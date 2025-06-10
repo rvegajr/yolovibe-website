@@ -7,7 +7,7 @@ import "@fontsource-variable/space-grotesk";
 import "../styles/global.css";
 import "../styles/enhanced-contrast.css";
 import "../styles/fix-annotation.css";
-
+import "../styles/neon-glow.css";
 
 export interface Props {
   title: string;
@@ -20,16 +20,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
 const {
   title,
-  description = "Learn coding with AI technologies like Windsurf and Cascade at YOLOVibeCodeBootCamps.",
-  image = "/opengraph.jpg",
+  description = "Learn cutting-edge AI-powered coding techniques at YOLOVibeCodeBootCamp. Our prime directive: Share knowledge freely and accelerate your development skills.",
+  image = "/yolo-opengraph.png",
   isHomepage = false,
 } = Astro.props;
 
 const resolvedImageWithDomain = new URL(image, Astro.site).toString();
 
 const makeTitle = title
-  ? title + " | YOLOVibeCodeBootCamps"
-  : "YOLOVibeCodeBootCamps - Learn Coding with AI Tools";
+  ? title + " | YOLOVibeCodeBootCamp"
+  : "YOLOVibeCodeBootCamp - Learn Coding with AI Tools";
 ---
 
 <!doctype html>
@@ -48,7 +48,7 @@ const makeTitle = title
         basic: {
           url: canonicalURL,
           type: "website",
-          title: `${title} | YOLOVibeCodeBootCamps`,
+          title: `${title} | YOLOVibeCodeBootCamp`,
           image: resolvedImageWithDomain,
         },
         image: {
