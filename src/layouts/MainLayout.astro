@@ -1,0 +1,131 @@
+---
+import { SEO } from "astro-seo";
+import Footer from "@/components/footer.astro";
+import Navbar from "@/components/navbar/navbar.astro";
+import "@fontsource-variable/inter/index.css";
+import "@fontsource-variable/space-grotesk";
+import "../styles/global.css";
+import "../styles/enhanced-contrast.css";
+import "../styles/fix-annotation.css";
+
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  isHomepage?: boolean;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const {
+  title,
+  description = "Learn coding with AI technologies like Windsurf and Cascade at YOLOVibeCodeBootCamps.",
+  image = "/opengraph.jpg",
+  isHomepage = false,
+} = Astro.props;
+
+const resolvedImageWithDomain = new URL(image, Astro.site).toString();
+
+const makeTitle = title
+  ? title + " | YOLOVibeCodeBootCamps"
+  : "YOLOVibeCodeBootCamps - Learn Coding with AI Tools";
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <SEO
+      title={makeTitle}
+      description={description}
+      canonical={canonicalURL}
+      openGraph={{
+        basic: {
+          url: canonicalURL,
+          type: "website",
+          title: `${title} | YOLOVibeCodeBootCamps`,
+          image: resolvedImageWithDomain,
+        },
+        image: {
+          alt: title,
+        },
+      }}
+    />
+    
+    <style is:global>
+      :root {
+        --color-primary: #7510F7;
+        --color-primary-dark: #5B0BC8;
+        --color-secondary: #00E5FF;
+        --color-text: #0C1C35;
+        --color-text-light: #4D5D75;
+        --color-bg: #ffffff;
+        --color-bg-alt: #F5F8FE;
+        --color-accent: #00C288;
+        --gradient-primary: linear-gradient(135deg, #7510F7 0%, #5725FF 50%, #00E5FF 100%);
+        --gradient-accent: linear-gradient(90deg, #00C288 0%, #10daa1 100%);
+        --shadow-sm: 0 4px 6px rgba(117, 16, 247, 0.05);
+        --shadow-md: 0 10px 20px rgba(117, 16, 247, 0.08);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+      }
+      
+      html.dark {
+        color-scheme: dark;
+        --color-primary: #aa65ff;
+        --color-primary-dark: #8a45e8;
+        --color-secondary: #4aecff;
+        --color-text: #f8fafc;
+        --color-text-light: #cbd5e1;
+        --color-bg: #0f172a;
+        --color-bg-alt: #1e293b;
+        --gradient-primary: linear-gradient(135deg, #aa65ff 0%, #7e54ff 50%, #4aecff 100%);
+      }
+      
+      /* Dark mode text enhancements */
+      html.dark .prose p,
+      html.dark .prose li,
+      html.dark .text-slate-600 {
+        color: #e2e8f0;
+      }
+      
+      html.dark .text-slate-700 {
+        color: #f1f5f9;
+      }
+      
+      html.dark .text-slate-500 {
+        color: #cbd5e1;
+      }
+      
+      html.dark h2, 
+      html.dark h3, 
+      html.dark h4 {
+        color: #f8fafc;
+      }
+    </style>
+
+    <slot name="head" />
+  </head>
+  <body>
+    <slot name="header-content">
+      <Navbar isHomepage={isHomepage} />
+    </slot>
+
+    <slot />
+
+    <Footer />
+
+    <style is:global>
+      /* Improve Page speed */
+      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+      img {
+        content-visibility: auto;
+      }
+    </style>
+  </body>
+</html>

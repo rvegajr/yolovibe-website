@@ -1,0 +1,15 @@
+/* CSS to hide the "Please fix this text" annotation */
+[class*="fix"],
+[id*="fix"],
+[class*="Fix"],
+[id*="Fix"],
+div:has(> span:contains("fix")),
+div:has(> span:contains("Fix")),
+div:has(> img[alt*="fix"]),
+div:has(> img[alt*="Fix"]),
+div[style*="position: absolute"][style*="z-index"],
+.annotation,
+.dev-note,
+.fix-note {
+  display: none !important;
+}

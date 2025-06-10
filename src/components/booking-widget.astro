@@ -1,0 +1,109 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<section id="book" class="py-20 bg-gradient-to-b from-gray-900 to-slate-900 dark:from-slate-900 dark:to-black">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto text-center mb-12">
+      <div class="inline-block mb-3">
+        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-purple-500/30 border border-indigo-400/30 animate-pulse">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="relative">Book Now</span>
+        </span>
+      </div>
+      <h2 class="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 dark:from-pink-400 dark:via-purple-300 dark:to-cyan-300 drop-shadow-lg" style="text-shadow: 0 0 10px rgba(216, 180, 254, 0.5);">Jump Into a Workshop</h2>
+      <p class="text-xl text-white font-medium enhanced-text max-w-2xl mx-auto glow-text">Ready to level up? Pick a date that works for you and let's make some <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-500 font-bold">magic</span> happen!</p>
+    </div>
+
+    <div class="booking-container max-w-5xl mx-auto relative">
+      <!-- Animated Neon Border Effect -->
+      <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-400 rounded-2xl opacity-75 blur-lg animate-pulse"></div>
+      
+      <!-- Booking Widget Container -->
+      <div class="min-h-[500px] flex flex-col relative z-10">
+        <div class="grid md:grid-cols-5 gap-0 h-full rounded-2xl overflow-hidden">
+          <!-- Left Column: Calendar & Info -->
+          <div class="md:col-span-3 p-8 flex flex-col justify-between booking-left-column relative overflow-hidden">
+            <!-- Decorative elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-500/10 to-yellow-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
+            
+            <div class="relative z-10">
+              <div class="flex items-center mb-8">
+                <div class="w-12 h-12 rounded-full calendar-icon-container flex items-center justify-center mr-4">
+                  <Icon name="bx:bxs-calendar" class="w-6 h-6 text-white" />
+                </div>
+                <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 drop-shadow-md" style="text-shadow: 0 0 8px rgba(139, 92, 246, 0.5);">Book Your Workshop</h3>
+              </div>
+              
+              <div class="booking-form-container rounded-xl p-6 mb-8">
+                <p class="text-white text-lg mb-6 font-medium">Our calendar booking system will be integrated here.</p>
+                <div class="flex items-center justify-center bg-black/30 rounded-lg p-8 mb-6 border border-indigo-500/30">
+                  <img src="https://cdn-apps.acuityscheduling.com/images/logo-en-color.svg" alt="Acuity Scheduling" class="h-12 opacity-90" />
+                </div>
+                <p class="text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 font-bold text-lg animate-pulse">Coming soon!</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-2 text-sm text-indigo-200 mt-auto relative z-10 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+              <Icon name="bx:bxs-lock" class="w-4 h-4 text-cyan-400" />
+              <span>All payments handled securely by Stripe</span>
+            </div>
+          </div>
+          
+          <!-- Right Column: Gradient Background & Features -->
+          <div class="md:col-span-2 benefits-column p-8 rounded-r-xl relative overflow-hidden">
+            <!-- Animated grid pattern -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10">
+              <div class="absolute inset-0 bg-grid-white/10 bg-[size:40px_40px] animate-grid-fade"></div>
+            </div>
+            
+            <!-- Glow orbs -->
+            <div class="absolute top-1/4 right-1/4 w-32 h-32 bg-purple-600/30 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-1/4 left-1/4 w-24 h-24 bg-cyan-500/30 rounded-full blur-3xl animate-float-delayed"></div>
+            
+            <div class="relative z-10">
+              <h3 class="text-2xl font-bold mb-8 text-white inline-flex items-center">
+                <span class="mr-2">✨</span> Workshop Benefits
+              </h3>
+              
+              <div class="space-y-8">
+                <div class="flex items-start group">
+                  <div class="feature-icon-container rounded-full p-3 mr-4 group-hover:shadow-lg group-hover:shadow-purple-500/50 transition-all duration-300">
+                    <Icon name="bx:bxs-calendar" class="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-400 group-hover:to-cyan-400 transition-all duration-300">Flexible Scheduling</h4>
+                    <p class="text-indigo-100">Choose dates that work perfectly for your entire team</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start group">
+                  <div class="feature-icon-container rounded-full p-3 mr-4 group-hover:shadow-lg group-hover:shadow-purple-500/50 transition-all duration-300">
+                    <Icon name="bx:bxs-credit-card" class="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-400 group-hover:to-cyan-400 transition-all duration-300">Secure Payments</h4>
+                    <p class="text-indigo-100">Pay safely with all major credit cards and payment methods</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start group">
+                  <div class="feature-icon-container rounded-full p-3 mr-4 group-hover:shadow-lg group-hover:shadow-purple-500/50 transition-all duration-300">
+                    <Icon name="bx:bxs-group" class="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-400 group-hover:to-cyan-400 transition-all duration-300">Group Discounts</h4>
+                    <p class="text-indigo-100">Special rates available for teams of 5 or more</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

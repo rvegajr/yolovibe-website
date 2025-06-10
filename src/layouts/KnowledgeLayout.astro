@@ -1,0 +1,179 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import { SEO } from "astro-seo";
+import Footer from "@/components/footer.astro";
+import Navbar from "@/components/navbar/navbar.astro";
+import "@fontsource-variable/space-grotesk";
+import "../styles/global.css";
+
+export interface Props {
+  title?: string;
+  footerMargin?: boolean;
+  description?: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const {
+  title = "YOLOVibeCodeBootCamps",
+  description = "Learn to harness AI for coding with our 3-day and 5-day workshops.",
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonicalURL}
+      twitter={{
+        card: "summary_large_image",
+        site: "@yourtwitterhandle",
+        title: title,
+        description: description,
+      }}
+    />
+    <ViewTransitions />
+  </head>
+  <body>
+    <Navbar />
+    <slot />
+    <Footer />
+    <style is:global>
+      :root {
+        --color-primary: #7e22ce;
+        --color-primary-dark: #581c87;
+        --color-secondary: #06b6d4;
+        --color-text: #1e293b;
+        --color-text-light: #64748b;
+        --color-bg: #ffffff;
+        --color-bg-alt: #f1f5f9;
+        --gradient-primary: linear-gradient(135deg, #7e22ce 0%, #4c1d95 60%, #06b6d4 110%);
+      }
+      
+      html.dark {
+        color-scheme: dark;
+        --color-primary: #aa65ff;
+        --color-primary-dark: #8a45e8;
+        --color-secondary: #4aecff;
+        --color-text: #f8fafc;
+        --color-text-light: #cbd5e1;
+        --color-bg: #0f172a;
+        --color-bg-alt: #1e293b;
+        --gradient-primary: linear-gradient(135deg, #aa65ff 0%, #7e54ff 60%, #4aecff 110%);
+      }
+      
+      /* Knowledge Unbound Page Font (matching Unprivacy) */
+      body {
+        font-family: "Space Grotesk Variable", sans-serif;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        letter-spacing: -0.01em;
+      }
+      
+      /* Special styling for headings */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: "Space Grotesk Variable", sans-serif;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      
+      /* Make prose text larger and more elegant in this page */
+      .prose p {
+        font-size: 1.125rem;
+        line-height: 1.75;
+      }
+      
+      /* Dark mode text enhancements with higher contrast */
+      html.dark .prose p,
+      html.dark .prose li,
+      html.dark .text-slate-600 {
+        color: #f0f4f8;
+      }
+      
+      html.dark .text-slate-700 {
+        color: #f8fafc;
+      }
+      
+      html.dark .text-slate-500 {
+        color: #e2e8f0;
+      }
+      
+      /* Brighter headings for maximum contrast */
+      html.dark h2, 
+      html.dark h3, 
+      html.dark h4 {
+        color: #ffffff;
+        text-shadow: 0 0 25px rgba(170, 101, 255, 0.2);
+      }
+
+      /* Custom Knowledge Unbound styles with enhanced visibility */
+      .knowledge-heading {
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        font-size: 2.25rem;
+      }
+
+      .knowledge-highlight {
+        font-weight: 600;
+        background: linear-gradient(to right, #ff87f4, #b995ff, #82d8ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+      }
+      
+      .glow-text {
+        text-shadow: 0 0 10px rgba(186, 156, 255, 0.5), 0 0 20px rgba(156, 191, 255, 0.3);
+        animation: pulse 2s infinite;
+      }
+      
+      .vibe-title {
+        text-shadow: 0 0 8px rgba(219, 39, 255, 0.3), 0 0 15px rgba(70, 127, 255, 0.2);
+        font-size: 1.5rem;
+        letter-spacing: -0.01em;
+        animation: titlePulse 3s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { text-shadow: 0 0 10px rgba(186, 156, 255, 0.5), 0 0 20px rgba(156, 191, 255, 0.3); }
+        50% { text-shadow: 0 0 15px rgba(186, 156, 255, 0.8), 0 0 30px rgba(156, 191, 255, 0.5); }
+        100% { text-shadow: 0 0 10px rgba(186, 156, 255, 0.5), 0 0 20px rgba(156, 191, 255, 0.3); }
+      }
+      
+      @keyframes titlePulse {
+        0% { text-shadow: 0 0 8px rgba(219, 39, 255, 0.3), 0 0 15px rgba(70, 127, 255, 0.2); }
+        50% { text-shadow: 0 0 12px rgba(255, 39, 210, 0.5), 0 0 20px rgba(70, 86, 255, 0.4); }
+        100% { text-shadow: 0 0 8px rgba(219, 39, 255, 0.3), 0 0 15px rgba(70, 127, 255, 0.2); }
+      }
+      
+      /* Make quotes and highlighted content stand out more */
+      html.dark blockquote,
+      html.dark .highlighted-box {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid var(--color-primary);
+        padding: 1rem;
+        margin: 1.5rem 0;
+      }
+      
+      /* Enhance links in the Knowledge page */
+      .prose a {
+        text-decoration: underline;
+        text-decoration-thickness: 0.05em;
+        text-underline-offset: 0.15em;
+        font-weight: 500;
+        color: var(--color-primary);
+      }
+      
+      html.dark .prose a {
+        color: var(--color-secondary);
+      }
+    </style>
+  </body>
+</html>

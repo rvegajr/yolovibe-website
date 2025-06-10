@@ -1,0 +1,103 @@
+---
+import Container from "@/components/container.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+import Link from "@/components/ui/link.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<MainLayout title="3-Day Rapid VibeCode Workshop" description="Master AI coding and deployment in just 3 days">
+  <Container>
+    <div class="max-w-4xl mx-auto py-12">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-cyan-500 mb-4">
+          3-Day Rapid VibeCode Workshop
+        </h1>
+        <p class="text-xl text-slate-600 dark:text-slate-400">
+          Master the art of AI-assisted coding in just three days
+        </p>
+      </div>
+
+      <div class="prose prose-lg dark:prose-invert max-w-none mb-12">
+        <p>
+          Our 3-Day Rapid VibeCode Workshop transforms your development capabilities by teaching 
+          you how to effectively use AI tools like Windsurf to accelerate your coding process.
+          Hands-on exercises ensure you leave with practical skills you can apply immediately.
+        </p>
+      </div>
+
+      <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-8 mb-12">
+        <div class="text-center">
+          <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">$3,000</div>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">per seat • 3 full days • on-site</p>
+          <Link href="/#book" style="primary" size="lg" class="group">
+            <span>Book Now</span>
+            <Icon name="tabler:arrow-right" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">Detailed Curriculum</h2>
+
+      <div class="space-y-16">
+        <div class="relative border-l-4 border-purple-600 dark:border-purple-400 pl-8">
+          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-purple-600 dark:bg-purple-400 flex items-center justify-center text-white font-bold">1</div>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 1 — The Essence of Vibe Coding</h3>
+          
+          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
+            <li>Understanding the revolutionary AI Flow paradigm of development</li>
+            <li>Achieving previously unrealistic software development principles through AI</li>
+            <li>Radical openness: speaking your dreams to code</li>
+            <li>Setting up your personal AI coding environment for maximum efficiency</li>
+            <li>Hands-on: Creating your first vibe-driven application</li>
+            <li class="font-bold text-purple-600 dark:text-purple-400">
+              Deliverable: Personal coding "dream board" and AI-assisted dev environment
+            </li>
+          </ul>
+        </div>
+
+        <div class="relative border-l-4 border-blue-500 dark:border-blue-400 pl-8">
+          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-blue-500 dark:bg-blue-400 flex items-center justify-center text-white font-bold">2</div>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 2 — CLI-ing Everything</h3>
+          
+          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
+            <li>Transforming your workflow through command line mastery</li>
+            <li>Building voice-to-CLI interfaces with Windsurf</li>
+            <li>Script generation for repetitive development tasks</li>
+            <li>Creating personalized AI agents for your specific development workflow</li>
+            <li>Infrastructure automation: from zero to cloud in minutes</li>
+            <li class="font-bold text-blue-600 dark:text-blue-400">
+              Deliverable: Custom CLI toolkit that automates your daily tasks
+            </li>
+          </ul>
+        </div>
+
+        <div class="relative border-l-4 border-cyan-500 dark:border-cyan-400 pl-8">
+          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-cyan-500 dark:bg-cyan-400 flex items-center justify-center text-white font-bold">3</div>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 3 — Client Technology Integration</h3>
+          
+          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
+            <li>Understanding each participant's unique technology landscape</li>
+            <li>Tailoring AI tools to integrate with existing company systems</li>
+            <li>Adapting Windsurf to your organization's specific security requirements</li>
+            <li>Creating custom plugins for your team's preferred development environments</li>
+            <li>Building an adoption roadmap for your organization</li>
+            <li class="font-bold text-cyan-600 dark:text-cyan-400">
+              Deliverable: Personalized integration plan and proof-of-concept
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center mt-16">
+        <Link href="/#book" style="primary" size="lg" class="group">
+          <span>Book Your Workshop</span>
+          <Icon name="tabler:calendar-plus" class="h-4 w-4 ml-1" />
+        </Link>
+        
+        <p class="mt-8 text-sm text-slate-500 dark:text-slate-400">
+          Questions? Email us at contact@yolovibecodebootcamps.com
+        </p>
+      </div>
+    </div>
+  </Container>
+</MainLayout>

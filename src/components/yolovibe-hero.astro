@@ -1,0 +1,54 @@
+---
+import { Picture } from "astro:assets";
+import Link from "@/components/ui/link.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<main
+  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
+  <div class="py-6 md:order-1 hidden md:block">
+    <div class="relative">
+      <div class="absolute -left-4 -top-4 w-72 h-72 bg-gradient-to-br from-purple-600 to-cyan-400 rounded-full opacity-50 blur-xl"></div>
+      <div class="relative z-10 rounded-xl overflow-hidden shadow-xl">
+        <Picture
+          src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+          alt="AI Coding Session"
+          width={600}
+          height={400}
+          widths={[200, 400, 600]}
+          sizes="(max-width: 800px) 100vw, 620px"
+          loading="eager"
+          format="avif"
+          class="w-full h-auto object-cover"
+        />
+      </div>
+    </div>
+  </div>
+  <div>
+    <h1
+      class="text-5xl lg:text-6xl xl:text-7xl font-extrabold lg:tracking-tight xl:tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-500 drop-shadow-sm">
+      YOLOVibeCoding Boot Camps
+    </h1>
+    <p class="text-lg mt-4 text-slate-900 dark:text-white max-w-xl font-medium bg-slate-200/70 dark:bg-slate-800/90 p-3 rounded-md backdrop-blur-sm border border-slate-300 dark:border-indigo-500/50 shadow-sm hero-bg-overlay">
+      Accelerate your development workflow with cutting-edge AI-powered techniques. Learn the skills to transform your business processes and create applications at unprecedented speed. Our experts bring hands-on training directly to your team.
+    </p>
+    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+      <Link
+        href="#book"
+        class="flex gap-1 items-center justify-center"
+        rel="noopener">
+        <Icon class="text-white w-5 h-5" name="bx:bxs-calendar" />
+        Book a Workshop
+      </Link>
+      <Link
+        size="lg"
+        style="outline"
+        rel="noopener"
+        href="/knowledge-unbound"
+        class="flex gap-1 items-center justify-center">
+        <Icon class="text-black dark:text-white w-4 h-4" name="bx:bxs-bulb" />
+        Knowledge Unbound
+      </Link>
+    </div>
+  </div>
+</main>

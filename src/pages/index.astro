@@ -1,0 +1,15 @@
+---
+import Container from "@/components/container.astro";
+import YOLOVibeHero from "@/components/yolovibe-hero.astro";
+import WorkshopOfferings from "@/components/workshop-offerings.astro";
+import BookingWidget from "@/components/booking-widget.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout title="YOLOVibeCodeBootCamps" description="Learn how to harness AI for coding with our 3-day and 5-day workshops" isHomepage={true}>
+  <Container>
+    <YOLOVibeHero />
+    <WorkshopOfferings />
+    <BookingWidget />
+  </Container>
+</MainLayout>
