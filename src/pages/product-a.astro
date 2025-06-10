@@ -25,11 +25,11 @@ import { Icon } from "astro-icon/components";
         </p>
       </div>
 
-      <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-8 mb-12">
+      <div class="bg-gradient-to-r from-slate-900 to-purple-900 rounded-xl p-8 mb-12 shadow-xl border border-purple-500/30">
         <div class="text-center">
-          <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">$3,000</div>
-          <p class="text-slate-600 dark:text-slate-400 mb-6">per seat • 3 full days • on-site</p>
-          <Link href="/book" style="primary" size="lg" class="group">
+          <div class="text-4xl font-bold text-green-500 mb-2 glow-sm">$3,000</div>
+          <p class="text-slate-300 mb-6">per seat • 3 full days • on-site</p>
+          <Link href="/book" style="primary" size="lg" class="group bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-green-500/20">
             <span>Book Now</span>
             <Icon name="tabler:arrow-right" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -89,7 +89,7 @@ import { Icon } from "astro-icon/components";
       </div>
 
       <div class="text-center mt-16">
-        <Link href="/book" style="primary" size="lg" class="group">
+        <Link href="/book" style="primary" size="lg" class="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-purple-500/50 glow-sm transform hover:scale-105 transition-all">
           <span>Book Your Workshop</span>
           <Icon name="tabler:calendar-plus" class="h-4 w-4 ml-1" />
         </Link>
