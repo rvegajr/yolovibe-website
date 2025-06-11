@@ -1,5 +1,8 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Container from "../components/container.astro";
+import Sectionhead from "../components/sectionhead.astro";
+import "../styles/neon-glow.css";
 ---
 
 <MainLayout title="Book a Workshop | YOLOVibeCodeBootCamp" description="Schedule your YOLOVibeCode workshop and accelerate your development process with our AI-powered training.">
@@ -16,24 +19,22 @@ import MainLayout from '../layouts/MainLayout.astro';
       <!-- Workshop Package Options -->
       <div class="grid md:grid-cols-2 gap-6 mb-8">
         <!-- 3-Day Workshop Package -->
-        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 p-6 rounded-xl border border-purple-200 dark:border-purple-700 shadow-md hover:shadow-lg transition-shadow">
+        <div class="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 dark:from-purple-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-purple-500/30 dark:border-purple-700/50 shadow-md hover:shadow-lg transition-shadow">
           <h3 class="text-xl font-bold mb-3 text-purple-700 dark:text-purple-300">3-Day Rapid VibeCode Workshop</h3>
           <p class="text-slate-700 dark:text-slate-300 mb-4">Intensive 3-day workshop covering AI-powered development fundamentals.</p>
-          <p class="font-bold text-lg mb-5 text-green-600 dark:text-green-400">$3,000 per seat</p>
-          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465314" 
-             class="inline-block w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium text-center rounded-lg transition-colors">
-            Book 3-Day Workshop
+          <p class="font-bold text-lg mb-5 text-green-500 glow-sm">$3,000 per seat</p>
+          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465314" class="inline-flex items-center justify-center w-full py-3 px-4 text-white font-medium text-center rounded-lg transition-all whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 hover:scale-[1.02] hover:shadow-lg glow-sm">
+            <span>Book 3-Day Workshop</span>
           </a>
         </div>
         
         <!-- 5-Day Workshop Package -->
-        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 p-6 rounded-xl border border-blue-200 dark:border-blue-700 shadow-md hover:shadow-lg transition-shadow">
+        <div class="bg-gradient-to-br from-blue-900/40 to-indigo-900/40 dark:from-blue-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-blue-500/30 dark:border-blue-700/50 shadow-md hover:shadow-lg transition-shadow">
           <h3 class="text-xl font-bold mb-3 text-blue-700 dark:text-blue-300">5-Day VibeCode + Business Plan</h3>
           <p class="text-slate-700 dark:text-slate-300 mb-4">Complete 5-day workshop with business integration planning.</p>
-          <p class="font-bold text-lg mb-5 text-green-600 dark:text-green-400">$4,500 per seat</p>
-          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465467" 
-             class="inline-block w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-center rounded-lg transition-colors">
-            Book 5-Day Workshop
+          <p class="font-bold text-lg mb-5 text-green-500 glow-sm">$4,500 per seat</p>
+          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465467" class="inline-flex items-center justify-center w-full py-3 px-4 text-white font-medium text-center rounded-lg transition-all whitespace-nowrap bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 hover:scale-[1.02] hover:shadow-lg glow-sm">
+            <span>Book 5-Day Workshop</span>
           </a>
         </div>
       </div>

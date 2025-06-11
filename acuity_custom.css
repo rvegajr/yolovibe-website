@@ -1,0 +1,484 @@
+/* YOLOVibeCodeBootCamp Custom Acuity Styling */
+
+/* Custom link overrides */
+/* This section redirects all links to the correct URLs */
+
+/* Override all "Add to cart" buttons to use the direct cart links */
+.select-item:nth-of-type(1) .btn {
+  pointer-events: none;
+}
+
+.select-item:nth-of-type(1) .css-djsnsg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.select-item:nth-of-type(1) .css-djsnsg::after {
+  cursor: pointer;
+}
+
+/* Create custom buttons with the correct links */
+.select-item:nth-of-type(1) .css-1j096s0::before {
+  content: 'Book 3-Day Workshop';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #6366f1, #4f46e5);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.select-item:nth-of-type(1) .css-1j096s0 {
+  position: relative;
+}
+
+.select-item:nth-of-type(1) .css-1j096s0::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* Apply similar styling for the 5-Day Workshop button */
+.select-item:nth-of-type(2) .btn {
+  pointer-events: none;
+}
+
+.select-item:nth-of-type(2) .css-djsnsg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.select-item:nth-of-type(2) .css-1j096s0::before {
+  content: 'Book 5-Day Workshop';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #6366f1, #4f46e5);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.select-item:nth-of-type(2) .css-1j096s0 {
+  position: relative;
+}
+
+.select-item:nth-of-type(2) .css-1j096s0::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* JavaScript to redirect to the correct URLs when buttons are clicked */
+/* We'll add this using a CSS content property with a data URI */
+body::after {
+  content: '';
+  display: none;
+}
+
+body:has(.select-item:nth-of-type(1) .css-1j096s0:active)::after {
+  content: url("data:text/html;charset=utf-8,%3Cscript%3Ewindow.location.href%20%3D%20'https%3A%2F%2Fapp.acuityscheduling.com%2Fcatalog.php%3Fowner%3D35993562%26action%3DaddCart%26clear%3D1%26id%3D1993193'%3B%3C%2Fscript%3E");
+}
+
+body:has(.select-item:nth-of-type(2) .css-1j096s0:active)::after {
+  content: url("data:text/html;charset=utf-8,%3Cscript%3Ewindow.location.href%20%3D%20'https%3A%2F%2Fapp.acuityscheduling.com%2Fcatalog.php%3Fowner%3D35993562%26action%3DaddCart%26clear%3D1%26id%3D1993196'%3B%3C%2Fscript%3E");
+}
+
+/* Main URL override for the header logo */
+header.css-zbwce8 {
+  cursor: pointer;
+}
+
+header.css-zbwce8::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
+body:has(header.css-zbwce8:active)::after {
+  content: url("data:text/html;charset=utf-8,%3Cscript%3Ewindow.location.href%20%3D%20'https%3A%2F%2Fyolovibecode.as.me%2F'%3B%3C%2Fscript%3E");
+}
+
+/* Admin-only message styling */
+.admin-message {
+  background-color: #f8fafc;
+  border-left: 4px solid #6366f1;
+  color: #1e293b;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 14px;
+  display: none; /* Hidden by default */
+}
+
+/* Only show admin message to admins */
+body.is-owner .admin-message {
+  display: block;
+}
+
+/* Admin banner at top of page */
+body::before {
+  content: "ADMIN VIEW: This page is configured to only show the package options";
+  display: none;
+  background: linear-gradient(to right, #6366f1, #4f46e5);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: 600;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Only show admin banner when logged in */
+body.is-owner::before {
+  display: block;
+}
+
+/* Adjust body padding for admin banner */
+body.is-owner {
+  padding-top: 40px;
+}
+
+/* Hide the "Select Appointment" section completely */
+li.css-1vkze3c:first-of-type,
+.step-title:has(h2:contains("Select Appointment")),
+nav:has(.step-title:has(h2:contains("Select Appointment"))),
+.select-type,
+.css-31bpaj > li:first-child,
+#pylon-nav {
+  display: none !important;
+}
+
+/* Center the business name */
+.css-yi7lzj {
+  justify-content: center !important;
+  padding: 1.5rem 0 !important;
+}
+
+/* Make the header more prominent */
+header.css-zbwce8 {
+  background: linear-gradient(to right, #1e293b, #0f172a) !important;
+  padding: 1rem 0 !important;
+  margin-bottom: 2rem !important;
+  border-bottom: 3px solid rgba(99, 102, 241, 0.5) !important;
+}
+
+/* Make Products & Packages the primary focus */
+li.css-1vkze3c:nth-of-type(2) {
+  margin-top: 2rem;
+}
+
+/* Ensure only the 2 packages are shown prominently */
+.css-dza7r7 {
+  display: block !important;
+}
+
+/* Make Products & Packages header more prominent */
+.css-80rb5l h2 {
+  font-size: 2rem !important;
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  font-weight: 700 !important;
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  position: relative;
+}
+
+.css-80rb5l h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  border-radius: 3px;
+}
+
+/* General page styling */
+#secondo-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header styling */
+header.css-zbwce8 {
+  background: linear-gradient(to right, #1e293b, #0f172a);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* Business name styling */
+.business-name {
+  background: linear-gradient(to right, #a855f7, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+/* Navigation styling */
+#pylon-nav {
+  background-color: rgba(15, 23, 42, 0.03);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+/* Step title styling */
+.step-title svg {
+  color: #6366f1;
+}
+
+.step-title h2 {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Appointment type styling */
+.select-item-box {
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.select-item-box:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Selected item styling */
+.css-1o4w35w {
+  border: 2px solid #6366f1 !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Package card styling */
+.select-item {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.4)) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15) !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 1.5rem !important;
+  overflow: hidden !important;
+  padding: 2rem !important;
+}
+
+/* Improve layout spacing */
+.css-7w2m40 {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+}
+
+/* Hide cart button if empty */
+.css-1krz8d2:has(span:contains("(0)")) {
+  opacity: 0.5 !important;
+}
+
+.select-item:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Package title styling */
+.appointment-type-name {
+  font-size: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+  background: linear-gradient(to right, #4f46e5, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+
+/* Package description styling */
+.type-description,
+.css-fwyvyx {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  color: #4b5563 !important;
+  margin-bottom: 1.5rem !important;
+  max-height: none !important;
+  white-space: pre-line !important;
+}
+
+/* Price container styling */
+.css-11pkq6j {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #10b981 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Duration container styling */
+.duration-container {
+  color: #64748b;
+}
+
+/* Price styling */
+.duration-container span:contains("$") {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* Button styling */
+.btn {
+  background: linear-gradient(to right, #6366f1, #4f46e5) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  font-size: 1.1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+}
+
+.btn:hover {
+  background: linear-gradient(to right, #4f46e5, #4338ca) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Cart styling */
+.css-1krz8d2 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 8px !important;
+  color: #4f46e5 !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  padding: 10px 16px !important;
+}
+
+.css-1krz8d2:hover {
+  background-color: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Package description styling */
+.type-description {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Footer styling */
+footer {
+  border-top: 1px solid rgba(99, 102, 241, 0.1) !important;
+  padding: 16px 0 !important;
+  margin-top: 3rem !important;
+}
+
+/* Improve footer logo */
+footer img {
+  opacity: 0.7 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+footer img:hover {
+  opacity: 1 !important;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .admin-message {
+    background-color: #1e293b !important;
+    border-left: 4px solid #818cf8 !important;
+    color: #f8fafc !important;
+  }
+  
+  body::before {
+    background: linear-gradient(to right, #4f46e5, #3730a3) !important;
+  }
+  
+  .select-item {
+    background: linear-gradient(to bottom right, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  }
+  
+  .appointment-type-name {
+    background: linear-gradient(to right, #818cf8, #6366f1) !important;
+    color: transparent !important;
+  }
+  
+  .type-description,
+  .css-fwyvyx {
+    color: #cbd5e1 !important;
+  }
+  
+  .duration-container {
+    color: #94a3b8 !important;
+  }
+  
+  .css-11pkq6j {
+    color: #34d399 !important;
+    text-shadow: 0 0 10px rgba(52, 211, 153, 0.3) !important;
+  }
+  
+  .btn {
+    background: linear-gradient(to right, #818cf8, #6366f1) !important;
+  }
+  
+  .btn:hover {
+    background: linear-gradient(to right, #6366f1, #4f46e5) !important;
+  }
+  
+  footer {
+    border-top: 1px solid rgba(99, 102, 241, 0.2) !important;
+  }
+}
+
+/* Add this HTML to your page:
+<div class="admin-message">
+  <strong>Admin Notice:</strong> This message is only visible to administrators.
+</div>
+*/
