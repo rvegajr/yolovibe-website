@@ -39,7 +39,7 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+**/node_modules/*
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -139,3 +139,11 @@ dist
 dist/
 .astro/
 .vercel
+
+**/googlecloud.json/*
+googlecloud.json
+
+# Google Cloud service account keys
+*.json.key
+*-key.json
+yolovibe-calendar-key.json
