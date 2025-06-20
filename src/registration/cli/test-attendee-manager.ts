@@ -1,80 +1,21 @@
 #!/usr/bin/env node
 /**
  * CLI Test Harness for IAttendeeManager Interface
- * This test DRIVES the interface design - written BEFORE implementation!
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-attendee-manager.ts
  */
 
 import type { IAttendeeManager } from '../core/interfaces/index.js';
-import type { AttendeeInfo, Attendee, AttendeeUpdates, AccessStatus } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockAttendeeManager implements IAttendeeManager {
-  private attendees: Map<string, Attendee> = new Map();
-  private bookingAttendees: Map<string, string[]> = new Map(); // bookingId -> attendeeIds
-  private nextAttendeeId = 1;
-
-  async addAttendee(bookingId: string, attendeeInfo: AttendeeInfo): Promise<void> {
-    const attendeeId = `attendee-${this.nextAttendeeId++}`;
-    
-    const attendee: Attendee = {
-      ...attendeeInfo,
-      id: attendeeId,
-      bookingId,
-      accessStatus: {
-        attendeeId,
-        hasAccess: false,
-        passwordGenerated: false
-      },
-      registrationDate: new Date()
-    };
-
-    this.attendees.set(attendeeId, attendee);
-    
-    // Track attendees by booking
-    const bookingAttendeeIds = this.bookingAttendees.get(bookingId) || [];
-    bookingAttendeeIds.push(attendeeId);
-    this.bookingAttendees.set(bookingId, bookingAttendeeIds);
-  }
-
-  async getAttendees(bookingId: string): Promise<Attendee[]> {
-    const attendeeIds = this.bookingAttendees.get(bookingId) || [];
-    return attendeeIds.map(id => this.attendees.get(id)!).filter(Boolean);
-  }
-
-  async removeAttendee(attendeeId: string): Promise<void> {
-    const attendee = this.attendees.get(attendeeId);
-    if (!attendee) {
-      throw new Error(`Attendee not found: ${attendeeId}`);
-    }
-
-    // Remove from booking tracking
-    const bookingAttendeeIds = this.bookingAttendees.get(attendee.bookingId) || [];
-    const updatedIds = bookingAttendeeIds.filter(id => id !== attendeeId);
-    this.bookingAttendees.set(attendee.bookingId, updatedIds);
-
-    // Remove attendee
-    this.attendees.delete(attendeeId);
-  }
-
-  async updateAttendee(attendeeId: string, updates: AttendeeUpdates): Promise<void> {
-    const attendee = this.attendees.get(attendeeId);
-    if (!attendee) {
-      throw new Error(`Attendee not found: ${attendeeId}`);
-    }
-
-    // Apply updates
-    Object.assign(attendee, updates);
-    this.attendees.set(attendeeId, attendee);
-  }
-}
+import type { Attendee, AttendeeInfo, AttendeeUpdates } from '../core/types/index.js';
+import { AttendeeManager } from '../implementations/AttendeeManager.js';
 
 // TEST SUITE
 async function runTests() {
   console.log('🧪 Testing IAttendeeManager Interface...\n');
   
-  const manager: IAttendeeManager = new MockAttendeeManager();
+  // Use concrete implementation instead of mock!
+  const attendeeManager: IAttendeeManager = new AttendeeManager();
   let testsPassed = 0;
   let testsTotal = 0;
 
@@ -91,7 +32,7 @@ async function runTests() {
       accessibilityNeeds: 'None'
     };
 
-    await manager.addAttendee('booking-123', attendeeInfo);
+    await attendeeManager.addAttendee('booking-123', attendeeInfo);
     
     console.log('✅ Test 1: addAttendee()');
     console.log(`   Added: ${attendeeInfo.firstName} ${attendeeInfo.lastName}`);
@@ -125,8 +66,8 @@ async function runTests() {
       accessibilityNeeds: 'Wheelchair access'
     };
 
-    await manager.addAttendee('booking-123', attendee2);
-    await manager.addAttendee('booking-123', attendee3);
+    await attendeeManager.addAttendee('booking-123', attendee2);
+    await attendeeManager.addAttendee('booking-123', attendee3);
     
     console.log('✅ Test 2: addAttendee() - Multiple Attendees');
     console.log(`   Added: ${attendee2.firstName} ${attendee2.lastName}`);
@@ -141,7 +82,7 @@ async function runTests() {
   // Test 3: Get all attendees for booking
   testsTotal++;
   try {
-    const attendees = await manager.getAttendees('booking-123');
+    const attendees = await attendeeManager.getAttendees('booking-123');
     
     console.log('✅ Test 3: getAttendees()');
     console.log(`   Found ${attendees.length} attendees for booking-123:`);
@@ -170,9 +111,9 @@ async function runTests() {
       dietaryRestrictions: 'Vegan'
     };
 
-    await manager.updateAttendee('attendee-1', updates);
+    await attendeeManager.updateAttendee('attendee-1', updates);
     
-    const updatedAttendees = await manager.getAttendees('booking-123');
+    const updatedAttendees = await attendeeManager.getAttendees('booking-123');
     const updatedAttendee = updatedAttendees.find(a => a.id === 'attendee-1');
     
     console.log('✅ Test 4: updateAttendee()');
@@ -196,9 +137,9 @@ async function runTests() {
   // Test 5: Remove attendee
   testsTotal++;
   try {
-    await manager.removeAttendee('attendee-2');
+    await attendeeManager.removeAttendee('attendee-2');
     
-    const remainingAttendees = await manager.getAttendees('booking-123');
+    const remainingAttendees = await attendeeManager.getAttendees('booking-123');
     
     console.log('✅ Test 5: removeAttendee()');
     console.log(`   Remaining attendees: ${remainingAttendees.length}`);
@@ -219,7 +160,7 @@ async function runTests() {
   // Test 6: Error handling for invalid attendee ID
   testsTotal++;
   try {
-    await manager.updateAttendee('invalid-attendee-id', { firstName: 'Test' });
+    await attendeeManager.updateAttendee('invalid-attendee-id', { firstName: 'Test' });
     console.log('❌ Test 6 FAILED: Should have thrown error for invalid attendee ID\n');
   } catch (error) {
     console.log('✅ Test 6: updateAttendee() error handling');
@@ -230,7 +171,7 @@ async function runTests() {
   // Test 7: Get attendees for non-existent booking
   testsTotal++;
   try {
-    const attendees = await manager.getAttendees('non-existent-booking');
+    const attendees = await attendeeManager.getAttendees('non-existent-booking');
     
     console.log('✅ Test 7: getAttendees() - Non-existent Booking');
     console.log(`   Found ${attendees.length} attendees for non-existent booking`);

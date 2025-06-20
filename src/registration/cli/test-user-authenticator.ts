@@ -1,171 +1,22 @@
 #!/usr/bin/env tsx
 /**
  * CLI Test Harness for IUserAuthenticator Interface
- * Tests user authentication and session management
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-user-authenticator.ts
  */
 
 import type { IUserAuthenticator } from '../core/interfaces/index.js';
 import type { AuthenticationResult, UserSession, LoginCredentials } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockUserAuthenticator implements IUserAuthenticator {
-  private users: Map<string, { email: string; passwordHash: string; isActive: boolean }> = new Map();
-  private sessions: Map<string, UserSession> = new Map();
-  private nextSessionId = 1;
-
-  constructor() {
-    // Pre-populate with test users
-    this.users.set('admin@yolovibe.com', {
-      email: 'admin@yolovibe.com',
-      passwordHash: 'hashed_admin_password',
-      isActive: true
-    });
-
-    this.users.set('instructor@yolovibe.com', {
-      email: 'instructor@yolovibe.com',
-      passwordHash: 'hashed_instructor_password',
-      isActive: true
-    });
-
-    this.users.set('inactive@yolovibe.com', {
-      email: 'inactive@yolovibe.com',
-      passwordHash: 'hashed_inactive_password',
-      isActive: false
-    });
-  }
-
-  private hashPassword(password: string): string {
-    // Mock password hashing - in real implementation use bcrypt or similar
-    return `hashed_${password}`;
-  }
-
-  private generateSessionToken(): string {
-    return `session_token_${this.nextSessionId++}_${Date.now()}`;
-  }
-
-  async authenticate(credentials: LoginCredentials): Promise<AuthenticationResult> {
-    const user = this.users.get(credentials.email);
-    
-    if (!user) {
-      return {
-        success: false,
-        errorMessage: 'Invalid email or password',
-        user: null,
-        sessionToken: null
-      };
-    }
-
-    if (!user.isActive) {
-      return {
-        success: false,
-        errorMessage: 'Account is inactive',
-        user: null,
-        sessionToken: null
-      };
-    }
-
-    const hashedPassword = this.hashPassword(credentials.password);
-    if (user.passwordHash !== hashedPassword) {
-      return {
-        success: false,
-        errorMessage: 'Invalid email or password',
-        user: null,
-        sessionToken: null
-      };
-    }
-
-    // Create session
-    const sessionToken = this.generateSessionToken();
-    const session: UserSession = {
-      sessionId: sessionToken,
-      userId: user.email,
-      email: user.email,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-      isActive: true
-    };
-
-    this.sessions.set(sessionToken, session);
-
-    return {
-      success: true,
-      errorMessage: null,
-      user: {
-        id: user.email,
-        email: user.email,
-        isActive: user.isActive
-      },
-      sessionToken
-    };
-  }
-
-  async validateSession(sessionToken: string): Promise<UserSession | null> {
-    const session = this.sessions.get(sessionToken);
-    
-    if (!session) {
-      return null;
-    }
-
-    if (!session.isActive || session.expiresAt < new Date()) {
-      // Session expired or inactive
-      session.isActive = false;
-      this.sessions.set(sessionToken, session);
-      return null;
-    }
-
-    return session;
-  }
-
-  async refreshSession(sessionToken: string): Promise<string | null> {
-    const session = await this.validateSession(sessionToken);
-    
-    if (!session) {
-      return null;
-    }
-
-    // Extend session expiration
-    session.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-    this.sessions.set(sessionToken, session);
-
-    return sessionToken;
-  }
-
-  async logout(sessionToken: string): Promise<void> {
-    const session = this.sessions.get(sessionToken);
-    
-    if (session) {
-      session.isActive = false;
-      this.sessions.set(sessionToken, session);
-    }
-  }
-
-  async getCurrentUser(sessionToken: string): Promise<{ id: string; email: string; isActive: boolean } | null> {
-    const session = await this.validateSession(sessionToken);
-    
-    if (!session) {
-      return null;
-    }
-
-    const user = this.users.get(session.email);
-    if (!user) {
-      return null;
-    }
-
-    return {
-      id: user.email,
-      email: user.email,
-      isActive: user.isActive
-    };
-  }
-}
+import { UserAuthenticator } from '../implementations/UserAuthenticator.js';
 
 // TEST SUITE
-async function runTests() {
+async function testUserAuthenticator() {
   console.log('🧪 Testing IUserAuthenticator Interface...\n');
   
-  const authenticator = new MockUserAuthenticator();
+  // Use concrete implementation instead of mock!
+  // Cast to any since CLI test expects methods beyond current interface definition
+  const authenticator: any = new UserAuthenticator();
   let passedTests = 0;
   let totalTests = 0;
 
@@ -177,9 +28,9 @@ async function runTests() {
       password: 'admin_password'
     };
 
-    const result = await authenticator.authenticate(credentials);
+    const result = await authenticator.authenticateUser(credentials);
     
-    console.log('✅ Test 1: authenticate() - Success');
+    console.log('✅ Test 1: authenticateUser() - Success');
     console.log(`   Email: ${credentials.email}`);
     console.log(`   Success: ${result.success}`);
     console.log(`   User ID: ${result.user?.id}`);
@@ -190,7 +41,7 @@ async function runTests() {
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 1: authenticate() failed');
+    console.log('❌ Test 1: authenticateUser() failed');
     console.log(`   Error: ${error}\n`);
   }
 
@@ -202,9 +53,9 @@ async function runTests() {
       password: 'wrong_password'
     };
 
-    const result = await authenticator.authenticate(credentials);
+    const result = await authenticator.authenticateUser(credentials);
     
-    console.log('✅ Test 2: authenticate() - Invalid Password');
+    console.log('✅ Test 2: authenticateUser() - Invalid Password');
     console.log(`   Email: ${credentials.email}`);
     console.log(`   Success: ${result.success}`);
     console.log(`   User: ${result.user}`);
@@ -214,7 +65,7 @@ async function runTests() {
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 2: authenticate() failed');
+    console.log('❌ Test 2: authenticateUser() failed');
     console.log(`   Error: ${error}\n`);
   }
 
@@ -226,9 +77,9 @@ async function runTests() {
       password: 'any_password'
     };
 
-    const result = await authenticator.authenticate(credentials);
+    const result = await authenticator.authenticateUser(credentials);
     
-    console.log('✅ Test 3: authenticate() - User Not Found');
+    console.log('✅ Test 3: authenticateUser() - User Not Found');
     console.log(`   Email: ${credentials.email}`);
     console.log(`   Success: ${result.success}`);
     console.log(`   User: ${result.user}`);
@@ -238,7 +89,7 @@ async function runTests() {
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 3: authenticate() failed');
+    console.log('❌ Test 3: authenticateUser() failed');
     console.log(`   Error: ${error}\n`);
   }
 
@@ -250,9 +101,9 @@ async function runTests() {
       password: 'inactive_password'
     };
 
-    const result = await authenticator.authenticate(credentials);
+    const result = await authenticator.authenticateUser(credentials);
     
-    console.log('✅ Test 4: authenticate() - Inactive User');
+    console.log('✅ Test 4: authenticateUser() - Inactive User');
     console.log(`   Email: ${credentials.email}`);
     console.log(`   Success: ${result.success}`);
     console.log(`   User: ${result.user}`);
@@ -262,7 +113,7 @@ async function runTests() {
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 4: authenticate() failed');
+    console.log('❌ Test 4: authenticateUser() failed');
     console.log(`   Error: ${error}\n`);
   }
 
@@ -275,12 +126,12 @@ async function runTests() {
       password: 'instructor_password'
     };
 
-    const authResult = await authenticator.authenticate(credentials);
+    const authResult = await authenticator.authenticateUser(credentials);
     const sessionToken = authResult.sessionToken!;
     
-    const session = await authenticator.validateSession(sessionToken);
+    const session = await authenticator.validateUserSession(sessionToken);
     
-    console.log('✅ Test 5: validateSession() - Valid Session');
+    console.log('✅ Test 5: validateUserSession() - Valid Session');
     console.log(`   Session ID: ${session?.sessionId.substring(0, 20)}...`);
     console.log(`   User ID: ${session?.userId}`);
     console.log(`   Email: ${session?.email}`);
@@ -291,22 +142,22 @@ async function runTests() {
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 5: validateSession() failed');
+    console.log('❌ Test 5: validateUserSession() failed');
     console.log(`   Error: ${error}\n`);
   }
 
   // Test 6: Validate Session - Invalid Session
   totalTests++;
   try {
-    const session = await authenticator.validateSession('invalid_session_token');
+    const session = await authenticator.validateUserSession('invalid_session_token');
     
-    console.log('✅ Test 6: validateSession() - Invalid Session');
+    console.log('✅ Test 6: validateUserSession() - Invalid Session');
     console.log(`   Session: ${session}`);
     console.log('   ✅ Invalid session handled correctly\n');
     
     passedTests++;
   } catch (error) {
-    console.log('❌ Test 6: validateSession() failed');
+    console.log('❌ Test 6: validateUserSession() failed');
     console.log(`   Error: ${error}\n`);
   }
 
@@ -319,7 +170,7 @@ async function runTests() {
       password: 'admin_password'
     };
 
-    const authResult = await authenticator.authenticate(credentials);
+    const authResult = await authenticator.authenticateUser(credentials);
     const sessionToken = authResult.sessionToken!;
     
     const user = await authenticator.getCurrentUser(sessionToken);
@@ -345,7 +196,7 @@ async function runTests() {
       password: 'instructor_password'
     };
 
-    const authResult = await authenticator.authenticate(credentials);
+    const authResult = await authenticator.authenticateUser(credentials);
     const originalToken = authResult.sessionToken!;
     
     const refreshedToken = await authenticator.refreshSession(originalToken);
@@ -371,17 +222,16 @@ async function runTests() {
       password: 'admin_password'
     };
 
-    const authResult = await authenticator.authenticate(credentials);
+    const authResult = await authenticator.authenticateUser(credentials);
     const sessionToken = authResult.sessionToken!;
     
-    // Verify session is valid before logout
-    const sessionBefore = await authenticator.validateSession(sessionToken);
+    // Verify session exists before logout
+    const sessionBefore = await authenticator.validateUserSession(sessionToken);
     
-    // Logout
     await authenticator.logout(sessionToken);
     
-    // Verify session is invalid after logout
-    const sessionAfter = await authenticator.validateSession(sessionToken);
+    // Verify session is gone after logout
+    const sessionAfter = await authenticator.validateUserSession(sessionToken);
     
     console.log('✅ Test 9: logout()');
     console.log(`   Session Before Logout: ${sessionBefore?.isActive}`);
@@ -423,4 +273,4 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(console.error);
+testUserAuthenticator().catch(console.error);

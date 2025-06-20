@@ -1,79 +1,21 @@
 #!/usr/bin/env node
 /**
  * CLI Test Harness for IBookingManager Interface
- * This test DRIVES the interface design - written BEFORE implementation!
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-booking-manager.ts
  */
 
 import type { IBookingManager } from '../core/interfaces/index.js';
 import type { BookingRequest, BookingResult, Booking, ContactInfo, AttendeeInfo, PaymentMethod } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockBookingManager implements IBookingManager {
-  private bookings: Map<string, Booking> = new Map();
-  private nextBookingId = 1;
-
-  async createBooking(request: BookingRequest): Promise<BookingResult> {
-    const bookingId = `booking-${this.nextBookingId++}`;
-    const workshopId = `workshop-${request.productId}-${request.startDate.toISOString().split('T')[0]}`;
-    
-    // Simulate booking creation
-    const booking: Booking = {
-      id: bookingId,
-      workshopId,
-      pointOfContactId: 'poc-1',
-      attendees: request.attendees.map((info, index) => ({
-        ...info,
-        id: `attendee-${index + 1}`,
-        bookingId,
-        accessStatus: {
-          attendeeId: `attendee-${index + 1}`,
-          hasAccess: false,
-          passwordGenerated: false
-        },
-        registrationDate: new Date()
-      })),
-      totalAmount: request.attendeeCount * 3000, // Mock pricing
-      paymentStatus: 'pending',
-      bookingDate: new Date(),
-      status: 'active',
-      confirmationNumber: `YOLO-${Date.now()}`
-    };
-
-    this.bookings.set(bookingId, booking);
-
-    return {
-      bookingId,
-      workshopId,
-      status: 'confirmed',
-      totalAmount: booking.totalAmount,
-      confirmationNumber: booking.confirmationNumber
-    };
-  }
-
-  async getBooking(bookingId: string): Promise<Booking> {
-    const booking = this.bookings.get(bookingId);
-    if (!booking) {
-      throw new Error(`Booking not found: ${bookingId}`);
-    }
-    return booking;
-  }
-
-  async cancelBooking(bookingId: string): Promise<void> {
-    const booking = this.bookings.get(bookingId);
-    if (!booking) {
-      throw new Error(`Booking not found: ${bookingId}`);
-    }
-    booking.status = 'cancelled';
-  }
-}
+import { BookingManager } from '../implementations/BookingManager.js';
 
 // TEST SUITE
 async function runTests() {
   console.log('🧪 Testing IBookingManager Interface...\n');
   
-  const bookingManager: IBookingManager = new MockBookingManager();
+  // Use concrete implementation instead of mock!
+  const bookingManager: IBookingManager = new BookingManager();
   let testsPassed = 0;
   let testsTotal = 0;
 

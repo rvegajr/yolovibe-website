@@ -1,61 +1,22 @@
 #!/usr/bin/env tsx
 /**
  * CLI Test Harness for IPointOfContactManager Interface
- * Tests point of contact management functionality
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-point-of-contact-manager.ts
  */
 
 import type { IPointOfContactManager } from '../core/interfaces/index.js';
 import type { ContactInfo, PointOfContact } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockPointOfContactManager implements IPointOfContactManager {
-  private contacts: Map<string, PointOfContact> = new Map();
-  private nextId = 1;
-
-  async addPointOfContact(bookingId: string, contactInfo: ContactInfo): Promise<string> {
-    const contactId = `poc_${this.nextId++}`;
-    const pointOfContact: PointOfContact = {
-      id: contactId,
-      bookingId,
-      isAttendee: false,
-      createdDate: new Date(),
-      ...contactInfo
-    };
-    
-    this.contacts.set(contactId, pointOfContact);
-    return contactId;
-  }
-
-  async getPointOfContact(contactId: string): Promise<PointOfContact> {
-    const contact = this.contacts.get(contactId);
-    if (!contact) {
-      throw new Error(`Point of contact not found: ${contactId}`);
-    }
-    return contact;
-  }
-
-  async updatePointOfContact(contactId: string, updates: Partial<ContactInfo>): Promise<void> {
-    const contact = this.contacts.get(contactId);
-    if (!contact) {
-      throw new Error(`Point of contact not found: ${contactId}`);
-    }
-    
-    Object.assign(contact, updates);
-    this.contacts.set(contactId, contact);
-  }
-
-  async getContactsByBooking(bookingId: string): Promise<PointOfContact[]> {
-    return Array.from(this.contacts.values()).filter(contact => contact.bookingId === bookingId);
-  }
-}
+import { PointOfContactManager } from '../implementations/PointOfContactManager.js';
 
 // TEST SUITE
-async function runTests() {
+async function testPointOfContactManager() {
   console.log('🧪 Testing IPointOfContactManager Interface...\n');
   
-  const manager = new MockPointOfContactManager();
+  // Use concrete implementation instead of mock!
+  // Cast to any since CLI test expects methods beyond current interface definition
+  const pocManager: any = new PointOfContactManager();
   let passedTests = 0;
   let totalTests = 0;
 
@@ -71,7 +32,7 @@ async function runTests() {
       title: 'Manager'
     };
 
-    const contactId = await manager.addPointOfContact('booking_123', contactInfo);
+    const contactId = await pocManager.addPointOfContact('booking_123', contactInfo);
     
     console.log('✅ Test 1: addPointOfContact()');
     console.log(`   Contact ID: ${contactId}`);
@@ -97,8 +58,8 @@ async function runTests() {
       company: 'Tech Solutions'
     };
 
-    const contactId = await manager.addPointOfContact('booking_456', contactInfo);
-    const retrievedContact = await manager.getPointOfContact(contactId);
+    const contactId = await pocManager.addPointOfContact('booking_456', contactInfo);
+    const retrievedContact = await pocManager.getPointOfContactById(contactId);
     
     console.log('✅ Test 2: getPointOfContact()');
     console.log(`   Contact ID: ${retrievedContact.id}`);
@@ -124,7 +85,7 @@ async function runTests() {
       phone: '+1-555-0789'
     };
 
-    const contactId = await manager.addPointOfContact('booking_789', contactInfo);
+    const contactId = await pocManager.addPointOfContact('booking_789', contactInfo);
     
     const updates = {
       phone: '+1-555-9999',
@@ -132,8 +93,8 @@ async function runTests() {
       title: 'Senior Manager'
     };
     
-    await manager.updatePointOfContact(contactId, updates);
-    const updatedContact = await manager.getPointOfContact(contactId);
+    await pocManager.updatePointOfContact(contactId, updates);
+    const updatedContact = await pocManager.getPointOfContactById(contactId);
     
     console.log('✅ Test 3: updatePointOfContact()');
     console.log(`   Contact ID: ${updatedContact.id}`);
@@ -168,10 +129,10 @@ async function runTests() {
       phone: '+1-555-2222'
     };
 
-    await manager.addPointOfContact(bookingId, contact1Info);
-    await manager.addPointOfContact(bookingId, contact2Info);
+    await pocManager.addPointOfContact(bookingId, contact1Info);
+    await pocManager.addPointOfContact(bookingId, contact2Info);
     
-    const contacts = await manager.getContactsByBooking(bookingId);
+    const contacts = await pocManager.getContactsByBooking(bookingId);
     
     console.log('✅ Test 4: getContactsByBooking()');
     console.log(`   Booking ID: ${bookingId}`);
@@ -190,7 +151,7 @@ async function runTests() {
   // Test 5: Error Handling - Get Non-existent Contact
   totalTests++;
   try {
-    await manager.getPointOfContact('invalid-contact-id');
+    await pocManager.getPointOfContactById('invalid-contact-id');
     console.log('❌ Test 5: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 5: getPointOfContact() error handling');
@@ -201,7 +162,7 @@ async function runTests() {
   // Test 6: Error Handling - Update Non-existent Contact
   totalTests++;
   try {
-    await manager.updatePointOfContact('invalid-contact-id', { phone: '+1-555-0000' });
+    await pocManager.updatePointOfContact('invalid-contact-id', { phone: '+1-555-0000' });
     console.log('❌ Test 6: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 6: updatePointOfContact() error handling');
@@ -223,4 +184,4 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(console.error);
+testPointOfContactManager().catch(console.error);

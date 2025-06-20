@@ -260,6 +260,33 @@ export interface Session {
   createdAt: Date;
 }
 
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthenticationResult {
+  success: boolean;
+  user?: User | null;
+  sessionToken?: string | null;
+  errorMessage?: string | null;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  isActive: boolean;
+}
+
+export interface UserSession {
+  sessionId: string;
+  userId: string;
+  email: string;
+  isActive: boolean;
+  createdAt: Date;
+  expiresAt: Date;
+}
+
 // Material Types
 export interface Material {
   id: string;
@@ -336,4 +363,40 @@ export interface EmailAttachment {
   filename: string;
   content: string | Buffer;
   contentType: string;
+}
+
+// Calendar Management Types
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  location?: string;
+  attendees: string[];
+  isAllDay: boolean;
+  status: 'confirmed' | 'tentative' | 'cancelled';
+  workshopId?: string;
+}
+
+export interface CalendarEventRequest {
+  title: string;
+  description?: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  location?: string;
+  attendees?: string[];
+  isAllDay?: boolean;
+  workshopId?: string;
+}
+
+export interface CalendarEventUpdate {
+  title?: string;
+  description?: string;
+  startDateTime?: Date;
+  endDateTime?: Date;
+  location?: string;
+  attendees?: string[];
+  isAllDay?: boolean;
+  status?: 'confirmed' | 'tentative' | 'cancelled';
 }

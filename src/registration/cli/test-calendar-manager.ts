@@ -1,150 +1,22 @@
 #!/usr/bin/env tsx
 /**
  * CLI Test Harness for ICalendarManager Interface
- * Tests calendar integration and event management
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-calendar-manager.ts
  */
 
 import type { ICalendarManager } from '../core/interfaces/index.js';
 import type { CalendarEvent, CalendarEventRequest, CalendarEventUpdate } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockCalendarManager implements ICalendarManager {
-  private events: Map<string, CalendarEvent> = new Map();
-  private nextId = 1;
-
-  constructor() {
-    // Pre-populate with test events
-    const event1: CalendarEvent = {
-      id: 'cal_event_1',
-      title: '3-Day YOLO Workshop - July 2025',
-      description: 'Intensive 3-day workshop covering advanced techniques',
-      startDateTime: new Date('2025-07-07T09:00:00'),
-      endDateTime: new Date('2025-07-09T17:00:00'),
-      location: 'YOLO Training Center',
-      attendees: ['john@example.com', 'jane@example.com'],
-      isAllDay: false,
-      status: 'confirmed',
-      workshopId: 'workshop_1'
-    };
-
-    const event2: CalendarEvent = {
-      id: 'cal_event_2',
-      title: '5-Day YOLO Workshop - July 2025',
-      description: 'Comprehensive 5-day workshop program',
-      startDateTime: new Date('2025-07-14T09:00:00'),
-      endDateTime: new Date('2025-07-18T17:00:00'),
-      location: 'YOLO Training Center',
-      attendees: ['alice@example.com'],
-      isAllDay: false,
-      status: 'confirmed',
-      workshopId: 'workshop_2'
-    };
-
-    this.events.set(event1.id, event1);
-    this.events.set(event2.id, event2);
-  }
-
-  async createEvent(request: CalendarEventRequest): Promise<string> {
-    const eventId = `cal_event_${this.nextId++}`;
-    
-    const event: CalendarEvent = {
-      id: eventId,
-      title: request.title,
-      description: request.description,
-      startDateTime: request.startDateTime,
-      endDateTime: request.endDateTime,
-      location: request.location,
-      attendees: request.attendees || [],
-      isAllDay: request.isAllDay || false,
-      status: 'confirmed',
-      workshopId: request.workshopId
-    };
-
-    this.events.set(eventId, event);
-    return eventId;
-  }
-
-  async updateEvent(eventId: string, updates: CalendarEventUpdate): Promise<void> {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error(`Calendar event not found: ${eventId}`);
-    }
-
-    // Apply updates
-    if (updates.title !== undefined) event.title = updates.title;
-    if (updates.description !== undefined) event.description = updates.description;
-    if (updates.startDateTime !== undefined) event.startDateTime = updates.startDateTime;
-    if (updates.endDateTime !== undefined) event.endDateTime = updates.endDateTime;
-    if (updates.location !== undefined) event.location = updates.location;
-    if (updates.attendees !== undefined) event.attendees = updates.attendees;
-    if (updates.isAllDay !== undefined) event.isAllDay = updates.isAllDay;
-    if (updates.status !== undefined) event.status = updates.status;
-
-    this.events.set(eventId, event);
-  }
-
-  async deleteEvent(eventId: string): Promise<void> {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error(`Calendar event not found: ${eventId}`);
-    }
-
-    this.events.delete(eventId);
-  }
-
-  async getEvent(eventId: string): Promise<CalendarEvent> {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error(`Calendar event not found: ${eventId}`);
-    }
-
-    return event;
-  }
-
-  async addAttendee(eventId: string, attendeeEmail: string): Promise<void> {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error(`Calendar event not found: ${eventId}`);
-    }
-
-    if (!event.attendees.includes(attendeeEmail)) {
-      event.attendees.push(attendeeEmail);
-      this.events.set(eventId, event);
-    }
-  }
-
-  async removeAttendee(eventId: string, attendeeEmail: string): Promise<void> {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error(`Calendar event not found: ${eventId}`);
-    }
-
-    event.attendees = event.attendees.filter(email => email !== attendeeEmail);
-    this.events.set(eventId, event);
-  }
-
-  async getUpcomingEvents(days: number = 30): Promise<CalendarEvent[]> {
-    const now = new Date();
-    const futureDate = new Date();
-    futureDate.setDate(now.getDate() + days);
-
-    return Array.from(this.events.values())
-      .filter(event => {
-        return event.startDateTime >= now && 
-               event.startDateTime <= futureDate &&
-               event.status === 'confirmed';
-      })
-      .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
-  }
-}
+import { CalendarManager } from '../implementations/CalendarManager.js';
 
 // TEST SUITE
-async function runTests() {
+async function testCalendarManager() {
   console.log('🧪 Testing ICalendarManager Interface...\n');
   
-  const manager = new MockCalendarManager();
+  // Use concrete implementation instead of mock!
+  // Cast to any since CLI test expects methods beyond current interface definition
+  const calendarManager: any = new CalendarManager();
   let passedTests = 0;
   let totalTests = 0;
 
@@ -162,8 +34,8 @@ async function runTests() {
       workshopId: 'workshop_test'
     };
 
-    const eventId = await manager.createEvent(request);
-    const event = await manager.getEvent(eventId);
+    const eventId = await calendarManager.createEvent(request);
+    const event = await calendarManager.getEvent(eventId);
     
     console.log('✅ Test 1: createEvent()');
     console.log(`   Event ID: ${eventId}`);
@@ -184,7 +56,7 @@ async function runTests() {
   // Test 2: Get Calendar Event
   totalTests++;
   try {
-    const event = await manager.getEvent('cal_event_1');
+    const event = await calendarManager.getEvent('cal_event_1');
     
     console.log('✅ Test 2: getEvent()');
     console.log(`   Event ID: ${event.id}`);
@@ -210,8 +82,8 @@ async function runTests() {
       description: 'Updated description for the workshop'
     };
 
-    await manager.updateEvent('cal_event_1', updates);
-    const updatedEvent = await manager.getEvent('cal_event_1');
+    await calendarManager.updateEvent('cal_event_1', updates);
+    const updatedEvent = await calendarManager.getEvent('cal_event_1');
     
     console.log('✅ Test 3: updateEvent()');
     console.log(`   Event ID: cal_event_1`);
@@ -229,11 +101,11 @@ async function runTests() {
   // Test 4: Add Attendee
   totalTests++;
   try {
-    const originalEvent = await manager.getEvent('cal_event_2');
+    const originalEvent = await calendarManager.getEvent('cal_event_2');
     const originalCount = originalEvent.attendees.length;
     
-    await manager.addAttendee('cal_event_2', 'newattendee@example.com');
-    const updatedEvent = await manager.getEvent('cal_event_2');
+    await calendarManager.addAttendee('cal_event_2', 'newattendee@example.com');
+    const updatedEvent = await calendarManager.getEvent('cal_event_2');
     
     console.log('✅ Test 4: addAttendee()');
     console.log(`   Event ID: cal_event_2`);
@@ -252,11 +124,11 @@ async function runTests() {
   // Test 5: Remove Attendee
   totalTests++;
   try {
-    const originalEvent = await manager.getEvent('cal_event_2');
+    const originalEvent = await calendarManager.getEvent('cal_event_2');
     const originalCount = originalEvent.attendees.length;
     
-    await manager.removeAttendee('cal_event_2', 'alice@example.com');
-    const updatedEvent = await manager.getEvent('cal_event_2');
+    await calendarManager.removeAttendee('cal_event_2', 'alice@example.com');
+    const updatedEvent = await calendarManager.getEvent('cal_event_2');
     
     console.log('✅ Test 5: removeAttendee()');
     console.log(`   Event ID: cal_event_2`);
@@ -275,7 +147,7 @@ async function runTests() {
   // Test 6: Get Upcoming Events
   totalTests++;
   try {
-    const upcomingEvents = await manager.getUpcomingEvents(60); // Next 60 days
+    const upcomingEvents = await calendarManager.getUpcomingEvents(60); // Next 60 days
     
     console.log('✅ Test 6: getUpcomingEvents()');
     console.log(`   Found ${upcomingEvents.length} upcoming events:`);
@@ -303,13 +175,13 @@ async function runTests() {
       workshopId: 'workshop_delete_test'
     };
 
-    const eventId = await manager.createEvent(request);
+    const eventId = await calendarManager.createEvent(request);
     
     // Verify it exists
-    await manager.getEvent(eventId);
+    await calendarManager.getEvent(eventId);
     
     // Delete it
-    await manager.deleteEvent(eventId);
+    await calendarManager.deleteEvent(eventId);
     
     console.log('✅ Test 7: deleteEvent()');
     console.log(`   Event ID: ${eventId}`);
@@ -325,7 +197,7 @@ async function runTests() {
   // Test 8: Error Handling - Get Non-existent Event
   totalTests++;
   try {
-    await manager.getEvent('invalid-event-id');
+    await calendarManager.getEvent('invalid-event-id');
     console.log('❌ Test 8: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 8: getEvent() error handling');
@@ -336,7 +208,7 @@ async function runTests() {
   // Test 9: Error Handling - Update Non-existent Event
   totalTests++;
   try {
-    await manager.updateEvent('invalid-event-id', { title: 'New Title' });
+    await calendarManager.updateEvent('invalid-event-id', { title: 'New Title' });
     console.log('❌ Test 9: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 9: updateEvent() error handling');
@@ -347,7 +219,7 @@ async function runTests() {
   // Test 10: Error Handling - Delete Non-existent Event
   totalTests++;
   try {
-    await manager.deleteEvent('invalid-event-id');
+    await calendarManager.deleteEvent('invalid-event-id');
     console.log('❌ Test 10: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 10: deleteEvent() error handling');
@@ -369,4 +241,4 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(console.error);
+testCalendarManager().catch(console.error);
