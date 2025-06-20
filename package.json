@@ -27,7 +27,21 @@
     "deploy:production": "vercel --prod",
     "email:test": "npx tsx cli/send-test-email.ts",
     "email:workshop": "npx tsx cli/send-test-email.ts --type workshop",
-    "validate:integrations": "npx tsx cli/validate-integrations.ts"
+    "validate:integrations": "npx tsx cli/validate-integrations.ts",
+    "test:interfaces": "npx tsx src/registration/cli/test-all-interfaces.ts",
+    "test:product-catalog": "npx tsx src/registration/cli/test-product-catalog.ts",
+    "test:booking-manager": "npx tsx src/registration/cli/test-booking-manager.ts",
+    "test:payment-processor": "npx tsx src/registration/cli/test-payment-processor.ts",
+    "test:attendee-manager": "npx tsx src/registration/cli/test-attendee-manager.ts",
+    "test:email-sender": "npx tsx src/registration/cli/test-email-sender.ts",
+    "test:point-of-contact-manager": "npx tsx src/registration/cli/test-point-of-contact-manager.ts",
+    "test:attendee-access-manager": "npx tsx src/registration/cli/test-attendee-access-manager.ts",
+    "test:coupon-manager": "tsx src/registration/cli/test-coupon-manager.ts",
+    "test:workshop-admin": "tsx src/registration/cli/test-workshop-admin.ts",
+    "test:calendar-manager": "tsx src/registration/cli/test-calendar-manager.ts",
+    "test:user-authenticator": "tsx src/registration/cli/test-user-authenticator.ts",
+    "test:material-manager": "tsx src/registration/cli/test-material-manager.ts",
+    "test:reporting-manager": "tsx src/registration/cli/test-reporting-manager.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.0",
