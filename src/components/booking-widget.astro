@@ -22,15 +22,15 @@ import { Icon } from "astro-icon/components";
       <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-400 rounded-2xl opacity-75 blur-lg animate-pulse"></div>
       
       <!-- Booking Widget Container -->
-      <div class="min-h-[500px] flex flex-col relative z-10">
+      <div class="min-h-[600px] flex flex-col relative z-10">
         <div class="grid md:grid-cols-5 gap-0 h-full rounded-2xl overflow-hidden">
-          <!-- Left Column: Calendar & Info -->
+          <!-- Left Column: Booking Form -->
           <div class="md:col-span-3 p-8 flex flex-col justify-between booking-left-column relative overflow-hidden">
             <!-- Decorative elements -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
             <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-500/10 to-yellow-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
             
-            <div class="relative z-10">
+            <div class="relative z-10 flex-1">
               <div class="flex items-center mb-8">
                 <div class="w-12 h-12 rounded-full calendar-icon-container flex items-center justify-center mr-4">
                   <Icon name="bx:bxs-calendar" class="w-6 h-6 text-white" />
@@ -38,18 +38,85 @@ import { Icon } from "astro-icon/components";
                 <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 drop-shadow-md" style="text-shadow: 0 0 8px rgba(139, 92, 246, 0.5);">Book Your Workshop</h3>
               </div>
               
-              <div class="booking-form-container rounded-xl p-6 mb-8">
-                <p class="text-white text-lg mb-6 font-medium">Our calendar booking system will be integrated here.</p>
-                <div class="flex items-center justify-center bg-black/30 rounded-lg p-8 mb-6 border border-indigo-500/30">
-                  <img src="https://cdn-apps.acuityscheduling.com/images/logo-en-color.svg" alt="Acuity Scheduling" class="h-12 opacity-90" />
+              <!-- Booking Form -->
+              <form id="booking-form" class="space-y-6">
+                <!-- Workshop Selection -->
+                <div class="space-y-2">
+                  <label for="workshop-select" class="block text-white font-semibold text-sm">Choose Workshop</label>
+                  <select id="workshop-select" name="productId" required 
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                    <option value="">Loading workshops...</option>
+                  </select>
                 </div>
-                <p class="text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 font-bold text-lg animate-pulse">Coming soon!</p>
-              </div>
+
+                <!-- Date Selection -->
+                <div class="space-y-2">
+                  <label for="workshop-date" class="block text-white font-semibold text-sm">Workshop Date</label>
+                  <input type="date" id="workshop-date" name="startDate" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all"
+                    min={new Date().toISOString().split('T')[0]} />
+                </div>
+
+                <!-- Attendee Count -->
+                <div class="space-y-2">
+                  <label for="attendee-count" class="block text-white font-semibold text-sm">Number of Attendees</label>
+                  <select id="attendee-count" name="attendeeCount" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                    <option value="1">1 Person</option>
+                    <option value="2">2 People</option>
+                    <option value="3">3 People</option>
+                    <option value="4">4 People</option>
+                    <option value="5">5 People (Group Discount!)</option>
+                    <option value="6">6+ People (Contact Us)</option>
+                  </select>
+                </div>
+
+                <!-- Point of Contact -->
+                <div class="space-y-4">
+                  <h4 class="text-white font-semibold">Point of Contact</h4>
+                  <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="contact-first-name" name="contactFirstName" placeholder="First Name" required
+                      class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                    <input type="text" id="contact-last-name" name="contactLastName" placeholder="Last Name" required
+                      class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                  </div>
+                  <input type="email" id="contact-email" name="contactEmail" placeholder="Email Address" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                  <input type="tel" id="contact-phone" name="contactPhone" placeholder="Phone Number" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                </div>
+
+                <!-- Attendees Container -->
+                <div id="attendees-container" class="space-y-4">
+                  <h4 class="text-white font-semibold">Attendee Information</h4>
+                  <!-- Attendee forms will be dynamically added here -->
+                </div>
+
+                <!-- Coupon Code -->
+                <div class="space-y-2">
+                  <label for="coupon-code" class="block text-white font-semibold text-sm">Coupon Code (Optional)</label>
+                  <input type="text" id="coupon-code" name="couponCode" placeholder="Enter coupon code"
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="book-workshop-btn"
+                  class="w-full py-4 px-6 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold text-lg hover:from-purple-700 hover:to-cyan-600 focus:ring-4 focus:ring-purple-500/50 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <span id="btn-text">Book Workshop</span>
+                  <span id="btn-loading" class="hidden">
+                    <Icon name="bx:bx-loader-alt" class="w-5 h-5 animate-spin inline mr-2" />
+                    Processing...
+                  </span>
+                </button>
+              </form>
+
+              <!-- Success/Error Messages -->
+              <div id="booking-message" class="hidden mt-4 p-4 rounded-lg"></div>
             </div>
             
-            <div class="flex items-center gap-2 text-sm text-indigo-200 mt-auto relative z-10 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+            <div class="flex items-center gap-2 text-sm text-indigo-200 mt-6 relative z-10 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
               <Icon name="bx:bxs-lock" class="w-4 h-4 text-cyan-400" />
-              <span>All payments handled securely by Stripe</span>
+              <span>All payments handled securely by Square</span>
             </div>
           </div>
           
@@ -107,3 +174,186 @@ import { Icon } from "astro-icon/components";
     </div>
   </div>
 </section>
+
+<!-- Booking Widget JavaScript -->
+<script>
+  class BookingWidget {
+    private form: HTMLFormElement;
+    private workshopSelect: HTMLSelectElement;
+    private attendeeCountSelect: HTMLSelectElement;
+    private attendeesContainer: HTMLElement;
+    private submitButton: HTMLButtonElement;
+    private messageDiv: HTMLElement;
+
+    constructor() {
+      this.form = document.getElementById('booking-form') as HTMLFormElement;
+      this.workshopSelect = document.getElementById('workshop-select') as HTMLSelectElement;
+      this.attendeeCountSelect = document.getElementById('attendee-count') as HTMLSelectElement;
+      this.attendeesContainer = document.getElementById('attendees-container') as HTMLElement;
+      this.submitButton = document.getElementById('book-workshop-btn') as HTMLButtonElement;
+      this.messageDiv = document.getElementById('booking-message') as HTMLElement;
+
+      this.init();
+    }
+
+    private async init(): Promise<void> {
+      await this.loadWorkshops();
+      this.setupEventListeners();
+      this.updateAttendeeFields();
+    }
+
+    private async loadWorkshops(): Promise<void> {
+      try {
+        const response = await fetch('/api/workshops/available');
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          this.workshopSelect.innerHTML = '<option value="">Select a workshop...</option>';
+          
+          data.data.forEach((workshop: any) => {
+            const option = document.createElement('option');
+            option.value = workshop.id;
+            option.textContent = `${workshop.name} - $${workshop.price}`;
+            this.workshopSelect.appendChild(option);
+          });
+        } else {
+          throw new Error('Failed to load workshops');
+        }
+      } catch (error) {
+        console.error('Error loading workshops:', error);
+        this.workshopSelect.innerHTML = '<option value="">Error loading workshops</option>';
+      }
+    }
+
+    private setupEventListeners(): void {
+      this.attendeeCountSelect.addEventListener('change', () => {
+        this.updateAttendeeFields();
+      });
+
+      this.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleSubmit();
+      });
+    }
+
+    private updateAttendeeFields(): void {
+      const count = parseInt(this.attendeeCountSelect.value);
+      const container = this.attendeesContainer;
+      
+      // Clear existing attendee fields (keep the header)
+      const existingFields = container.querySelectorAll('.attendee-field');
+      existingFields.forEach(field => field.remove());
+
+      // Add attendee input fields
+      for (let i = 1; i <= count; i++) {
+        const attendeeDiv = document.createElement('div');
+        attendeeDiv.className = 'attendee-field grid grid-cols-2 gap-4';
+        attendeeDiv.innerHTML = `
+          <input type="text" name="attendee-${i}-firstName" placeholder="Attendee ${i} First Name" required
+            class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+          <input type="text" name="attendee-${i}-lastName" placeholder="Attendee ${i} Last Name" required
+            class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+          <input type="email" name="attendee-${i}-email" placeholder="Attendee ${i} Email" required
+            class="col-span-2 p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+        `;
+        container.appendChild(attendeeDiv);
+      }
+    }
+
+    private async handleSubmit(): Promise<void> {
+      try {
+        this.setLoading(true);
+        this.hideMessage();
+
+        const formData = new FormData(this.form);
+        const attendeeCount = parseInt(formData.get('attendeeCount') as string);
+
+        // Build attendees array
+        const attendees = [];
+        for (let i = 1; i <= attendeeCount; i++) {
+          attendees.push({
+            firstName: formData.get(`attendee-${i}-firstName`) as string,
+            lastName: formData.get(`attendee-${i}-lastName`) as string,
+            email: formData.get(`attendee-${i}-email`) as string,
+          });
+        }
+
+        // Build booking request
+        const bookingRequest = {
+          productId: formData.get('productId') as string,
+          startDate: formData.get('startDate') as string,
+          attendeeCount: attendeeCount,
+          attendees: attendees,
+          pointOfContact: {
+            firstName: formData.get('contactFirstName') as string,
+            lastName: formData.get('contactLastName') as string,
+            email: formData.get('contactEmail') as string,
+            phone: formData.get('contactPhone') as string,
+          },
+          paymentMethod: {
+            type: 'card'
+          },
+          couponCode: formData.get('couponCode') as string || undefined,
+        };
+
+        const response = await fetch('/api/bookings/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bookingRequest),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          this.showMessage('success', `Booking created successfully! Confirmation: ${result.data.confirmationNumber}`);
+          this.form.reset();
+          this.updateAttendeeFields();
+        } else {
+          throw new Error(result.error || 'Booking failed');
+        }
+
+      } catch (error) {
+        console.error('Booking error:', error);
+        this.showMessage('error', error instanceof Error ? error.message : 'Booking failed. Please try again.');
+      } finally {
+        this.setLoading(false);
+      }
+    }
+
+    private setLoading(loading: boolean): void {
+      const btnText = document.getElementById('btn-text');
+      const btnLoading = document.getElementById('btn-loading');
+      
+      if (loading) {
+        btnText?.classList.add('hidden');
+        btnLoading?.classList.remove('hidden');
+        this.submitButton.disabled = true;
+      } else {
+        btnText?.classList.remove('hidden');
+        btnLoading?.classList.add('hidden');
+        this.submitButton.disabled = false;
+      }
+    }
+
+    private showMessage(type: 'success' | 'error', message: string): void {
+      this.messageDiv.className = `mt-4 p-4 rounded-lg ${
+        type === 'success' 
+          ? 'bg-green-500/20 border border-green-500/30 text-green-300' 
+          : 'bg-red-500/20 border border-red-500/30 text-red-300'
+      }`;
+      this.messageDiv.textContent = message;
+      this.messageDiv.classList.remove('hidden');
+    }
+
+    private hideMessage(): void {
+      this.messageDiv.classList.add('hidden');
+    }
+  }
+
+  // Initialize booking widget when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new BookingWidget();
+  });
+</script>

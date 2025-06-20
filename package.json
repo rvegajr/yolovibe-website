@@ -41,7 +41,8 @@
     "test:calendar-manager": "tsx src/registration/cli/test-calendar-manager.ts",
     "test:user-authenticator": "tsx src/registration/cli/test-user-authenticator.ts",
     "test:material-manager": "tsx src/registration/cli/test-material-manager.ts",
-    "test:reporting-manager": "tsx src/registration/cli/test-reporting-manager.ts"
+    "test:reporting-manager": "tsx src/registration/cli/test-reporting-manager.ts",
+    "test:api": "npx tsx cli/test-api-integration.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.0",
@@ -56,10 +57,13 @@
     "@iconify-json/uil": "^1.2.3",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.14",
+    "@types/bcrypt": "^5.0.2",
     "astro": "^5.9.2",
     "astro-icon": "^1.1.5",
     "astro-navbar": "^2.3.9",
     "astro-seo": "^0.8.4",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.10.0",
     "sharp": "^0.33.5",
     "square": "^42.3.0",
     "tailwindcss": "^4.0.14"

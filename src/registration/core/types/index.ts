@@ -275,16 +275,41 @@ export interface AuthenticationResult {
 export interface User {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  company?: string;
+  phone?: string;
+  isAdmin: boolean;
+  emailVerified: boolean;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt?: string;
 }
 
 export interface UserSession {
   sessionId: string;
   userId: string;
+  token: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface RegistrationData {
   email: string;
-  isActive: boolean;
-  createdAt: Date;
-  expiresAt: Date;
+  password: string;
+  firstName: string;
+  lastName: string;
+  company?: string;
+  phone?: string;
+  isAdmin?: boolean;
+}
+
+export interface PasswordResetRequest {
+  userId: string;
+  token: string;
+  expiresAt: string;
+  createdAt: string;
 }
 
 // Material Types

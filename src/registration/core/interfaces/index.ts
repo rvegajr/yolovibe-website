@@ -37,7 +37,9 @@ import type {
   File,
   EmailRequest,
   EmailResult,
-  EmailStatus
+  EmailStatus,
+  RegistrationData,
+  User
 } from '../types/index.js';
 
 // Product & Workshop Management
@@ -116,9 +118,11 @@ export interface ICalendarManager {
 }
 
 export interface IUserAuthenticator {
+  registerUser(registrationData: RegistrationData): Promise<User>;
   authenticate(credentials: Credentials): Promise<AuthResult>;
   validateSession(token: string): Promise<boolean>;
   createSession(userId: string): Promise<Session>;
+  logoutUser(sessionToken: string): Promise<boolean>;
   resetPassword(email: string): Promise<void>;
 }
 
