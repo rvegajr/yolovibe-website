@@ -398,10 +398,8 @@ export interface CalendarEvent {
   startDateTime: Date;
   endDateTime: Date;
   location?: string;
-  attendees: string[];
-  isAllDay: boolean;
-  status: 'confirmed' | 'tentative' | 'cancelled';
-  workshopId?: string;
+  attendees?: string[];
+  isAllDay?: boolean;
 }
 
 export interface CalendarEventRequest {
@@ -424,4 +422,34 @@ export interface CalendarEventUpdate {
   attendees?: string[];
   isAllDay?: boolean;
   status?: 'confirmed' | 'tentative' | 'cancelled';
+}
+
+// Purchase Workflow Types
+export interface PurchaseRequest {
+  bookingRequest: BookingRequest;
+  paymentMethod: PaymentMethod;
+  billingAddress?: Address;
+  savePaymentMethod?: boolean;
+}
+
+export interface PurchaseResult {
+  purchaseId: string;
+  bookingId: string;
+  paymentId: string;
+  status: 'completed' | 'failed' | 'pending';
+  totalAmount: number;
+  confirmationNumber: string;
+  receiptUrl?: string;
+  errorMessage?: string;
+}
+
+export interface PurchaseStatus {
+  purchaseId: string;
+  bookingStatus: 'confirmed' | 'cancelled' | 'pending';
+  paymentStatus: 'completed' | 'failed' | 'pending' | 'refunded';
+  totalAmount: number;
+  paidAmount: number;
+  refundAmount?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

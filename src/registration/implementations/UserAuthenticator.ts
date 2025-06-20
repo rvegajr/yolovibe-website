@@ -27,23 +27,35 @@ export class UserAuthenticator implements IUserAuthenticator {
   private nextSessionId = 1;
 
   constructor() {
-    // Pre-populate with test users for consistency with CLI tests
-    this.users.set('admin@yolovibe.com', {
-      email: 'admin@yolovibe.com',
-      passwordHash: 'hashed_admin_password',
-      isActive: true
-    });
+    // Only populate test data in development/test environments
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+      this.initializeTestData();
+    }
+  }
 
-    this.users.set('instructor@yolovibe.com', {
-      email: 'instructor@yolovibe.com',
-      passwordHash: 'hashed_instructor_password',
-      isActive: true
-    });
+  private initializeTestData(): void {
+    // Test data for CLI testing - only used in development
+    // Using placeholder hashes that will be replaced with proper bcrypt hashes
+    const testUsers = [
+      {
+        email: 'admin@yolovibe.com',
+        passwordHash: this.hashPassword('admin123'), // Generate proper hash
+        isActive: true
+      },
+      {
+        email: 'instructor@yolovibe.com',
+        passwordHash: this.hashPassword('instructor123'), // Generate proper hash
+        isActive: true
+      },
+      {
+        email: 'inactive@yolovibe.com',
+        passwordHash: this.hashPassword('inactive123'), // Generate proper hash
+        isActive: false
+      }
+    ];
 
-    this.users.set('inactive@yolovibe.com', {
-      email: 'inactive@yolovibe.com',
-      passwordHash: 'hashed_inactive_password',
-      isActive: false
+    testUsers.forEach(user => {
+      this.users.set(user.email, user);
     });
   }
 
