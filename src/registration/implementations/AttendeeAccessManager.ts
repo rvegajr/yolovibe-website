@@ -20,42 +20,62 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
   private accessRecords: Map<string, AttendeeAccess> = new Map();
 
   constructor() {
-    // Pre-populate with test access records for consistency with CLI tests
-    this.accessRecords.set('attendee_456', {
-      attendeeId: 'attendee_456',
-      password: 'YOLO-ABC123',
-      hasAccess: true,
-      passwordGenerated: true,
-      lastAccessDate: new Date('2025-06-15'),
-      expirationDate: new Date('2025-07-20')
-    });
+    // Only populate test data in development/test environments
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+      this.initializeTestData();
+    }
+  }
 
-    this.accessRecords.set('attendee_789', {
-      attendeeId: 'attendee_789',
-      password: 'YOLO-XYZ789',
-      hasAccess: true,
-      passwordGenerated: true,
-      lastAccessDate: new Date('2025-06-10'),
-      expirationDate: new Date('2025-08-01')
-    });
+  private initializeTestData(): void {
+    // Test data for CLI testing - only used in development
+    const testRecords = [
+      {
+        attendeeId: 'attendee_456',
+        password: this.generateTestPassword(),
+        hasAccess: true,
+        passwordGenerated: true,
+        lastAccessDate: new Date('2025-06-15'),
+        expirationDate: new Date('2025-07-20')
+      },
+      {
+        attendeeId: 'attendee_789',
+        password: this.generateTestPassword(),
+        hasAccess: true,
+        passwordGenerated: true,
+        lastAccessDate: new Date('2025-06-10'),
+        expirationDate: new Date('2025-08-01')
+      },
+      {
+        attendeeId: 'attendee_revoke',
+        password: this.generateTestPassword(),
+        hasAccess: true,
+        passwordGenerated: true,
+        lastAccessDate: new Date('2025-06-01'),
+        expirationDate: new Date('2025-07-15')
+      },
+      {
+        attendeeId: 'attendee_reset',
+        password: this.generateTestPassword(),
+        hasAccess: true,
+        passwordGenerated: true,
+        lastAccessDate: new Date('2025-06-05'),
+        expirationDate: new Date('2025-07-25')
+      }
+    ];
 
-    this.accessRecords.set('attendee_revoke', {
-      attendeeId: 'attendee_revoke',
-      password: 'YOLO-REV123',
-      hasAccess: true,
-      passwordGenerated: true,
-      lastAccessDate: new Date('2025-06-01'),
-      expirationDate: new Date('2025-07-15')
+    testRecords.forEach(record => {
+      this.accessRecords.set(record.attendeeId, record);
     });
+  }
 
-    this.accessRecords.set('attendee_reset', {
-      attendeeId: 'attendee_reset',
-      password: 'YOLO-WYCE4M',
-      hasAccess: true,
-      passwordGenerated: true,
-      lastAccessDate: new Date('2025-06-05'),
-      expirationDate: new Date('2025-07-25')
-    });
+  private generateTestPassword(): string {
+    // Generate a test password dynamically (not hardcoded)
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let password = 'YOLO-';
+    for (let i = 0; i < 6; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
   }
 
   async generateAccessPassword(attendeeId: string): Promise<string> {

@@ -39,7 +39,10 @@ import type {
   EmailResult,
   EmailStatus,
   RegistrationData,
-  User
+  User,
+  PurchaseRequest,
+  PurchaseResult,
+  PurchaseStatus
 } from '../types/index.js';
 
 // Product & Workshop Management
@@ -69,6 +72,14 @@ export interface IPaymentProcessor {
   getPaymentStatus(paymentId: string): Promise<PaymentStatus>;
 }
 
+// Purchase Workflow - Coordinates booking and payment
+export interface IPurchaseManager {
+  processPurchase(purchaseRequest: PurchaseRequest): Promise<PurchaseResult>;
+  getPurchaseStatus(purchaseId: string): Promise<PurchaseStatus>;
+  cancelPurchase(purchaseId: string): Promise<void>;
+}
+
+// Coupon Management
 export interface ICouponManager {
   validateCoupon(code: string): Promise<CouponValidation>;
   applyCoupon(code: string, amount: number): Promise<number>;

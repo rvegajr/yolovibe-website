@@ -72,8 +72,37 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# Security - Prevent sensitive data from being committed
+*.env
+*.env.local
+*.env.production
+*.env.staging
+.env.*
+config/secrets.json
+config/production.json
+data/*.db*
+data/production/*
+**/*password*
+**/*secret*
+**/*key*
+**/test-data-with-passwords.*
+*.json.key
+*-key.json
+yolovibe-calendar-key.json
+googlecloud.json
+**/googlecloud.json/*
+
+# Database files (SQLite)
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Production configuration
+production.config.*
+secrets/
+
 # dotenv environment variable files
-.env
 .env.development.local
 .env.test.local
 .env.production.local
@@ -139,11 +168,3 @@ dist
 dist/
 .astro/
 .vercel
-
-**/googlecloud.json/*
-googlecloud.json
-
-# Google Cloud service account keys
-*.json.key
-*-key.json
-yolovibe-calendar-key.json
