@@ -1,81 +1,24 @@
 #!/usr/bin/env node
 /**
  * CLI Test Harness for IPaymentProcessor Interface
- * This test DRIVES the interface design - written BEFORE implementation!
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-payment-processor.ts
  */
 
 import type { IPaymentProcessor } from '../core/interfaces/index.js';
 import type { PaymentRequest, PaymentResult, RefundResult, PaymentStatus, PaymentMethod } from '../core/types/index.js';
-
-// Mock implementation for testing (drives our interface design!)
-class MockPaymentProcessor implements IPaymentProcessor {
-  private payments: Map<string, PaymentStatus> = new Map();
-  private nextPaymentId = 1;
-
-  async processPayment(paymentRequest: PaymentRequest): Promise<PaymentResult> {
-    const paymentId = `pay_${this.nextPaymentId++}`;
-    
-    // Simulate payment processing logic
-    const isValidAmount = paymentRequest.amount > 0 && paymentRequest.amount <= 50000; // Max $500
-    const isValidCurrency = paymentRequest.currency === 'USD';
-    
-    if (!isValidAmount || !isValidCurrency) {
-      return {
-        paymentId,
-        status: 'failed',
-        errorMessage: 'Invalid payment amount or currency'
-      };
-    }
-
-    // Simulate successful payment
-    const paymentStatus: PaymentStatus = {
-      paymentId,
-      status: 'completed',
-      amount: paymentRequest.amount,
-      transactionDate: new Date()
-    };
-    
-    this.payments.set(paymentId, paymentStatus);
-
-    return {
-      paymentId,
-      status: 'success',
-      transactionId: `txn_${Date.now()}`,
-      receiptUrl: `https://receipts.yolovibe.com/${paymentId}`
-    };
-  }
-
-  async processRefund(bookingId: string, amount?: number): Promise<RefundResult> {
-    // Find payment by booking ID (simplified for mock)
-    const refundId = `ref_${Date.now()}`;
-    const refundAmount = amount || 3000; // Default refund amount
-    
-    // Simulate refund processing
-    return {
-      refundId,
-      status: 'success',
-      amount: refundAmount
-    };
-  }
-
-  async getPaymentStatus(paymentId: string): Promise<PaymentStatus> {
-    const payment = this.payments.get(paymentId);
-    if (!payment) {
-      throw new Error(`Payment not found: ${paymentId}`);
-    }
-    return payment;
-  }
-}
+import { PaymentProcessorManager } from '../implementations/PaymentProcessorManager.js';
 
 // TEST SUITE
 async function runTests() {
   console.log('🧪 Testing IPaymentProcessor Interface...\n');
   
-  const processor: IPaymentProcessor = new MockPaymentProcessor();
+  // Use concrete implementation instead of mock!
+  const processor: IPaymentProcessor = new PaymentProcessorManager();
   let testsPassed = 0;
   let testsTotal = 0;
+  let successfulPaymentId = ''; // Capture payment ID for later tests
 
   // Test 1: Process successful payment
   testsTotal++;
@@ -103,6 +46,7 @@ async function runTests() {
     
     if (result.status === 'success' && result.paymentId && result.transactionId) {
       testsPassed++;
+      successfulPaymentId = result.paymentId; // Capture for later use
       console.log('   ✅ Payment processed successfully\n');
     } else {
       console.log('   ❌ Payment processing failed\n');
@@ -146,7 +90,7 @@ async function runTests() {
   // Test 3: Get payment status
   testsTotal++;
   try {
-    const status = await processor.getPaymentStatus('pay_1');
+    const status = await processor.getPaymentStatus(successfulPaymentId);
     
     console.log('✅ Test 3: getPaymentStatus()');
     console.log(`   Payment ID: ${status.paymentId}`);

@@ -1,180 +1,28 @@
 #!/usr/bin/env tsx
 /**
  * CLI Test Harness for ICouponManager Interface
- * Tests coupon validation and usage tracking
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-coupon-manager.ts
  */
 
 import type { ICouponManager } from '../core/interfaces/index.js';
 import type { CouponValidation, CouponUsage } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockCouponManager implements ICouponManager {
-  private coupons: Map<string, {
-    discountType: 'percentage' | 'fixed';
-    discountValue: number;
-    minimumAmount?: number;
-    expirationDate?: Date;
-    usageLimit?: number;
-    currentUsage: number;
-    isActive: boolean;
-  }> = new Map();
-
-  constructor() {
-    // Pre-populate with test coupons
-    this.coupons.set('SAVE20', {
-      discountType: 'percentage',
-      discountValue: 20,
-      minimumAmount: 1000,
-      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-      usageLimit: 100,
-      currentUsage: 5,
-      isActive: true
-    });
-
-    this.coupons.set('FIXED100', {
-      discountType: 'fixed',
-      discountValue: 100,
-      minimumAmount: 500,
-      usageLimit: 50,
-      currentUsage: 10,
-      isActive: true
-    });
-
-    this.coupons.set('EXPIRED', {
-      discountType: 'percentage',
-      discountValue: 30,
-      expirationDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
-      currentUsage: 0,
-      isActive: true
-    });
-
-    this.coupons.set('MAXEDOUT', {
-      discountType: 'fixed',
-      discountValue: 200,
-      usageLimit: 5,
-      currentUsage: 5,
-      isActive: true
-    });
-  }
-
-  async validateCoupon(couponCode: string): Promise<CouponValidation> {
-    const coupon = this.coupons.get(couponCode.toUpperCase());
-    
-    if (!coupon) {
-      return {
-        isValid: false,
-        couponCode,
-        discountType: 'percentage',
-        discountValue: 0,
-        currentUsage: 0,
-        errorMessage: 'Coupon code not found'
-      };
-    }
-
-    if (!coupon.isActive) {
-      return {
-        isValid: false,
-        couponCode,
-        discountType: coupon.discountType,
-        discountValue: coupon.discountValue,
-        currentUsage: coupon.currentUsage,
-        errorMessage: 'Coupon is inactive'
-      };
-    }
-
-    if (coupon.expirationDate && coupon.expirationDate < new Date()) {
-      return {
-        isValid: false,
-        couponCode,
-        discountType: coupon.discountType,
-        discountValue: coupon.discountValue,
-        expirationDate: coupon.expirationDate,
-        currentUsage: coupon.currentUsage,
-        errorMessage: 'Coupon has expired'
-      };
-    }
-
-    if (coupon.usageLimit && coupon.currentUsage >= coupon.usageLimit) {
-      return {
-        isValid: false,
-        couponCode,
-        discountType: coupon.discountType,
-        discountValue: coupon.discountValue,
-        usageLimit: coupon.usageLimit,
-        currentUsage: coupon.currentUsage,
-        errorMessage: 'Coupon usage limit exceeded'
-      };
-    }
-
-    return {
-      isValid: true,
-      couponCode,
-      discountType: coupon.discountType,
-      discountValue: coupon.discountValue,
-      minimumAmount: coupon.minimumAmount,
-      expirationDate: coupon.expirationDate,
-      usageLimit: coupon.usageLimit,
-      currentUsage: coupon.currentUsage
-    };
-  }
-
-  async applyCoupon(couponCode: string, amount: number): Promise<number> {
-    const validation = await this.validateCoupon(couponCode);
-    
-    if (!validation.isValid) {
-      throw new Error(validation.errorMessage || 'Invalid coupon');
-    }
-
-    if (validation.minimumAmount && amount < validation.minimumAmount) {
-      throw new Error(`Minimum order amount of $${validation.minimumAmount} required`);
-    }
-
-    // Apply the coupon usage
-    const coupon = this.coupons.get(couponCode.toUpperCase());
-    if (coupon) {
-      coupon.currentUsage++;
-      this.coupons.set(couponCode.toUpperCase(), coupon);
-    }
-
-    // Calculate discount amount
-    if (validation.discountType === 'percentage') {
-      return Math.round((amount * validation.discountValue) / 100);
-    } else {
-      return Math.min(validation.discountValue, amount);
-    }
-  }
-
-  async getCouponUsage(couponCode: string): Promise<CouponUsage> {
-    const coupon = this.coupons.get(couponCode.toUpperCase());
-    
-    if (!coupon) {
-      throw new Error(`Coupon not found: ${couponCode}`);
-    }
-
-    return {
-      couponCode,
-      totalUsage: coupon.currentUsage,
-      usageLimit: coupon.usageLimit,
-      remainingUses: coupon.usageLimit ? coupon.usageLimit - coupon.currentUsage : undefined,
-      lastUsedDate: coupon.currentUsage > 0 ? new Date() : undefined
-    };
-  }
-}
+import { CouponManager } from '../implementations/CouponManager.js';
 
 // TEST SUITE
-async function runTests() {
+async function testCouponManager() {
   console.log('🧪 Testing ICouponManager Interface...\n');
   
-  const manager = new MockCouponManager();
+  // Use concrete implementation instead of mock!
+  const couponManager: ICouponManager = new CouponManager();
   let passedTests = 0;
   let totalTests = 0;
 
   // Test 1: Valid Percentage Coupon
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('SAVE20');
+    const validation = await couponManager.validateCoupon('SAVE20');
     
     console.log('✅ Test 1: validateCoupon() - Valid Percentage Coupon');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -194,7 +42,7 @@ async function runTests() {
   // Test 2: Valid Fixed Amount Coupon
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('FIXED100');
+    const validation = await couponManager.validateCoupon('FIXED100');
     
     console.log('✅ Test 2: validateCoupon() - Valid Fixed Amount Coupon');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -214,7 +62,7 @@ async function runTests() {
   // Test 3: Invalid Coupon - Not Found
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('INVALID');
+    const validation = await couponManager.validateCoupon('INVALID');
     
     console.log('✅ Test 3: validateCoupon() - Invalid Coupon');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -231,7 +79,7 @@ async function runTests() {
   // Test 4: Invalid Coupon - Expired
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('EXPIRED');
+    const validation = await couponManager.validateCoupon('EXPIRED');
     
     console.log('✅ Test 4: validateCoupon() - Expired Coupon');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -249,7 +97,7 @@ async function runTests() {
   // Test 5: Invalid Coupon - Usage Limit Exceeded
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('MAXEDOUT');
+    const validation = await couponManager.validateCoupon('MAXEDOUT');
     
     console.log('✅ Test 5: validateCoupon() - Usage Limit Exceeded');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -267,7 +115,7 @@ async function runTests() {
   // Test 6: Invalid Coupon - Minimum Amount Not Met
   totalTests++;
   try {
-    const validation = await manager.validateCoupon('SAVE20');
+    const validation = await couponManager.validateCoupon('SAVE20');
     
     console.log('✅ Test 6: validateCoupon() - Minimum Amount Not Met');
     console.log(`   Coupon Code: ${validation.couponCode}`);
@@ -284,9 +132,9 @@ async function runTests() {
   // Test 7: Apply Coupon
   totalTests++;
   try {
-    const beforeUsage = await manager.getCouponUsage('SAVE20');
-    const discount = await manager.applyCoupon('SAVE20', 2000);
-    const afterUsage = await manager.getCouponUsage('SAVE20');
+    const beforeUsage = await couponManager.getCouponUsage('SAVE20');
+    const discount = await couponManager.applyCoupon('SAVE20', 2000);
+    const afterUsage = await couponManager.getCouponUsage('SAVE20');
     
     console.log('✅ Test 7: applyCoupon()');
     console.log(`   Coupon Code: SAVE20`);
@@ -305,7 +153,7 @@ async function runTests() {
   // Test 8: Get Coupon Usage
   totalTests++;
   try {
-    const usage = await manager.getCouponUsage('FIXED100');
+    const usage = await couponManager.getCouponUsage('FIXED100');
     
     console.log('✅ Test 8: getCouponUsage()');
     console.log(`   Coupon Code: ${usage.couponCode}`);
@@ -323,7 +171,7 @@ async function runTests() {
   // Test 9: Get Coupon Usage - Non-existent Coupon
   totalTests++;
   try {
-    await manager.getCouponUsage('NONEXISTENT');
+    await couponManager.getCouponUsage('NONEXISTENT');
     console.log('❌ Test 9: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 9: getCouponUsage() error handling');
@@ -345,4 +193,4 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(console.error);
+testCouponManager().catch(console.error);

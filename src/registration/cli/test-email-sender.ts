@@ -1,132 +1,21 @@
 #!/usr/bin/env node
 /**
  * CLI Test Harness for IEmailSender Interface
- * This test DRIVES the interface design - written BEFORE implementation!
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-email-sender.ts
  */
 
 import type { IEmailSender } from '../core/interfaces/index.js';
-import type { Booking, Workshop, Attendee, EmailTemplate, EmailRequest, EmailResult, EmailStatus } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockEmailSender implements IEmailSender {
-  private sentEmails: Map<string, EmailStatus> = new Map();
-  private nextEmailId = 1;
-
-  async sendEmail(emailRequest: EmailRequest): Promise<EmailResult> {
-    const emailId = `email_${this.nextEmailId++}`;
-    
-    // Validate email request
-    if (!emailRequest.to || !emailRequest.subject || !emailRequest.content) {
-      return {
-        emailId,
-        status: 'failed',
-        errorMessage: 'Missing required email fields'
-      };
-    }
-
-    // Simulate email sending
-    const emailStatus: EmailStatus = {
-      emailId,
-      status: 'sent',
-      sentAt: new Date(),
-      recipient: emailRequest.to
-    };
-
-    this.sentEmails.set(emailId, emailStatus);
-
-    return {
-      emailId,
-      status: 'success',
-      messageId: `msg_${Date.now()}`
-    };
-  }
-
-  async sendTemplatedEmail(templateId: string, recipient: string, templateData: Record<string, any>): Promise<EmailResult> {
-    const emailId = `email_${this.nextEmailId++}`;
-    
-    // Validate template exists (mock validation)
-    const validTemplates = ['booking-confirmation', 'workshop-reminder', 'access-credentials', 'cancellation'];
-    if (!validTemplates.includes(templateId)) {
-      return {
-        emailId,
-        status: 'failed',
-        errorMessage: `Template not found: ${templateId}`
-      };
-    }
-
-    // Simulate templated email sending
-    const emailStatus: EmailStatus = {
-      emailId,
-      status: 'sent',
-      sentAt: new Date(),
-      recipient,
-      templateId
-    };
-
-    this.sentEmails.set(emailId, emailStatus);
-
-    return {
-      emailId,
-      status: 'success',
-      messageId: `msg_template_${Date.now()}`
-    };
-  }
-
-  async getEmailStatus(emailId: string): Promise<EmailStatus> {
-    const email = this.sentEmails.get(emailId);
-    if (!email) {
-      throw new Error(`Email not found: ${emailId}`);
-    }
-    return email;
-  }
-
-  async sendBulkEmails(emailRequests: EmailRequest[]): Promise<EmailResult[]> {
-    const results: EmailResult[] = [];
-    
-    for (const request of emailRequests) {
-      const result = await this.sendEmail(request);
-      results.push(result);
-    }
-    
-    return results;
-  }
-
-  // Legacy methods for backward compatibility
-  async sendConfirmation(booking: Booking): Promise<void> {
-    await this.sendTemplatedEmail('booking-confirmation', booking.attendees[0]?.email || '', {
-      bookingId: booking.id,
-      confirmationNumber: booking.confirmationNumber
-    });
-  }
-
-  async sendReminder(workshop: Workshop, daysBeforeWorkshop: number): Promise<void> {
-    await this.sendTemplatedEmail('workshop-reminder', 'attendee@example.com', {
-      workshopId: workshop.id,
-      daysBeforeWorkshop
-    });
-  }
-
-  async sendAttendeeInvitation(attendee: Attendee, workshop: Workshop): Promise<void> {
-    await this.sendTemplatedEmail('attendee-invitation', attendee.email, {
-      attendeeId: attendee.id,
-      workshopId: workshop.id
-    });
-  }
-
-  async sendPasswordReset(attendee: Attendee): Promise<void> {
-    await this.sendTemplatedEmail('password-reset', attendee.email, {
-      attendeeId: attendee.id
-    });
-  }
-}
+import type { EmailRequest, EmailResult, EmailStatus } from '../core/types/index.js';
+import { EmailSenderManager } from '../implementations/EmailSenderManager.js';
 
 // TEST SUITE
 async function runTests() {
   console.log('🧪 Testing IEmailSender Interface...\n');
   
-  const sender: IEmailSender = new MockEmailSender();
+  // Use concrete implementation instead of mock!
+  const sender: IEmailSender = new EmailSenderManager();
   let testsPassed = 0;
   let testsTotal = 0;
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * CLI Test Harness for IProductCatalog Interface
- * This test DRIVES the interface design - written BEFORE implementation!
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-product-catalog.ts
  */
@@ -9,73 +9,14 @@
 import type { IProductCatalog } from '../core/interfaces/index.js';
 import type { Product } from '../core/types/index.js';
 import { ProductType } from '../core/types/index.js';
-
-// Mock implementation for testing (this drives our interface design!)
-class MockProductCatalog implements IProductCatalog {
-  private products: Product[] = [
-    {
-      id: 'prod-3day',
-      name: '3-Day YOLO Workshop',
-      type: ProductType.THREE_DAY,
-      price: 3000,
-      duration: 3,
-      description: 'Intensive 3-day workshop covering core YOLO principles',
-      maxCapacity: 12,
-      availableStartDays: ['monday', 'tuesday', 'wednesday']
-    },
-    {
-      id: 'prod-5day',
-      name: '5-Day YOLO Intensive',
-      type: ProductType.FIVE_DAY,
-      price: 4500,
-      duration: 5,
-      description: 'Comprehensive 5-day deep-dive workshop',
-      maxCapacity: 8,
-      availableStartDays: ['monday']
-    }
-  ];
-
-  async getAvailableProducts(): Promise<Product[]> {
-    return this.products;
-  }
-
-  async getProductDetails(productId: string): Promise<Product> {
-    const product = this.products.find(p => p.id === productId);
-    if (!product) {
-      throw new Error(`Product not found: ${productId}`);
-    }
-    return product;
-  }
-
-  async getAvailableStartDates(productType: ProductType): Promise<Date[]> {
-    // Mock implementation - returns next 4 weeks of valid start dates
-    const dates: Date[] = [];
-    const today = new Date();
-    
-    for (let week = 0; week < 4; week++) {
-      const monday = new Date(today);
-      monday.setDate(today.getDate() + (week * 7) + (1 - today.getDay() + 7) % 7);
-      
-      if (productType === ProductType.THREE_DAY) {
-        // 3-day can start Mon, Tue, Wed
-        dates.push(new Date(monday)); // Monday
-        dates.push(new Date(monday.getTime() + 24 * 60 * 60 * 1000)); // Tuesday
-        dates.push(new Date(monday.getTime() + 2 * 24 * 60 * 60 * 1000)); // Wednesday
-      } else if (productType === ProductType.FIVE_DAY) {
-        // 5-day only starts Monday
-        dates.push(new Date(monday));
-      }
-    }
-    
-    return dates;
-  }
-}
+import { ProductCatalogManager } from '../implementations/ProductCatalogManager.js';
 
 // TEST SUITE - This is what drives our interface design!
 async function runTests() {
   console.log('🧪 Testing IProductCatalog Interface...\n');
   
-  const catalog: IProductCatalog = new MockProductCatalog();
+  // Use concrete implementation instead of mock!
+  const catalog: IProductCatalog = new ProductCatalogManager();
   let testsPassed = 0;
   let testsTotal = 0;
 

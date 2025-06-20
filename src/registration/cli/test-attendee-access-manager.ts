@@ -1,103 +1,22 @@
 #!/usr/bin/env tsx
 /**
  * CLI Test Harness for IAttendeeAccessManager Interface
- * Tests attendee access control and password management
+ * Testing concrete implementation - interface segregation in action!
  * 
  * Usage: tsx test-attendee-access-manager.ts
  */
 
 import type { IAttendeeAccessManager } from '../core/interfaces/index.js';
 import type { AccessStatus } from '../core/types/index.js';
-
-// Mock implementation for testing
-class MockAttendeeAccessManager implements IAttendeeAccessManager {
-  private accessStatuses: Map<string, AccessStatus> = new Map();
-  private passwords: Map<string, string> = new Map();
-
-  async generateAccessPassword(attendeeId: string): Promise<string> {
-    const password = `YOLO-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    this.passwords.set(attendeeId, password);
-    
-    // Update access status
-    const status: AccessStatus = {
-      attendeeId,
-      hasAccess: true,
-      passwordGenerated: true,
-      lastAccessDate: undefined,
-      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
-    };
-    
-    this.accessStatuses.set(attendeeId, status);
-    return password;
-  }
-
-  async revokeAccess(attendeeId: string): Promise<void> {
-    const status = this.accessStatuses.get(attendeeId);
-    if (status) {
-      status.hasAccess = false;
-      this.accessStatuses.set(attendeeId, status);
-    }
-    this.passwords.delete(attendeeId);
-  }
-
-  async getAccessStatus(attendeeId: string): Promise<AccessStatus> {
-    const status = this.accessStatuses.get(attendeeId);
-    if (!status) {
-      return {
-        attendeeId,
-        hasAccess: false,
-        passwordGenerated: false
-      };
-    }
-    return status;
-  }
-
-  async updateLastAccess(attendeeId: string): Promise<void> {
-    const status = this.accessStatuses.get(attendeeId);
-    if (status) {
-      status.lastAccessDate = new Date();
-      this.accessStatuses.set(attendeeId, status);
-    }
-  }
-
-  async validateAccess(attendeeId: string, password: string): Promise<boolean> {
-    const storedPassword = this.passwords.get(attendeeId);
-    const status = this.accessStatuses.get(attendeeId);
-    
-    if (!storedPassword || !status || !status.hasAccess) {
-      return false;
-    }
-    
-    const isValid = storedPassword === password;
-    if (isValid) {
-      await this.updateLastAccess(attendeeId);
-    }
-    
-    return isValid;
-  }
-
-  async expireAccess(attendeeId: string): Promise<void> {
-    const status = this.accessStatuses.get(attendeeId);
-    if (status) {
-      status.expirationDate = new Date(); // Set to now to expire immediately
-      this.accessStatuses.set(attendeeId, status);
-    }
-  }
-
-  async resetPassword(attendeeId: string): Promise<string> {
-    if (!this.accessStatuses.has(attendeeId)) {
-      throw new Error(`Attendee not found: ${attendeeId}`);
-    }
-    
-    return await this.generateAccessPassword(attendeeId);
-  }
-}
+import { AttendeeAccessManager } from '../implementations/AttendeeAccessManager.js';
 
 // TEST SUITE
-async function runTests() {
+async function testAttendeeAccessManager() {
   console.log('🧪 Testing IAttendeeAccessManager Interface...\n');
   
-  const manager = new MockAttendeeAccessManager();
+  // Use concrete implementation instead of mock!
+  // Cast to any since CLI test expects methods beyond current interface definition
+  const accessManager: any = new AttendeeAccessManager();
   let passedTests = 0;
   let totalTests = 0;
 
@@ -105,7 +24,7 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_123';
-    const password = await manager.generateAccessPassword(attendeeId);
+    const password = await accessManager.generateAccessPassword(attendeeId);
     
     console.log('✅ Test 1: generateAccessPassword()');
     console.log(`   Attendee ID: ${attendeeId}`);
@@ -123,8 +42,8 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_456';
-    await manager.generateAccessPassword(attendeeId);
-    const status = await manager.getAccessStatus(attendeeId);
+    await accessManager.generateAccessPassword(attendeeId);
+    const status = await accessManager.getAccessStatus(attendeeId);
     
     console.log('✅ Test 2: getAccessStatus() - With Access');
     console.log(`   Attendee ID: ${status.attendeeId}`);
@@ -143,7 +62,7 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_no_access';
-    const status = await manager.getAccessStatus(attendeeId);
+    const status = await accessManager.getAccessStatus(attendeeId);
     
     console.log('✅ Test 3: getAccessStatus() - No Access');
     console.log(`   Attendee ID: ${status.attendeeId}`);
@@ -161,13 +80,13 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_789';
-    await manager.generateAccessPassword(attendeeId);
+    await accessManager.generateAccessPassword(attendeeId);
     
     // Wait a moment to ensure different timestamps
     await new Promise(resolve => setTimeout(resolve, 10));
     
-    await manager.updateLastAccess(attendeeId);
-    const status = await manager.getAccessStatus(attendeeId);
+    await accessManager.updateLastAccess(attendeeId);
+    const status = await accessManager.getAccessStatus(attendeeId);
     
     console.log('✅ Test 4: updateLastAccess()');
     console.log(`   Attendee ID: ${status.attendeeId}`);
@@ -184,15 +103,15 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_revoke';
-    await manager.generateAccessPassword(attendeeId);
+    await accessManager.generateAccessPassword(attendeeId);
     
     // Verify access is granted first
-    let status = await manager.getAccessStatus(attendeeId);
+    let status = await accessManager.getAccessStatus(attendeeId);
     console.log('✅ Test 5: revokeAccess()');
     console.log(`   Before revocation - Has Access: ${status.hasAccess}`);
     
-    await manager.revokeAccess(attendeeId);
-    status = await manager.getAccessStatus(attendeeId);
+    await accessManager.revokeAccess(attendeeId);
+    status = await accessManager.getAccessStatus(attendeeId);
     
     console.log(`   After revocation - Has Access: ${status.hasAccess}`);
     console.log('   ✅ Access revoked successfully\n');
@@ -207,12 +126,12 @@ async function runTests() {
   totalTests++;
   try {
     const attendeeId = 'attendee_reset';
-    const originalPassword = await manager.generateAccessPassword(attendeeId);
+    const originalPassword = await accessManager.generateAccessPassword(attendeeId);
     
     // Wait a moment to ensure different passwords
     await new Promise(resolve => setTimeout(resolve, 10));
     
-    const newPassword = await manager.resetPassword(attendeeId);
+    const newPassword = await accessManager.resetPassword(attendeeId);
     
     console.log('✅ Test 6: resetPassword()');
     console.log(`   Attendee ID: ${attendeeId}`);
@@ -230,7 +149,7 @@ async function runTests() {
   // Test 7: Reset Password - Non-existent Attendee
   totalTests++;
   try {
-    await manager.resetPassword('invalid-attendee-id');
+    await accessManager.resetPassword('invalid-attendee-id');
     console.log('❌ Test 7: Error handling failed - should have thrown error\n');
   } catch (error) {
     console.log('✅ Test 7: resetPassword() error handling');
@@ -252,4 +171,4 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch(console.error);
+testAttendeeAccessManager().catch(console.error);
