@@ -1,166 +1,205 @@
-# Astroship - Astro SAAS Starter Website Template
+# YOLOVibe Workshop Registration System
 
-Astroship is a free starter astro website template for saas, startups, marketing websites, landing pages & blogs. Built with Astro & TailwindCSS.
+**A production-ready online registration system built with strict interface segregation and test-driven development principles.**
 
-This Free Template is sponsored by [Web3Templates](https://web3templates.com)
+## 🚨 CRITICAL DEVELOPMENT PRINCIPLES
 
-## Live Demo
+### ⚠️ **INTERFACE SEGREGATION MANDATORY**
+**NOTHING should be created unless it's through a properly segregated interface.**
 
-**[https://astroship.web3templates.com/](https://astroship.web3templates.com/)**
+- **ALL business logic MUST implement one of the 13 core interfaces**
+- **NO direct class instantiation** - only through interface contracts
+- **Clients depend ONLY on methods they actually use**
+- **Interfaces are behavioral contracts, NOT implementation blueprints**
 
-**[Download Astroship Template](https://web3templates.com/templates/astroship-starter-website-template-for-astro)**
+### 🧪 **TEST-DRIVEN DEVELOPMENT REQUIRED**
+**ALL business logic MUST be validated through CLI test harnesses BEFORE implementation.**
 
-## Upgrade to Astroship Pro Version
+- **100% CLI test coverage** for all 13 core interfaces
+- **Mock implementations** validate interface contracts
+- **CLI tests exercise full business workflows**
+- **No concrete implementation without passing CLI tests**
 
-**[https://astroship-pro.web3templates.com/](https://astroship-pro.web3templates.com/)**
+## 🏗️ Architecture Overview
 
-**[Purchase Astroship Pro — $49](https://web3templates.com/templates/astroship-pro-astro-saas-website-template)**
+This system integrates into the existing Astro + Vercel YOLOVibe website with:
 
+- **13 Core Interfaces** with strict segregation
+- **Pure TypeScript** business logic (no JavaScript mixing)
+- **CLI Test Harnesses** for every interface
+- **Interface-driven development** with dependency injection
+- **Seamless Astro integration** for production deployment
 
-<!-- prettier-ignore -->
-| Feature | Free Version | Pro Version |
-| --- | ------ | --- |
-| Astro v3 | ✅  | ✅ |
-| Content Collections | ✅  | ✅ |
-| Tailwind CSS   | ✅  | ✅ |
-| Mobile Responsive | ✅  | ✅ |
-| Working Contact Page | ✅  | ✅ |
-| Pro Layouts & Features | ❌  | ✅ |
-| Blog with Pagination | ❌ | ✅ |
-| View Transitions | ❌ | ✅ |
-| Advanced Homepage Design | ❌  | ✅ |
-| Features Page | ❌  | ✅ |
-| Integrations Page | ❌  | ✅ |
-| Elegant 404 Page | ❌  | ✅ |
-| 6 Months Support| ❌  | ✅  |
-| Free Updates    | ✅  | ✅  |
-| License         | GPL-2.0 | Commercial |
-| &nbsp; | &nbsp;| &nbsp;|
-| Pricing| Free|**$49**|
-| &nbsp; | [Deploy for free](https://vercel.com/new/surjithctly/clone?demo-description=Starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20blogs%20built%20with%20Astro%20and%20TailwindCSS.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F5dB0dDqBr1BfvIoNOmffVB%2F784984a8d3fe5e3db123e7c655166046%2Fastroship_-_Tony_Sullivan.jpg&demo-title=Astroship&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&from=templates&project-name=Astroship&repository-name=astroship&repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&skippable-integrations=1) | [Purchase Pro](https://web3templates.com/templates/astroship-pro-astro-saas-website-template) |
+## 🔌 Core Business Interfaces
 
-<a href="https://web3templates.com/templates/astroship-pro-astro-saas-website-template">
-<img width="160" alt="Upgrade to Pro" src="https://user-images.githubusercontent.com/1884712/199181300-37c2128e-d033-4145-a906-16fa5263a53b.png">
-</a>
+### Product & Workshop Management
+- `IProductCatalog` - Product discovery and availability
+- `IBookingManager` - Booking lifecycle management  
+- `IWorkshopAdmin` - Workshop capacity and metrics
 
-## Deploy this template
+### Payment Processing
+- `IPaymentProcessor` - Payment and refund processing
+- `ICouponManager` - Coupon validation and application
 
-You can instantly clone this to your GitHub and deploy the site by clicking the below buttons to deploy to your chosen providers!
+### People Management  
+- `IAttendeeManager` - Attendee registration and updates
+- `IPointOfContactManager` - Primary contact management
+- `IAttendeeAccessManager` - Access control and passwords
 
-Click here to deploy on Vercel:
+### Communication & Content
+- `IEmailSender` - Email notifications and templates
+- `IMaterialManager` - Workshop material distribution
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&project-name=astroship&repository-name=astroship&demo-title=Astroship%20-%20Astro%20Starter%20Template&demo-description=Astroship%20is%20a%20starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20landing%20pages.%20Built%20with%20Astro%2C%20TailwindCSS&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&demo-image=https%3A%2F%2Fuser-images.githubusercontent.com%2F1884712%2F200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
+### System Services
+- `ICalendarManager` - Date availability and scheduling
+- `IUserAuthenticator` - Authentication and sessions
+- `IReportingManager` - Analytics and reporting
 
-Click here to deploy on Netlify:
+## 🧪 CLI Test Infrastructure
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/surjithctly/astroship)
-
-## Preview
-
-![image](https://user-images.githubusercontent.com/1884712/200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
-
-
-## Pro Version Preview
-
-![preview](https://github.com/surjithctly/astroship/assets/1884712/25665c02-d2a7-43dc-89b2-34a8ae37ade9)
-
-
-### Pagespeed Score
-
-[![pagespeed](https://user-images.githubusercontent.com/1884712/210250214-7aa98167-7993-4b90-8138-326b8fa0c223.png)](https://pagespeed.web.dev/report?url=https%3A%2F%2Fastroship.web3templates.com%2F)
-
-
-## Installation
-
-If you are reading this on github, you can click on the "Use this template" button above to create a new repository from astroship to your account. Then you can do a `git clone` to clone it to your local system.
-
-Alternatively, you can clone the project directly from this repo to your local system.
-
-### 1. Clone the repo
+Every interface has a dedicated CLI test harness:
 
 ```bash
-git clone https://github.com/surjithctly/astroship.git myProjectName
-# or
-git clone https://github.com/surjithctly/astroship.git .
+# Test individual interfaces
+npm run test:product-catalog
+npm run test:booking-manager
+npm run test:workshop-admin
+npm run test:payment-processor
+npm run test:coupon-manager
+npm run test:attendee-manager
+npm run test:point-of-contact-manager
+npm run test:attendee-access-manager
+npm run test:email-sender
+npm run test:material-manager
+npm run test:calendar-manager
+npm run test:user-authenticator
+npm run test:reporting-manager
+
+# Test all interfaces
+npm run test:all-interfaces
 ```
 
-The `.` will clone it to the current directory so make sure you are inside your project folder first.
+## 🚀 Development Workflow
 
-### 2. Install Dependencies
+### 1. Interface First
+```typescript
+// ✅ CORRECT: Define interface contract
+export interface INewFeature {
+  performAction(input: InputType): Promise<OutputType>;
+}
+```
+
+### 2. CLI Test Harness
+```bash
+# ✅ CORRECT: Create CLI test first
+tsx src/registration/cli/test-new-feature.ts
+```
+
+### 3. Mock Implementation
+```typescript
+// ✅ CORRECT: Mock validates interface
+class MockNewFeature implements INewFeature {
+  async performAction(input: InputType): Promise<OutputType> {
+    // Mock implementation for testing
+  }
+}
+```
+
+### 4. Concrete Implementation
+```typescript
+// ✅ CORRECT: Only after CLI tests pass
+class ConcreteNewFeature implements INewFeature {
+  async performAction(input: InputType): Promise<OutputType> {
+    // Real implementation
+  }
+}
+```
+
+## 🚫 Anti-Patterns (DO NOT DO)
+
+```typescript
+// ❌ WRONG: Direct class usage
+const service = new SomeService();
+
+// ❌ WRONG: Fat interfaces
+interface IGodObject {
+  doEverything(): void;
+  handleAllCases(): void;
+  // ... 50 more methods
+}
+
+// ❌ WRONG: Implementation before tests
+class UntestableService {
+  // No interface, no tests
+}
+
+// ❌ WRONG: JavaScript mixing
+const jsFunction = function() { /* JS code */ };
+```
+
+## 📁 Project Structure
+
+```
+/src/registration/
+├── core/
+│   ├── interfaces/           # 13 core business interfaces
+│   ├── types/               # TypeScript type definitions
+│   └── implementations/     # Concrete implementations (internal)
+├── cli/                     # CLI test harnesses
+│   ├── test-*.ts           # Individual interface tests
+│   └── test-all-interfaces.ts
+└── factories/               # Dependency injection setup
+```
+
+## 🔧 Installation & Setup
 
 ```bash
+# Install dependencies
 npm install
-# or
-yarn install
-# or (recommended)
-pnpm install
-```
 
-### 3. Start development Server
-
-```bash
+# Run development server
 npm run dev
-# or
-yarn dev
-# or (recommended)
-pnpm dev
-```
 
-### Preview & Build
-
-```bash
-npm run preview
+# Build for production
 npm run build
-# or
-yarn preview
-yarn build
-# or (recommended)
-pnpm preview
-pnpm build
+
+# Deploy to Vercel
+npm run deploy
 ```
 
-We recommend using [pnpm](https://pnpm.io/) to save disk space on your computer.
+## 🎯 Workshop Products
 
-### Other Commands
+- **3-Day Workshop**: Mon/Tue/Wed start, $3,000 per seat
+- **5-Day Workshop**: Monday start only, $4,500 per seat
 
-```bash
-pnpm astro ...
-pnpm astro add
-pnpm astro --help
-```
+## 📋 Development Checklist
 
-## Project Structure
+Before implementing ANY new feature:
 
-Inside of your Astro project, you'll see the following folders and files:
+- [ ] Interface defined with proper segregation
+- [ ] CLI test harness created and passing
+- [ ] Mock implementation validates interface
+- [ ] Type definitions are complete
+- [ ] Integration tests with existing interfaces
+- [ ] Documentation updated
 
-```
-/
-├── public/
-│   └── ...
-├── src/
-│   ├── components/
-│   │   └── ...
-│   ├── layouts/
-│   │   └── ...
-│   └── pages/
-│       └── ...
-└── package.json
-```
+## 🚨 Code Review Requirements
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+All PRs must demonstrate:
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. **Interface Segregation**: Small, focused interfaces
+2. **CLI Test Coverage**: 100% business logic testing
+3. **Type Safety**: Pure TypeScript implementation
+4. **Contract Validation**: Interface compliance verified
+5. **Integration Ready**: Seamless Astro compatibility
 
-## TailwindCSS
+## 📚 Resources
 
-TailwindCSS is already configured in this repo, so you can start using it without any installation.
+- [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle)
+- [Test-Driven Development](https://en.wikipedia.org/wiki/Test-driven_development)
+- [Astro Documentation](https://docs.astro.build)
+- [TypeScript Best Practices](https://typescript-eslint.io/rules/)
 
-## Credits
+---
 
-[Hero Illustration](https://www.figma.com/community/file/1108400791662599811) by [Streamline](https://www.streamlinehq.com/)
-
-## 👀 Want to learn more?
-
-Feel free to check out [Astro Docs](https://docs.astro.build) or jump into our [Discord Chat](https://web3templates.com/discord).
-
-[![Built with Astro](https://astro.badg.es/v1/built-with-astro.svg)](https://astro.build)
+**Remember: Interface First, Test First, Implementation Last** 🎯
