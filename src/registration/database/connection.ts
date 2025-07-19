@@ -579,14 +579,38 @@ export class DatabaseConnection {
       throw new Error('Database not initialized');
     }
 
+    const startTime = Date.now();
+    
     try {
+      let result: any[];
+      
       if (this.isTurso) {
-        const result = await this.db.execute({ sql, args: params });
-        return result.rows || [];
+        const queryResult = await this.db.execute({ sql, args: params });
+        result = queryResult.rows || [];
       } else {
         const stmt = this.db.prepare(sql);
-        return stmt.all(...params);
+        result = stmt.all(...params);
       }
+      
+      // Track usage metrics
+      const queryTime = Date.now() - startTime;
+      const isRead = sql.trim().toUpperCase().startsWith('SELECT');
+      
+      if (typeof window === 'undefined' && process.env.NODE_ENV !== 'test') {
+        try {
+          const { usageMonitor } = await import('./UsageMonitor.js');
+          
+          if (isRead) {
+            usageMonitor.trackRead(result.length);
+          }
+          
+          usageMonitor.trackQueryTime(queryTime);
+        } catch (error) {
+          // Silently ignore usage tracking errors
+        }
+      }
+      
+      return result;
     } catch (error) {
       console.error('Database query error:', error);
       throw error;
@@ -601,13 +625,41 @@ export class DatabaseConnection {
       throw new Error('Database not initialized');
     }
 
+    const startTime = Date.now();
+    
     try {
+      let result: any;
+      
       if (this.isTurso) {
-        return await this.db.execute({ sql, args: params });
+        result = await this.db.execute({ sql, args: params });
       } else {
         const stmt = this.db.prepare(sql);
-        return stmt.run(...params);
+        result = stmt.run(...params);
       }
+      
+      // Track usage metrics
+      const queryTime = Date.now() - startTime;
+      const isWrite = ['INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER'].some(
+        keyword => sql.trim().toUpperCase().startsWith(keyword)
+      );
+      
+      if (typeof window === 'undefined' && process.env.NODE_ENV !== 'test') {
+        try {
+          const { usageMonitor } = await import('./UsageMonitor.js');
+          
+          if (isWrite) {
+            // Estimate affected rows (Turso provides this, SQLite we estimate)
+            const affectedRows = result?.changes || result?.rowsAffected || 1;
+            usageMonitor.trackWrite(affectedRows);
+          }
+          
+          usageMonitor.trackQueryTime(queryTime);
+        } catch (error) {
+          // Silently ignore usage tracking errors
+        }
+      }
+      
+      return result;
     } catch (error) {
       console.error('Database execution error:', error);
       throw error;
