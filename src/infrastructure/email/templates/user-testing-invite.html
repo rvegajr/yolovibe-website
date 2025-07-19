@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOVibe Beta Testing - You're Invited!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 18px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .hero p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .coupon-box {
+            background: #fef3c7;
+            border: 2px dashed #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .coupon-code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: bold;
+            color: #92400e;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 10px 0;
+            border: 1px solid #f59e0b;
+        }
+        .test-scenario {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .test-scenario h3 {
+            margin: 0 0 10px 0;
+            color: #1e40af;
+        }
+        .test-steps {
+            list-style: none;
+            padding: 0;
+        }
+        .test-steps li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .test-steps li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+        }
+        .test-steps li:last-child {
+            border-bottom: none;
+        }
+        .button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background: #1d4ed8;
+        }
+        .button-secondary {
+            background: #64748b;
+        }
+        .button-secondary:hover {
+            background: #475569;
+        }
+        .feedback-section {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .important-note {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .important-note strong {
+            color: #dc2626;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .contact-info {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            .hero h1 { font-size: 24px; }
+            .coupon-code { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">YOLOVibe</div>
+            <div class="subtitle">Empowering Your Learning Journey</div>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🎉 You're Invited to Beta Test YOLOVibe!</h1>
+            <p>Help us perfect the ultimate workshop booking and learning platform</p>
+        </div>
+
+        <!-- Personal Message -->
+        <p>Hi {{firstName}},</p>
+        
+        <p>We're excited to invite you to be one of the first to test <strong>YOLOVibe</strong> - our new workshop booking and learning management platform! Your feedback will be invaluable in helping us create the best possible experience.</p>
+
+        <!-- Free Testing Coupons -->
+        <div class="coupon-box">
+            <h3 style="margin: 0 0 10px 0; color: #92400e;">🎁 FREE Testing Coupons</h3>
+            <p style="margin: 0 0 15px 0; color: #92400e;">Use these codes to test the full booking experience at no cost:</p>
+            
+            <div class="coupon-code">BETATEST100</div>
+            <div style="font-size: 14px; color: #92400e; margin: 5px 0;">100% off any workshop - Valid until {{expiryDate}}</div>
+            
+            <div class="coupon-code">TESTFREE50</div>
+            <div style="font-size: 14px; color: #92400e; margin: 5px 0;">50% off + free materials - Backup code</div>
+        </div>
+
+        <div class="important-note">
+            <strong>Important:</strong> These are real bookings in our test environment. You can complete the full process, but no actual workshops will be scheduled. We'll contact you separately if you're interested in real workshops!
+        </div>
+
+        <!-- Quick Start -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{websiteUrl}}" class="button">🚀 Start Testing YOLOVibe</a>
+        </div>
+
+        <!-- Test Scenarios -->
+        <h2 style="color: #1f2937; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">🧪 Test Scenarios</h2>
+        <p>Please try these scenarios to help us test all functionality:</p>
+
+        <!-- Scenario 1: Browse & Discover -->
+        <div class="test-scenario">
+            <h3>🔍 Scenario 1: Browse & Discover</h3>
+            <p><strong>Goal:</strong> Test the browsing and discovery experience</p>
+            <ul class="test-steps">
+                <li>Visit the homepage and explore the workshop offerings</li>
+                <li>Browse both "Product A" and "Product B" workshop pages</li>
+                <li>Check out the pricing page and compare options</li>
+                <li>Read a few blog posts in the knowledge section</li>
+                <li>Use the contact form to send a test message</li>
+            </ul>
+            <p><strong>What to test:</strong> Navigation, page loading, content clarity, mobile responsiveness</p>
+        </div>
+
+        <!-- Scenario 2: User Registration & Booking -->
+        <div class="test-scenario">
+            <h3>👤 Scenario 2: Complete Booking Process</h3>
+            <p><strong>Goal:</strong> Test the full user registration and booking flow</p>
+            <ul class="test-steps">
+                <li>Click "Book Now" on any workshop</li>
+                <li>Create a new user account with your email</li>
+                <li>Select a workshop date and time</li>
+                <li>Add attendee information (you can use fake data)</li>
+                <li>Apply coupon code <strong>BETATEST100</strong> at checkout</li>
+                <li>Complete the "payment" process (no real charge)</li>
+                <li>Check your email for confirmation</li>
+            </ul>
+            <p><strong>What to test:</strong> Form validation, user experience, email delivery, booking confirmation</p>
+        </div>
+
+        <!-- Scenario 3: User Dashboard -->
+        <div class="test-scenario">
+            <h3>📊 Scenario 3: User Dashboard Experience</h3>
+            <p><strong>Goal:</strong> Test the user account and booking management</p>
+            <ul class="test-steps">
+                <li>Log into your account after booking</li>
+                <li>View your booking details and status</li>
+                <li>Try updating your profile information</li>
+                <li>Access any workshop materials (if available)</li>
+                <li>Test the logout and login process</li>
+            </ul>
+            <p><strong>What to test:</strong> Account management, booking visibility, material access</p>
+        </div>
+
+        <!-- Scenario 4: Edge Cases & Error Handling -->
+        <div class="test-scenario">
+            <h3>⚠️ Scenario 4: Edge Cases & Errors</h3>
+            <p><strong>Goal:</strong> Test error handling and edge cases</p>
+            <ul class="test-steps">
+                <li>Try booking with invalid email format</li>
+                <li>Attempt to use an invalid coupon code</li>
+                <li>Try accessing pages while logged out</li>
+                <li>Test form submission with missing required fields</li>
+                <li>Try booking the same workshop twice</li>
+            </ul>
+            <p><strong>What to test:</strong> Error messages, validation, user guidance</p>
+        </div>
+
+        <!-- Scenario 5: Mobile Experience -->
+        <div class="test-scenario">
+            <h3>📱 Scenario 5: Mobile Experience</h3>
+            <p><strong>Goal:</strong> Test mobile responsiveness and usability</p>
+            <ul class="test-steps">
+                <li>Access the site on your phone or tablet</li>
+                <li>Navigate through different pages</li>
+                <li>Try completing a booking on mobile</li>
+                <li>Test the mobile menu and navigation</li>
+                <li>Check form usability on smaller screens</li>
+            </ul>
+            <p><strong>What to test:</strong> Mobile design, touch interactions, readability</p>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <h3 style="margin: 0 0 15px 0; color: #059669;">💬 We Want Your Feedback!</h3>
+            <p>Please share your thoughts on:</p>
+            <ul>
+                <li><strong>User Experience:</strong> Was the booking process intuitive?</li>
+                <li><strong>Design & Layout:</strong> Does the site look professional and trustworthy?</li>
+                <li><strong>Performance:</strong> Did pages load quickly?</li>
+                <li><strong>Content:</strong> Is the information clear and compelling?</li>
+                <li><strong>Bugs:</strong> Did anything break or behave unexpectedly?</li>
+                <li><strong>Suggestions:</strong> What would make this better?</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="mailto:{{feedbackEmail}}?subject=YOLOVibe Beta Feedback" class="button">📧 Send Feedback</a>
+                <a href="{{feedbackFormUrl}}" class="button button-secondary">📝 Fill Feedback Form</a>
+            </div>
+        </div>
+
+        <!-- Testing Timeline -->
+        <div style="background: #fef7ff; padding: 20px; border-radius: 8px; border: 1px solid #c084fc; margin: 20px 0;">
+            <h3 style="margin: 0 0 15px 0; color: #7c3aed;">⏰ Testing Timeline</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li><strong>Testing Period:</strong> {{testingStartDate}} - {{testingEndDate}}</li>
+                <li><strong>Feedback Deadline:</strong> {{feedbackDeadline}}</li>
+                <li><strong>Follow-up Call:</strong> Optional 15-min call to discuss your experience</li>
+            </ul>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info">
+            <h3 style="margin: 0 0 15px 0; color: #374151;">📞 Need Help or Have Questions?</h3>
+            <p style="margin: 0;"><strong>Email:</strong> {{supportEmail}}</p>
+            <p style="margin: 5px 0 0 0;"><strong>Phone:</strong> {{supportPhone}}</p>
+            <p style="margin: 5px 0 0 0;"><strong>Available:</strong> {{supportHours}}</p>
+        </div>
+
+        <!-- Thank You -->
+        <div style="text-align: center; margin: 40px 0;">
+            <h3 style="color: #1f2937;">🙏 Thank You!</h3>
+            <p>Your time and feedback are incredibly valuable to us. We're excited to build something amazing together!</p>
+            
+            <a href="{{websiteUrl}}" class="button" style="font-size: 18px; padding: 15px 30px;">🎯 Start Testing Now</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>YOLOVibe</strong> - Empowering Your Learning Journey</p>
+            <p>{{companyAddress}}</p>
+            <p>This is a beta testing invitation. Your participation helps us improve our platform.</p>
+        </div>
+    </div>
+</body>
+</html> 
