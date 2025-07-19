@@ -45,12 +45,12 @@ export class CalendarManager implements ICalendarManager {
   }
 
   // Interface methods (original interface)
-  async isDateAvailable(date: Date, workshopType: WorkshopType): Promise<boolean> {
+  async isDateAvailable(date: Date, _workshopType: WorkshopType): Promise<boolean> {
     const dateStr = date.toISOString().split('T')[0];
     return !this.blockedDates.has(dateStr);
   }
 
-  async blockDate(date: Date, reason: string): Promise<void> {
+  async blockDate(date: Date, _reason: string): Promise<void> {
     const dateStr = date.toISOString().split('T')[0];
     this.blockedDates.add(dateStr);
   }
@@ -154,6 +154,9 @@ export class CalendarManager implements ICalendarManager {
       throw new Error(`Calendar event not found: ${eventId}`);
     }
 
+    if (!event.attendees) {
+      event.attendees = [];
+    }
     if (!event.attendees.includes(attendeeEmail)) {
       event.attendees.push(attendeeEmail);
       this.events.set(eventId, event);
@@ -164,6 +167,10 @@ export class CalendarManager implements ICalendarManager {
     const event = this.events.get(eventId);
     if (!event) {
       throw new Error(`Calendar event not found: ${eventId}`);
+    }
+
+    if (!event.attendees) {
+      return; // No attendees to remove
     }
 
     const index = event.attendees.indexOf(attendeeEmail);

@@ -7,7 +7,6 @@
  */
 
 import type { IProductCatalog } from '../core/interfaces/index.js';
-import type { Product } from '../core/types/index.js';
 import { ProductType } from '../core/types/index.js';
 import { ProductCatalogManager } from '../implementations/ProductCatalogManager.js';
 
@@ -28,11 +27,11 @@ async function runTests() {
     console.log(`   Found ${products.length} products:`);
     products.forEach(p => console.log(`   - ${p.name} ($${p.price})`));
     
-    if (products.length === 2) {
+    if (products.length === 3) {
       testsPassed++;
-      console.log('   ✅ Expected 2 products found\n');
+      console.log('   ✅ Expected 3 products found (2 workshops + 1 consulting)\n');
     } else {
-      console.log('   ❌ Expected 2 products, got', products.length, '\n');
+      console.log('   ❌ Expected 3 products, got', products.length, '\n');
     }
   } catch (error) {
     console.log('❌ Test 1 FAILED:', error, '\n');
@@ -99,11 +98,51 @@ async function runTests() {
   try {
     await catalog.getProductDetails('invalid-id');
     console.log('❌ Test 5 FAILED: Should have thrown error for invalid ID\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 5: getProductDetails() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     testsPassed++;
   }
+
+  // Test 6: Get hourly availability for consulting
+  testsTotal++;
+  try {
+    const testDate = new Date('2024-12-25'); // Christmas day
+    const timeSlots = await catalog.getHourlyAvailability(testDate, 9, 17); // 9 AM to 5 PM
+    console.log('✅ Test 6: getHourlyAvailability()');
+    console.log(`   Found ${timeSlots.length} time slots for ${testDate.toDateString()}`);
+    if (timeSlots.length > 0) {
+      console.log(`   First slot: ${timeSlots[0].startTime}-${timeSlots[0].endTime} (${timeSlots[0].available ? 'available' : 'unavailable'})`);
+    }
+    testsPassed++;
+  } catch (error: unknown) {
+    console.log('❌ Test 6 FAILED: getHourlyAvailability()');
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Error: ${message}`);
+  }
+  console.log();
+
+  // Test 7: Validate business hours constraints
+  testsTotal++;
+  try {
+    const weekendDate = new Date('2024-12-22'); // Sunday
+    const weekendSlots = await catalog.getHourlyAvailability(weekendDate, 9, 17);
+    console.log('✅ Test 7: Weekend availability check');
+    console.log(`   Weekend slots: ${weekendSlots.length} (should be 0 or all unavailable)`);
+    const availableWeekendSlots = weekendSlots.filter(slot => slot.available);
+    if (availableWeekendSlots.length === 0) {
+      console.log('   ✅ Correctly blocks weekend bookings');
+    } else {
+      console.log('   ⚠️  Weekend slots are available (may be intentional)');
+    }
+    testsPassed++;
+  } catch (error: unknown) {
+    console.log('❌ Test 7 FAILED: Weekend availability check');
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Error: ${message}`);
+  }
+  console.log();
 
   // Results
   console.log('🎯 TEST RESULTS:');

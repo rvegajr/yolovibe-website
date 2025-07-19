@@ -64,7 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
     const bookingManager = new BookingManagerDB();
     const booking = await bookingManager.createBooking(bookingRequest);
     
-    console.log(`✅ API: Booking created successfully: ${booking.id}`);
+    console.log(`✅ API: Booking created successfully: ${booking.bookingId}`);
     
     return new Response(JSON.stringify({
       success: true,

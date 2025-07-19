@@ -8,10 +8,7 @@ import type {
   IBookingManager
 } from '../core/interfaces/index.js';
 import type { 
-  EmailRequest,
-  EmailResult,
-  Booking,
-  Workshop
+  EmailRequest
 } from '../core/types/index.js';
 import { EmailSenderManager } from './EmailSenderManager.js';
 import { BookingManagerDB } from './database/BookingManagerDB.js';
@@ -303,6 +300,188 @@ P.S. Don't forget to share your workshop experience on social media and tag us @
   }
 
   /**
+   * Schedule consulting session reminders
+   */
+  async scheduleConsultingReminders(
+    consultingSessionId: string,
+    clientEmail: string,
+    clientName: string,
+    sessionDate: Date,
+    zoomLink: string
+  ): Promise<void> {
+    console.log(`📅 Scheduling consulting reminders for session: ${consultingSessionId}`);
+
+    const schedule: FollowUpEmailSchedule = {
+      purchaseId: consultingSessionId,
+      bookingId: consultingSessionId,
+      attendeeEmail: clientEmail,
+      attendeeName: clientName,
+      workshopStartDate: sessionDate,
+      emailsSent: [],
+      nextEmailDue: new Date(sessionDate.getTime() - 24 * 60 * 60 * 1000) // 24 hours before
+    };
+
+    this.schedules.set(consultingSessionId, schedule);
+
+    // Send immediate confirmation email
+    await this.sendConsultingConfirmation(consultingSessionId, zoomLink);
+  }
+
+  /**
+   * Send consulting session confirmation
+   */
+  private async sendConsultingConfirmation(sessionId: string, zoomLink: string): Promise<void> {
+    const schedule = this.schedules.get(sessionId);
+    if (!schedule) return;
+
+    const emailRequest: EmailRequest = {
+      to: schedule.attendeeEmail,
+      from: 'noreply@yolovibe.com',
+      subject: 'AI Consulting Session Confirmed - Important Details',
+      content: `Dear ${schedule.attendeeName},
+
+Your AI Business Development consulting session is confirmed!
+
+🎯 SESSION DETAILS:
+   • Date: ${schedule.workshopStartDate.toLocaleDateString()}
+   • Time: ${schedule.workshopStartDate.toLocaleTimeString()}
+   • Duration: 2 hours minimum ($400)
+   • Format: Virtual via Zoom
+
+🔗 ZOOM MEETING LINK:
+${zoomLink}
+
+📋 WHAT TO PREPARE:
+   • Your business ideas or concepts
+   • Any specific questions or challenges
+   • Notebook for taking notes
+   • Quiet, private space for the call
+
+💡 WHAT WE'LL COVER:
+   • AI-powered business development strategies
+   • Idea validation and implementation planning
+   • Technology recommendations for your concepts
+   • Actionable next steps for your projects
+
+📧 REMINDERS:
+   • 24-hour reminder email
+   • 1-hour reminder email with Zoom link
+
+Questions? Reply to this email or call our support line.
+
+Looking forward to our session!
+
+The YOLOVibe Team`
+    };
+
+    const result = await this.emailSender.sendEmail(emailRequest);
+    schedule.emailsSent.push('consulting_confirmation');
+    
+    console.log(`📧 Consulting confirmation sent to ${schedule.attendeeEmail} (${result.emailId})`);
+  }
+
+  /**
+   * Send 24-hour consulting reminder
+   */
+  async sendConsulting24HourReminder(sessionId: string, zoomLink: string): Promise<void> {
+    const schedule = this.schedules.get(sessionId);
+    if (!schedule || schedule.emailsSent.includes('consulting_24h')) {
+      return;
+    }
+
+    const emailRequest: EmailRequest = {
+      to: schedule.attendeeEmail,
+      from: 'noreply@yolovibe.com',
+      subject: '🚀 AI Consulting Session Tomorrow - Final Preparation',
+      content: `Dear ${schedule.attendeeName},
+
+Your AI Business Development consulting session is tomorrow!
+
+⏰ SESSION REMINDER:
+   • Date: ${schedule.workshopStartDate.toLocaleDateString()}
+   • Time: ${schedule.workshopStartDate.toLocaleTimeString()}
+   • Duration: 2 hours minimum
+   • Zoom Link: ${zoomLink}
+
+✅ FINAL CHECKLIST:
+   □ Review your business ideas and questions
+   □ Test your Zoom connection
+   □ Prepare a quiet, private space
+   □ Have notebook and pen ready
+   □ Charge your devices
+
+🎯 MAXIMIZE YOUR SESSION:
+   • Be specific about your goals
+   • Ask about AI tools for your industry
+   • Discuss implementation timelines
+   • Take detailed notes
+   • Don't hesitate to ask questions
+
+💡 EMERGENCY CONTACT:
+   If you have any last-minute issues, call: +1-555-YOLO-911
+
+See you tomorrow!
+
+The YOLOVibe Team`
+    };
+
+    const result = await this.emailSender.sendEmail(emailRequest);
+    schedule.emailsSent.push('consulting_24h');
+    schedule.nextEmailDue = new Date(schedule.workshopStartDate.getTime() - 60 * 60 * 1000); // 1 hour before
+    
+    console.log(`📧 24-hour consulting reminder sent to ${schedule.attendeeEmail} (${result.emailId})`);
+  }
+
+  /**
+   * Send 1-hour consulting reminder
+   */
+  async sendConsulting1HourReminder(sessionId: string, zoomLink: string): Promise<void> {
+    const schedule = this.schedules.get(sessionId);
+    if (!schedule || schedule.emailsSent.includes('consulting_1h')) {
+      return;
+    }
+
+    const emailRequest: EmailRequest = {
+      to: schedule.attendeeEmail,
+      from: 'noreply@yolovibe.com',
+      subject: '⏰ AI Consulting Session in 1 Hour - Join Link Inside',
+      content: `Dear ${schedule.attendeeName},
+
+Your AI consulting session starts in 1 hour!
+
+🔗 JOIN NOW (or bookmark this link):
+${zoomLink}
+
+⏰ SESSION DETAILS:
+   • Time: ${schedule.workshopStartDate.toLocaleTimeString()}
+   • Duration: 2 hours minimum
+   • Format: Virtual via Zoom
+
+🚀 QUICK PREP (5 minutes):
+   • Join the Zoom meeting 5 minutes early
+   • Test your audio and video
+   • Have your questions ready
+   • Grab water and snacks
+
+💡 REMEMBER:
+This is YOUR time to get AI-powered insights for your business ideas. Come with specific questions and goals!
+
+See you very soon!
+
+The YOLOVibe Team
+
+---
+Zoom Link: ${zoomLink}
+Session ID: ${sessionId}`
+    };
+
+    const result = await this.emailSender.sendEmail(emailRequest);
+    schedule.emailsSent.push('consulting_1h');
+    
+    console.log(`📧 1-hour consulting reminder sent to ${schedule.attendeeEmail} (${result.emailId})`);
+  }
+
+  /**
    * Process all due emails (to be called by a scheduler/cron job)
    */
   async processDueEmails(): Promise<void> {
@@ -313,13 +492,28 @@ P.S. Don't forget to share your workshop experience on social media and tag us @
         continue;
       }
 
-      // Send preparation guide if due
-      if (!schedule.emailsSent.includes('preparation')) {
-        await this.sendPreparationGuide(purchaseId);
+      // Handle workshop emails
+      if (schedule.bookingId.startsWith('booking-')) {
+        // Send preparation guide if due
+        if (!schedule.emailsSent.includes('preparation')) {
+          await this.sendPreparationGuide(purchaseId);
+        }
+        // Send final reminder if due
+        else if (!schedule.emailsSent.includes('final_reminder')) {
+          await this.sendFinalReminder(purchaseId);
+        }
       }
-      // Send final reminder if due
-      else if (!schedule.emailsSent.includes('final_reminder')) {
-        await this.sendFinalReminder(purchaseId);
+      
+      // Handle consulting emails
+      else if (schedule.bookingId.startsWith('consulting-')) {
+        // Send 24-hour reminder if due
+        if (!schedule.emailsSent.includes('consulting_24h')) {
+          await this.sendConsulting24HourReminder(purchaseId, 'https://zoom.us/j/placeholder');
+        }
+        // Send 1-hour reminder if due
+        else if (!schedule.emailsSent.includes('consulting_1h')) {
+          await this.sendConsulting1HourReminder(purchaseId, 'https://zoom.us/j/placeholder');
+        }
       }
     }
   }

@@ -117,9 +117,10 @@ async function runTests() {
   try {
     await bookingManager.getBooking('invalid-booking-id');
     console.log('❌ Test 4 FAILED: Should have thrown error for invalid ID\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 4: getBooking() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     testsPassed++;
   }
 

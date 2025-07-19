@@ -173,9 +173,10 @@ async function testCouponManager() {
   try {
     await couponManager.getCouponUsage('NONEXISTENT');
     console.log('❌ Test 9: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 9: getCouponUsage() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 

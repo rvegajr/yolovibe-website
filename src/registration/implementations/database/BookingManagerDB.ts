@@ -7,9 +7,9 @@
  */
 
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import type { IBookingManager } from '../../core/interfaces/index.js';
-import type { BookingRequest, BookingResult, Booking, Attendee } from '../../core/types/index.js';
+import type { BookingRequest, BookingResult, Booking, ConsultingBookingRequest } from '../../core/types/index.js';
 import { BookingRepository } from '../../database/repositories/BookingRepository.js';
 import { initializeDatabase, closeDatabaseConnection } from '../../database/connection.js';
 
@@ -293,6 +293,45 @@ export class BookingManagerDB implements IBookingManager {
       return 1500; // $1500 for intro workshops
     } else {
       return 2000; // Default price
+    }
+  }
+
+  /**
+   * Create consulting booking
+   */
+  async createConsultingBooking(request: ConsultingBookingRequest): Promise<BookingResult> {
+    try {
+      console.log(`📅 Creating consulting booking for ${request.scheduledDate.toDateString()}`);
+      
+      const bookingId = `consulting-${this.nextBookingId++}`;
+      const sessionId = `session-${Date.now()}`;
+      const totalAmount = request.durationHours * 200; // $200/hour
+      const confirmationNumber = `CONSULT-${Date.now()}`;
+      
+      // Log consulting session details (database integration to be completed later)
+      console.log(`📅 Creating consulting session: ${sessionId}`);
+      console.log(`   Product ID: ${request.productId}`);
+      console.log(`   Date: ${request.scheduledDate.toDateString()}`);
+      console.log(`   Start time: ${request.startTime}`);
+      console.log(`   Duration: ${request.durationHours} hours`);
+      console.log(`   Total cost: $${totalAmount}`);
+      console.log(`   Contact: ${request.pointOfContact.firstName} ${request.pointOfContact.lastName}`);
+      console.log(`   Email: ${request.pointOfContact.email}`);
+      
+      const result: BookingResult = {
+        bookingId: bookingId,
+        workshopId: sessionId,
+        status: 'confirmed',
+        totalAmount: totalAmount,
+        confirmationNumber: confirmationNumber
+      };
+      
+      console.log(`✅ Consulting booking created successfully: ${bookingId}`);
+      return result;
+      
+    } catch (error) {
+      console.error('❌ Error creating consulting booking:', error);
+      throw new Error(`Failed to create consulting booking: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

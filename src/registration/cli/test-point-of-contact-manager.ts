@@ -137,7 +137,7 @@ async function testPointOfContactManager() {
     console.log('✅ Test 4: getContactsByBooking()');
     console.log(`   Booking ID: ${bookingId}`);
     console.log(`   Found ${contacts.length} contacts:`);
-    contacts.forEach((contact, index) => {
+    contacts.forEach((contact: any, index: number) => {
       console.log(`   ${index + 1}. ${contact.firstName} ${contact.lastName} (${contact.email})`);
     });
     console.log('   ✅ Contacts retrieved by booking successfully\n');
@@ -153,9 +153,10 @@ async function testPointOfContactManager() {
   try {
     await pocManager.getPointOfContactById('invalid-contact-id');
     console.log('❌ Test 5: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 5: getPointOfContact() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 
@@ -164,9 +165,10 @@ async function testPointOfContactManager() {
   try {
     await pocManager.updatePointOfContact('invalid-contact-id', { phone: '+1-555-0000' });
     console.log('❌ Test 6: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 6: updatePointOfContact() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 

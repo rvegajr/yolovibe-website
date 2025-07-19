@@ -91,19 +91,24 @@ export class HealthChecker {
     try {
       sgMail.setApiKey(this.config.sendgrid.apiKey);
 
-      const response = await fetch('https://api.sendgrid.com/v3/user/account', {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
+      const response = await fetch('https://api.sendgrid.com/v3/user/profile', {
         headers: {
           Authorization: `Bearer ${this.config.sendgrid.apiKey}`,
           'Content-Type': 'application/json',
         },
-        signal: AbortSignal.timeout(5000),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      const account = await response.json();
+      const profile = await response.json();
       const responseTime = Date.now() - startTime;
 
       return {
@@ -111,9 +116,10 @@ export class HealthChecker {
         status: 'healthy',
         message: 'SendGrid API accessible',
         responseTime,
-        details: { account_type: account.type },
+        details: { user_type: profile.type, company: profile.company },
       };
     } catch (error) {
+      console.error('SendGrid health check error:', error);
       return {
         service: 'SendGrid',
         status: 'unhealthy',

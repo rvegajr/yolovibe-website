@@ -37,9 +37,10 @@ CREATE TABLE products (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
-    product_type TEXT NOT NULL CHECK (product_type IN ('THREE_DAY', 'FIVE_DAY')),
+    product_type TEXT NOT NULL CHECK (product_type IN ('THREE_DAY', 'FIVE_DAY', 'HOURLY_CONSULTING')),
     price DECIMAL(10,2) NOT NULL,
-    duration_days INTEGER NOT NULL,
+    duration_days INTEGER, -- NULL for hourly consulting
+    duration_hours INTEGER, -- For hourly consulting
     max_capacity INTEGER NOT NULL DEFAULT 12,
     is_active BOOLEAN DEFAULT TRUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -205,6 +206,26 @@ CREATE TABLE material_access (
     FOREIGN KEY (material_id) REFERENCES workshop_materials(id) ON DELETE CASCADE,
     FOREIGN KEY (attendee_id) REFERENCES attendees(id) ON DELETE CASCADE,
     UNIQUE(material_id, attendee_id)
+);
+
+-- =====================================================
+-- CONSULTING SESSIONS
+-- =====================================================
+
+-- Consulting sessions table (supports hourly AI consulting bookings)
+CREATE TABLE consulting_sessions (
+    id TEXT PRIMARY KEY,
+    booking_id TEXT NOT NULL,
+    scheduled_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    duration_hours INTEGER NOT NULL DEFAULT 2,
+    hourly_rate DECIMAL(10,2) NOT NULL DEFAULT 200.00,
+    zoom_link TEXT,
+    zoom_meeting_id TEXT,
+    status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
 );
 
 -- =====================================================

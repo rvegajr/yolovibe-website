@@ -66,6 +66,17 @@ export class CouponManager implements ICouponManager {
       currentUsage: 5, // At limit
       isActive: true
     });
+
+    this.coupons.set('FREE100', {
+      code: 'FREE100',
+      discountType: 'percentage',
+      discountValue: 100,
+      minimumAmount: 0,
+      expirationDate: new Date('2025-12-31'),
+      usageLimit: 10,
+      currentUsage: 0,
+      isActive: true
+    });
   }
 
   async validateCoupon(code: string): Promise<CouponValidation> {

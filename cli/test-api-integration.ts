@@ -25,7 +25,7 @@ class APIIntegrationTester {
   private baseUrl: string;
   private results: TestResult[] = [];
 
-  constructor(baseUrl: string = 'http://localhost:4321') {
+  constructor(baseUrl: string = 'http://localhost:4322') {
     this.baseUrl = baseUrl;
   }
 
@@ -454,7 +454,7 @@ class APIIntegrationTester {
 
 // Run the tests
 async function main() {
-  const baseUrl = process.argv[2] || 'http://localhost:4321';
+  const baseUrl = process.argv[2] || 'http://localhost:4322';
   const tester = new APIIntegrationTester(baseUrl);
   await tester.runAllTests();
 }

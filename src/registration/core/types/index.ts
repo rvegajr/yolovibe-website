@@ -6,7 +6,8 @@
 // Workshop & Product Types
 export enum ProductType {
   THREE_DAY = '3-day',
-  FIVE_DAY = '5-day'
+  FIVE_DAY = '5-day',
+  HOURLY_CONSULTING = 'hourly-consulting'
 }
 
 export enum WorkshopType {
@@ -53,6 +54,35 @@ export interface CapacityStatus {
   available: number;
   isFull: boolean;
   waitlistCount: number;
+}
+
+// Consulting Types
+export interface TimeSlot {
+  startTime: string; // "09:00"
+  endTime: string;   // "11:00"
+  available: boolean;
+  duration: number;  // hours
+}
+
+export interface ConsultingSession {
+  id: string;
+  bookingId: string;
+  scheduledDate: Date;
+  startTime: string;
+  durationHours: number;
+  hourlyRate: number;
+  zoomLink?: string;
+  zoomMeetingId?: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+}
+
+export interface ConsultingBookingRequest {
+  productId: string;
+  scheduledDate: Date;
+  startTime: string; // "14:00"
+  durationHours: number;
+  pointOfContact: ContactInfo;
+  paymentMethod: PaymentMethod;
 }
 
 // Booking Types
@@ -400,6 +430,8 @@ export interface CalendarEvent {
   location?: string;
   attendees?: string[];
   isAllDay?: boolean;
+  status?: 'confirmed' | 'cancelled' | 'tentative';
+  workshopId?: string;
 }
 
 export interface CalendarEventRequest {
