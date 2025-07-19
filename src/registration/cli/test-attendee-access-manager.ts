@@ -151,9 +151,10 @@ async function testAttendeeAccessManager() {
   try {
     await accessManager.resetPassword('invalid-attendee-id');
     console.log('❌ Test 7: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 7: resetPassword() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 

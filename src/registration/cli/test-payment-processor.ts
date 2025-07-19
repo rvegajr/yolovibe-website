@@ -133,9 +133,10 @@ async function runTests() {
   try {
     await processor.getPaymentStatus('invalid-payment-id');
     console.log('❌ Test 5 FAILED: Should have thrown error for invalid payment ID\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 5: getPaymentStatus() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     testsPassed++;
   }
 

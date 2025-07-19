@@ -162,9 +162,10 @@ async function runTests() {
   try {
     await attendeeManager.updateAttendee('invalid-attendee-id', { firstName: 'Test' });
     console.log('❌ Test 6 FAILED: Should have thrown error for invalid attendee ID\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 6: updateAttendee() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     testsPassed++;
   }
 

@@ -104,4 +104,89 @@ export class GoogleCalendarService {
     
     return response.data;
   }
+
+  /**
+   * Gets a specific event by ID
+   * @param eventId The ID of the event to retrieve
+   * @returns The event data
+   */
+  async getEvent(eventId: string): Promise<calendar_v3.Schema$Event> {
+    const response = await this.calendar.events.get({
+      calendarId: this.calendarId,
+      eventId: eventId,
+    });
+    
+    return response.data;
+  }
+
+  /**
+   * Updates an existing event
+   * @param eventId The ID of the event to update
+   * @param updates The updates to apply to the event
+   * @returns Updated event
+   */
+  async updateEvent(eventId: string, updates: Partial<calendar_v3.Schema$Event>): Promise<calendar_v3.Schema$Event> {
+    const response = await this.calendar.events.patch({
+      calendarId: this.calendarId,
+      eventId: eventId,
+      requestBody: updates,
+    });
+    
+    return response.data;
+  }
+
+  /**
+   * Deletes an event from the calendar
+   * @param eventId The ID of the event to delete
+   */
+  async deleteEvent(eventId: string): Promise<void> {
+    await this.calendar.events.delete({
+      calendarId: this.calendarId,
+      eventId: eventId,
+    });
+  }
+
+  /**
+   * Lists events in a specific time range
+   * @param timeMin Start time (ISO string)
+   * @param timeMax End time (ISO string)
+   * @param maxResults Maximum number of events to return
+   * @returns List of events in the time range
+   */
+  async listEvents(timeMin?: string, timeMax?: string, maxResults = 100): Promise<calendar_v3.Schema$Event[]> {
+    const response = await this.calendar.events.list({
+      calendarId: this.calendarId,
+      timeMin,
+      timeMax,
+      maxResults,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+    
+    return response.data.items || [];
+  }
+
+  /**
+   * Checks for conflicting events in a time range
+   * @param startTime Start time to check
+   * @param endTime End time to check
+   * @returns List of conflicting events
+   */
+  async checkConflicts(startTime: Date, endTime: Date): Promise<calendar_v3.Schema$Event[]> {
+    const events = await this.listEvents(
+      startTime.toISOString(),
+      endTime.toISOString()
+    );
+    
+    // Filter events that actually overlap with our time range
+    return events.filter(event => {
+      if (!event.start || !event.end) return false;
+      
+      const eventStart = new Date(event.start.dateTime || event.start.date || '');
+      const eventEnd = new Date(event.end.dateTime || event.end.date || '');
+      
+      // Check for overlap: event starts before our end time AND event ends after our start time
+      return eventStart < endTime && eventEnd > startTime;
+    });
+  }
 }

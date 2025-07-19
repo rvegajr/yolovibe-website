@@ -137,7 +137,7 @@ export class DatabaseConnection {
   /**
    * Execute a prepared statement
    */
-  prepare<T = any>(sql: string): Database.Statement<T> {
+  prepare<T extends {} | unknown[] = any>(sql: string): Database.Statement<T> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
@@ -147,7 +147,7 @@ export class DatabaseConnection {
   /**
    * Execute a transaction
    */
-  transaction<T>(fn: () => T): T {
+  transaction<T extends {} | unknown[] = any>(fn: () => T): T {
     if (!this.db) {
       throw new Error('Database not initialized');
     }

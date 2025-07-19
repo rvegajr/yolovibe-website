@@ -5,7 +5,7 @@
  */
 
 import type { IProductCatalog } from '../core/interfaces/index.js';
-import type { Product, ProductType } from '../core/types/index.js';
+import type { Product, ProductType, TimeSlot } from '../core/types/index.js';
 import { ProductType as ProductTypeEnum } from '../core/types/index.js';
 
 export class ProductCatalogManager implements IProductCatalog {
@@ -29,6 +29,16 @@ export class ProductCatalogManager implements IProductCatalog {
       description: 'Comprehensive 5-day intensive program with advanced techniques and certification',
       maxCapacity: 8,
       availableStartDays: ['monday']
+    },
+    {
+      id: 'ai-consulting',
+      name: 'AI Business Development',
+      type: ProductTypeEnum.HOURLY_CONSULTING,
+      price: 200,
+      duration: 2, // 2 hours minimum
+      description: 'Personalized AI consulting sessions to help develop and implement your business ideas. $200/hour with 2-hour minimum.',
+      maxCapacity: 1, // One-on-one sessions
+      availableStartDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
     }
   ];
 
@@ -70,5 +80,28 @@ export class ProductCatalogManager implements IProductCatalog {
     }
     
     return dates;
+  }
+
+  async getHourlyAvailability(date: Date, startHour: number, endHour: number): Promise<TimeSlot[]> {
+    const timeSlots: TimeSlot[] = [];
+    
+    // Check if it's a business day (Monday-Friday)
+    const dayOfWeek = date.getDay();
+    const isBusinessDay = dayOfWeek >= 1 && dayOfWeek <= 5; // Monday = 1, Friday = 5
+    
+    // Generate 2-hour time slots between startHour and endHour
+    for (let hour = startHour; hour < endHour - 1; hour += 2) { // 2-hour minimum
+      const startTime = `${hour.toString().padStart(2, '0')}:00`;
+      const endTime = `${(hour + 2).toString().padStart(2, '0')}:00`;
+      
+      timeSlots.push({
+        startTime,
+        endTime,
+        available: isBusinessDay, // Only available on business days
+        duration: 2
+      });
+    }
+    
+    return timeSlots;
   }
 }

@@ -12,6 +12,8 @@ import type {
   Booking,
   WorkshopMetrics,
   CapacityStatus,
+  TimeSlot,
+  ConsultingBookingRequest,
   PaymentRequest,
   PaymentResult,
   RefundResult,
@@ -50,12 +52,16 @@ export interface IProductCatalog {
   getAvailableProducts(): Promise<Product[]>;
   getProductDetails(productId: string): Promise<Product>;
   getAvailableStartDates(productType: ProductType): Promise<Date[]>;
+  // Consulting methods
+  getHourlyAvailability(date: Date, startHour: number, endHour: number): Promise<TimeSlot[]>;
 }
 
 export interface IBookingManager {
   createBooking(request: BookingRequest): Promise<BookingResult>;
   getBooking(bookingId: string): Promise<Booking>;
   cancelBooking(bookingId: string): Promise<void>;
+  // Consulting methods
+  createConsultingBooking(request: ConsultingBookingRequest): Promise<BookingResult>;
 }
 
 export interface IWorkshopAdmin {

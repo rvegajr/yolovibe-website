@@ -131,7 +131,7 @@ async function runTests() {
     
     console.log('✅ Test 6: getUpcomingWorkshops() - All Types');
     console.log(`   Found ${upcomingWorkshops.length} upcoming workshops:`);
-    upcomingWorkshops.forEach((workshop, index) => {
+    upcomingWorkshops.forEach((workshop: any, index: number) => {
       console.log(`   ${index + 1}. ${workshop.id} - ${workshop.startDate.toISOString().split('T')[0]} (${workshop.productId})`);
     });
     console.log('   ✅ Upcoming workshops retrieved successfully\n');
@@ -149,7 +149,7 @@ async function runTests() {
     
     console.log('✅ Test 7: getUpcomingWorkshops() - 3-Day Only');
     console.log(`   Found ${upcomingWorkshops.length} upcoming 3-day workshops:`);
-    upcomingWorkshops.forEach((workshop, index) => {
+    upcomingWorkshops.forEach((workshop: any, index: number) => {
       console.log(`   ${index + 1}. ${workshop.id} - ${workshop.startDate.toISOString().split('T')[0]}`);
     });
     console.log('   ✅ Filtered workshops retrieved successfully\n');
@@ -184,9 +184,10 @@ async function runTests() {
   try {
     await workshopAdmin.updateCapacity('workshop_1', 5); // workshop_1 has 15 current attendees
     console.log('❌ Test 9: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 9: updateCapacity() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 
@@ -195,9 +196,10 @@ async function runTests() {
   try {
     await workshopAdmin.getWorkshop('invalid-workshop-id');
     console.log('❌ Test 10: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 10: getWorkshop() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 

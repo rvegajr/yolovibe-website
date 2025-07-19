@@ -12,7 +12,8 @@ import type {
   LoginCredentials, 
   AuthenticationResult, 
   User, 
-  UserSession 
+  UserSession,
+  RegistrationData 
 } from '../core/types/index.js';
 
 interface UserRecord {
@@ -111,12 +112,12 @@ export class UserAuthenticator implements IUserAuthenticator {
       return false;
     }
 
-    if (session.expiresAt < new Date()) {
+    if (new Date(session.expiresAt) < new Date()) {
       this.sessions.delete(session.sessionId);
       return false;
     }
 
-    return session.isActive;
+    return true;
   }
 
   async createSession(userId: string): Promise<Session> {
@@ -128,7 +129,7 @@ export class UserAuthenticator implements IUserAuthenticator {
       sessionId,
       userId,
       token: sessionId,
-      expiresAt,
+      expiresAt: expiresAt,
       createdAt: now
     };
 
@@ -136,10 +137,9 @@ export class UserAuthenticator implements IUserAuthenticator {
     const userSession: UserSession = {
       sessionId,
       userId,
-      email: userId,
-      isActive: true,
-      createdAt: now,
-      expiresAt
+      token: sessionId,
+      createdAt: now.toISOString(),
+      expiresAt: expiresAt.toISOString()
     };
 
     this.sessions.set(sessionId, userSession);
@@ -197,7 +197,15 @@ export class UserAuthenticator implements IUserAuthenticator {
     const userObj: User = {
       id: credentials.email,
       email: credentials.email,
-      isActive: user.isActive
+      firstName: 'Test',
+      lastName: 'User',
+      company: 'YOLOVibe',
+      phone: '+1-555-0123',
+      isAdmin: false,
+      emailVerified: true,
+      isActive: user.isActive,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     return {
@@ -214,7 +222,7 @@ export class UserAuthenticator implements IUserAuthenticator {
       return null;
     }
 
-    if (session.expiresAt < new Date()) {
+    if (new Date(session.expiresAt) < new Date()) {
       this.sessions.delete(sessionToken);
       return null;
     }
@@ -223,20 +231,33 @@ export class UserAuthenticator implements IUserAuthenticator {
   }
 
   async getCurrentUser(sessionToken: string): Promise<User | null> {
-    const session = await this.validateUserSession(sessionToken);
+    const session = this.sessions.get(sessionToken);
     if (!session) {
       return null;
     }
 
-    const user = this.users.get(session.email);
+    if (new Date(session.expiresAt) < new Date()) {
+      this.sessions.delete(sessionToken);
+      return null;
+    }
+
+    const user = this.users.get(session.userId);
     if (!user) {
       return null;
     }
 
     return {
-      id: session.email,
-      email: session.email,
-      isActive: user.isActive
+      id: session.userId,
+      email: session.userId,
+      firstName: 'Test',
+      lastName: 'User',
+      company: 'YOLOVibe',
+      phone: '+1-555-0123',
+      isAdmin: false,
+      emailVerified: true,
+      isActive: user.isActive,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
   }
 
@@ -247,7 +268,7 @@ export class UserAuthenticator implements IUserAuthenticator {
     }
 
     // Extend expiration time
-    session.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+    session.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours from now
     this.sessions.set(sessionToken, session);
 
     return sessionToken; // Return same token with extended expiration
@@ -255,5 +276,43 @@ export class UserAuthenticator implements IUserAuthenticator {
 
   async logout(sessionToken: string): Promise<void> {
     this.sessions.delete(sessionToken);
+  }
+
+  async registerUser(registrationData: RegistrationData): Promise<User> {
+    // Check if user already exists
+    if (this.users.has(registrationData.email)) {
+      throw new Error('User already exists with this email');
+    }
+
+    // Create new user record
+    const userRecord: UserRecord = {
+      email: registrationData.email,
+      passwordHash: this.hashPassword(registrationData.password),
+      isActive: true
+    };
+
+    // Store user
+    this.users.set(registrationData.email, userRecord);
+
+    // Return user object
+    return {
+      id: registrationData.email,
+      email: registrationData.email,
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      company: registrationData.company,
+      phone: registrationData.phone,
+      isAdmin: false,
+      emailVerified: false,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  async logoutUser(sessionToken: string): Promise<boolean> {
+    const success = this.sessions.has(sessionToken);
+    this.sessions.delete(sessionToken);
+    return success;
   }
 }

@@ -151,7 +151,7 @@ async function testCalendarManager() {
     
     console.log('✅ Test 6: getUpcomingEvents()');
     console.log(`   Found ${upcomingEvents.length} upcoming events:`);
-    upcomingEvents.forEach((event, index) => {
+    upcomingEvents.forEach((event: any, index: number) => {
       console.log(`   ${index + 1}. ${event.title} - ${event.startDateTime.toISOString().split('T')[0]}`);
     });
     console.log('   ✅ Upcoming events retrieved successfully\n');
@@ -199,9 +199,10 @@ async function testCalendarManager() {
   try {
     await calendarManager.getEvent('invalid-event-id');
     console.log('❌ Test 8: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 8: getEvent() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 
@@ -210,9 +211,10 @@ async function testCalendarManager() {
   try {
     await calendarManager.updateEvent('invalid-event-id', { title: 'New Title' });
     console.log('❌ Test 9: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 9: updateEvent() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 
@@ -221,9 +223,10 @@ async function testCalendarManager() {
   try {
     await calendarManager.deleteEvent('invalid-event-id');
     console.log('❌ Test 10: Error handling failed - should have thrown error\n');
-  } catch (error) {
+  } catch (error: unknown) {
     console.log('✅ Test 10: deleteEvent() error handling');
-    console.log(`   Correctly threw error: ${error.message}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`   Correctly threw error: ${message}\n`);
     passedTests++;
   }
 
