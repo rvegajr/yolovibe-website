@@ -17,7 +17,8 @@ import type {
   UpcomingEvent,
   SystemEvent,
   SystemActivity,
-  SystemHealth
+  SystemHealth,
+  HealthCheck
 } from '../core/interfaces/IDashboardService.js';
 
 import { usageMonitor } from '../database/UsageMonitor.js';
@@ -48,7 +49,7 @@ export class DatabaseUsageService implements IDatabaseUsageService {
     // Implementation would read historical usage data
     // For now, return current usage as example
     const current = await this.getCurrentUsage();
-    const history = [];
+    const history: { date: string; usage: DatabaseUsageMetrics }[] = [];
     
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
@@ -79,7 +80,14 @@ export class DatabaseUsageService implements IDatabaseUsageService {
 
 // Admin Calendar Service Implementation
 export class AdminCalendarService implements IAdminCalendarService {
-  private db = getDatabaseConnection();
+  private db: any = null;
+
+  private getDatabase() {
+    if (!this.db) {
+      this.db = getDatabaseConnection();
+    }
+    return this.db;
+  }
 
   async getUpcomingTasks(days: number): Promise<AdminTask[]> {
     const endDate = new Date();
@@ -88,73 +96,77 @@ export class AdminCalendarService implements IAdminCalendarService {
     // Generate dynamic tasks based on actual data
     const tasks: AdminTask[] = [];
 
-    // Check for upcoming workshops that need preparation
-    const upcomingWorkshops = await this.db.query(`
-      SELECT w.*, p.name as product_name, COUNT(a.id) as attendee_count
-      FROM workshops w
-      JOIN products p ON w.product_id = p.id
-      LEFT JOIN bookings b ON w.id = b.workshop_id
-      LEFT JOIN attendees a ON b.id = a.booking_id
-      WHERE w.start_date BETWEEN date('now') AND date('now', '+${days} days')
-      AND w.status = 'ACTIVE'
-      GROUP BY w.id
-      ORDER BY w.start_date
-    `);
+    try {
+      // Check for upcoming workshops that need preparation
+      const upcomingWorkshops = await this.getDatabase().query(`
+        SELECT w.*, p.name as product_name, COUNT(a.id) as attendee_count
+        FROM workshops w
+        JOIN products p ON w.product_id = p.id
+        LEFT JOIN bookings b ON w.id = b.workshop_id
+        LEFT JOIN attendees a ON b.id = a.booking_id
+        WHERE w.start_date BETWEEN date('now') AND date('now', '+${days} days')
+        AND w.status = 'ACTIVE'
+        GROUP BY w.id
+        ORDER BY w.start_date
+      `);
 
-    for (const workshop of upcomingWorkshops) {
-      const startDate = new Date(workshop.start_date);
-      const prepDate = new Date(startDate);
-      prepDate.setDate(prepDate.getDate() - 2); // Prepare 2 days before
+      for (const workshop of upcomingWorkshops) {
+        const startDate = new Date(workshop.start_date);
+        const prepDate = new Date(startDate);
+        prepDate.setDate(prepDate.getDate() - 2); // Prepare 2 days before
 
-      if (prepDate >= new Date()) {
-        tasks.push({
-          id: `prep-${workshop.id}`,
-          title: `Prepare for ${workshop.product_name}`,
-          description: `Setup materials and confirm ${workshop.attendee_count} attendees`,
-          dueDate: prepDate,
-          priority: 'high',
-          type: 'workshop',
-          status: 'pending',
-          estimatedDuration: 60
-        });
+        if (prepDate >= new Date()) {
+          tasks.push({
+            id: `prep-${workshop.id}`,
+            title: `Prepare for ${workshop.product_name}`,
+            description: `Setup materials and confirm ${workshop.attendee_count} attendees`,
+            dueDate: prepDate,
+            priority: 'high',
+            type: 'workshop',
+            status: 'pending',
+            estimatedDuration: 60
+          });
+        }
+
+        // Follow-up task after workshop
+        const followUpDate = new Date(workshop.end_date);
+        followUpDate.setDate(followUpDate.getDate() + 1);
+        
+        if (followUpDate <= endDate) {
+          tasks.push({
+            id: `followup-${workshop.id}`,
+            title: `Follow up on ${workshop.product_name}`,
+            description: `Send completion certificates and gather feedback`,
+            dueDate: followUpDate,
+            priority: 'medium',
+            type: 'workshop',
+            status: 'pending',
+            estimatedDuration: 30
+          });
+        }
       }
 
-      // Follow-up task after workshop
-      const followUpDate = new Date(workshop.end_date);
-      followUpDate.setDate(followUpDate.getDate() + 1);
-      
-      if (followUpDate <= endDate) {
+      // Check for pending bookings that need review
+      const pendingBookings = await this.getDatabase().query(`
+        SELECT COUNT(*) as count FROM bookings 
+        WHERE status = 'PENDING' 
+        AND created_at < datetime('now', '-24 hours')
+      `);
+
+      if (pendingBookings[0]?.count > 0) {
         tasks.push({
-          id: `followup-${workshop.id}`,
-          title: `Follow up on ${workshop.product_name}`,
-          description: `Send completion certificates and gather feedback`,
-          dueDate: followUpDate,
-          priority: 'medium',
-          type: 'workshop',
+          id: 'review-pending-bookings',
+          title: 'Review Pending Bookings',
+          description: `${pendingBookings[0].count} bookings need attention`,
+          dueDate: new Date(),
+          priority: 'urgent',
+          type: 'booking',
           status: 'pending',
-          estimatedDuration: 30
+          estimatedDuration: 15
         });
       }
-    }
-
-    // Check for pending bookings that need review
-    const pendingBookings = await this.db.query(`
-      SELECT COUNT(*) as count FROM bookings 
-      WHERE status = 'PENDING' 
-      AND created_at < datetime('now', '-24 hours')
-    `);
-
-    if (pendingBookings[0]?.count > 0) {
-      tasks.push({
-        id: 'review-pending-bookings',
-        title: 'Review Pending Bookings',
-        description: `${pendingBookings[0].count} bookings need attention`,
-        dueDate: new Date(),
-        priority: 'urgent',
-        type: 'booking',
-        status: 'pending',
-        estimatedDuration: 15
-      });
+    } catch (error) {
+      console.warn('Could not load workshop data for tasks, using fallback tasks');
     }
 
     // Backup maintenance task
@@ -185,64 +197,68 @@ export class AdminCalendarService implements IAdminCalendarService {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + days);
 
-    const workshops = await this.db.query(`
-      SELECT w.*, p.name as product_name, COUNT(a.id) as attendee_count
-      FROM workshops w
-      JOIN products p ON w.product_id = p.id
-      LEFT JOIN bookings b ON w.id = b.workshop_id
-      LEFT JOIN attendees a ON b.id = a.booking_id
-      WHERE w.start_date BETWEEN date('now') AND date('now', '+${days} days')
-      AND w.status = 'ACTIVE'
-      GROUP BY w.id
-      ORDER BY w.start_date
-    `);
-
     const events: UpcomingEvent[] = [];
 
-    for (const workshop of workshops) {
-      // Workshop start event
-      events.push({
-        id: `start-${workshop.id}`,
-        title: `${workshop.product_name} Begins`,
-        date: new Date(workshop.start_date),
-        type: 'workshop_start',
-        participants: workshop.attendee_count,
-        location: 'Virtual/On-site',
-        status: 'confirmed'
-      });
+    try {
+      const workshops = await this.getDatabase().query(`
+        SELECT w.*, p.name as product_name, COUNT(a.id) as attendee_count
+        FROM workshops w
+        JOIN products p ON w.product_id = p.id
+        LEFT JOIN bookings b ON w.id = b.workshop_id
+        LEFT JOIN attendees a ON b.id = a.booking_id
+        WHERE w.start_date BETWEEN date('now') AND date('now', '+${days} days')
+        AND w.status = 'ACTIVE'
+        GROUP BY w.id
+        ORDER BY w.start_date
+      `);
 
-      // Workshop end event
-      events.push({
-        id: `end-${workshop.id}`,
-        title: `${workshop.product_name} Ends`,
-        date: new Date(workshop.end_date),
-        type: 'workshop_end',
-        participants: workshop.attendee_count,
-        location: 'Virtual/On-site',
-        status: 'confirmed'
-      });
-    }
+      for (const workshop of workshops) {
+        // Workshop start event
+        events.push({
+          id: `start-${workshop.id}`,
+          title: `${workshop.product_name} Begins`,
+          date: new Date(workshop.start_date),
+          type: 'workshop_start',
+          participants: workshop.attendee_count,
+          location: 'Virtual/On-site',
+          status: 'confirmed'
+        });
 
-    // Check for booking deadlines
-    const bookingDeadlines = await this.db.query(`
-      SELECT w.*, p.name as product_name
-      FROM workshops w
-      JOIN products p ON w.product_id = p.id
-      WHERE date(w.start_date, '-7 days') BETWEEN date('now') AND date('now', '+${days} days')
-      AND w.status = 'ACTIVE'
-    `);
+        // Workshop end event
+        events.push({
+          id: `end-${workshop.id}`,
+          title: `${workshop.product_name} Ends`,
+          date: new Date(workshop.end_date),
+          type: 'workshop_end',
+          participants: workshop.attendee_count,
+          location: 'Virtual/On-site',
+          status: 'confirmed'
+        });
+      }
 
-    for (const workshop of bookingDeadlines) {
-      const deadline = new Date(workshop.start_date);
-      deadline.setDate(deadline.getDate() - 7);
-      
-      events.push({
-        id: `deadline-${workshop.id}`,
-        title: `Booking Deadline: ${workshop.product_name}`,
-        date: deadline,
-        type: 'booking_deadline',
-        status: 'scheduled'
-      });
+      // Check for booking deadlines
+      const bookingDeadlines = await this.getDatabase().query(`
+        SELECT w.*, p.name as product_name
+        FROM workshops w
+        JOIN products p ON w.product_id = p.id
+        WHERE date(w.start_date, '-7 days') BETWEEN date('now') AND date('now', '+${days} days')
+        AND w.status = 'ACTIVE'
+      `);
+
+      for (const workshop of bookingDeadlines) {
+        const deadline = new Date(workshop.start_date);
+        deadline.setDate(deadline.getDate() - 7);
+        
+        events.push({
+          id: `deadline-${workshop.id}`,
+          title: `Booking Deadline: ${workshop.product_name}`,
+          date: deadline,
+          type: 'booking_deadline',
+          status: 'scheduled'
+        });
+      }
+    } catch (error) {
+      console.warn('Could not load workshop data for events, using fallback events');
     }
 
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -273,39 +289,50 @@ export class AdminCalendarService implements IAdminCalendarService {
 
 // System Events Service Implementation
 export class SystemEventsService implements ISystemEventsService {
-  private db = getDatabaseConnection();
+  private db: any = null;
   private events: SystemEvent[] = [];
 
-  async getRecentEvents(limit: number): Promise<SystemEvent[]> {
-    // Get recent bookings
-    const recentBookings = await this.db.query(`
-      SELECT b.*, u.first_name, u.last_name, p.name as product_name
-      FROM bookings b
-      JOIN users u ON b.user_id = u.id
-      JOIN workshops w ON b.workshop_id = w.id
-      JOIN products p ON w.product_id = p.id
-      WHERE b.created_at >= datetime('now', '-24 hours')
-      ORDER BY b.created_at DESC
-      LIMIT ?
-    `, [Math.floor(limit / 2)]);
+  private getDatabase() {
+    if (!this.db) {
+      this.db = getDatabaseConnection();
+    }
+    return this.db;
+  }
 
+  async getRecentEvents(limit: number): Promise<SystemEvent[]> {
     const events: SystemEvent[] = [];
 
-    for (const booking of recentBookings) {
-      events.push({
-        id: `booking-${booking.id}`,
-        timestamp: new Date(booking.created_at),
-        type: 'booking_created',
-        severity: 'success',
-        message: `New booking: ${booking.first_name} ${booking.last_name} for ${booking.product_name}`,
-        details: {
-          bookingId: booking.id,
-          amount: booking.total_amount,
-          productName: booking.product_name
-        },
-        userId: booking.user_id,
-        affectedResource: `booking:${booking.id}`
-      });
+    try {
+      // Get recent bookings
+      const recentBookings = await this.getDatabase().query(`
+        SELECT b.*, u.first_name, u.last_name, p.name as product_name
+        FROM bookings b
+        JOIN users u ON b.user_id = u.id
+        JOIN workshops w ON b.workshop_id = w.id
+        JOIN products p ON w.product_id = p.id
+        WHERE b.created_at >= datetime('now', '-24 hours')
+        ORDER BY b.created_at DESC
+        LIMIT ?
+      `, [Math.floor(limit / 2)]);
+
+      for (const booking of recentBookings) {
+        events.push({
+          id: `booking-${booking.id}`,
+          timestamp: new Date(booking.created_at),
+          type: 'booking_created',
+          severity: 'success',
+          message: `New booking: ${booking.first_name} ${booking.last_name} for ${booking.product_name}`,
+          details: {
+            bookingId: booking.id,
+            amount: booking.total_amount,
+            productName: booking.product_name
+          },
+          userId: booking.user_id,
+          affectedResource: `booking:${booking.id}`
+        });
+      }
+    } catch (error) {
+      console.warn('Could not load booking data for events, using fallback events');
     }
 
     // Add system startup event if recent
@@ -347,24 +374,35 @@ export class SystemEventsService implements ISystemEventsService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Get recent bookings count
-    const recentBookings = await this.db.query(`
-      SELECT COUNT(*) as count FROM bookings 
-      WHERE created_at >= datetime('now', '-1 hour')
-    `);
+    let recentBookings = 0;
+    let pendingPayments = 0;
+    let upcomingWorkshops = 0;
 
-    // Get pending payments
-    const pendingPayments = await this.db.query(`
-      SELECT COUNT(*) as count FROM bookings 
-      WHERE payment_status = 'PENDING'
-    `);
+    try {
+      // Get recent bookings count
+      const recentBookingsResult = await this.getDatabase().query(`
+        SELECT COUNT(*) as count FROM bookings 
+        WHERE created_at >= datetime('now', '-1 hour')
+      `);
+      recentBookings = recentBookingsResult[0]?.count || 0;
 
-    // Get upcoming workshops in next 30 days
-    const upcomingWorkshops = await this.db.query(`
-      SELECT COUNT(*) as count FROM workshops 
-      WHERE start_date BETWEEN date('now') AND date('now', '+30 days')
-      AND status = 'ACTIVE'
-    `);
+      // Get pending payments
+      const pendingPaymentsResult = await this.getDatabase().query(`
+        SELECT COUNT(*) as count FROM bookings 
+        WHERE payment_status = 'PENDING'
+      `);
+      pendingPayments = pendingPaymentsResult[0]?.count || 0;
+
+      // Get upcoming workshops in next 30 days
+      const upcomingWorkshopsResult = await this.getDatabase().query(`
+        SELECT COUNT(*) as count FROM workshops 
+        WHERE start_date BETWEEN date('now') AND date('now', '+30 days')
+        AND status = 'ACTIVE'
+      `);
+      upcomingWorkshops = upcomingWorkshopsResult[0]?.count || 0;
+    } catch (error) {
+      console.warn('Could not load activity data, using fallback values');
+    }
 
     // Get last backup time
     const lastBackupTime = new Date();
@@ -375,11 +413,11 @@ export class SystemEventsService implements ISystemEventsService {
 
     return {
       activeUsers: Math.floor(Math.random() * 5) + 1, // Simulated active users
-      recentBookings: recentBookings[0]?.count || 0,
-      pendingPayments: pendingPayments[0]?.count || 0,
+      recentBookings,
+      pendingPayments,
       systemLoad: Math.random() * 0.3 + 0.1, // Simulated low system load
       lastBackup: lastBackupTime,
-      upcomingWorkshops: upcomingWorkshops[0]?.count || 0
+      upcomingWorkshops
     };
   }
 
@@ -411,8 +449,15 @@ export class SystemEventsService implements ISystemEventsService {
 
 // System Health Service Implementation
 export class SystemHealthService implements ISystemHealthService {
-  private db = getDatabaseConnection();
+  private db: any = null;
   private startTime = new Date();
+
+  private getDatabase() {
+    if (!this.db) {
+      this.db = getDatabaseConnection();
+    }
+    return this.db;
+  }
 
   async getSystemHealth(): Promise<SystemHealth> {
     const checks = await Promise.all([
@@ -451,7 +496,7 @@ export class SystemHealthService implements ISystemHealthService {
     const startTime = Date.now();
     
     try {
-      await this.db.query('SELECT 1');
+      await this.getDatabase().query('SELECT 1');
       const responseTime = Date.now() - startTime;
       
       return {
@@ -520,7 +565,7 @@ export class SystemHealthService implements ISystemHealthService {
   }
 
   async getUptimeStats(days: number): Promise<{ date: string; uptime: number }[]> {
-    const stats = [];
+    const stats: { date: string; uptime: number }[] = [];
     
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();

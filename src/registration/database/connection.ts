@@ -122,18 +122,29 @@ export class DatabaseConnection {
     // For production, use external database service
     const dbPath = '/tmp/yolovibe.db';
     
-    // Check if we can restore from backup
-    await this.restoreFromBackup(dbPath);
-    
-    this.db = new Database(dbPath, {
-      readonly: false,
-      fileMustExist: false,
-      timeout: this.config.timeout || 5000,
-      verbose: this.config.verbose
-    });
-    
-    console.warn('⚠️ WARNING: Using temporary SQLite storage. Data may be lost on deployment!');
-    console.warn('⚠️ For production, configure ***REMOVED*** with Turso or PostgreSQL');
+    try {
+      // Check if we can restore from backup
+      await this.restoreFromBackup(dbPath);
+      
+      this.db = new Database(dbPath, {
+        readonly: false,
+        fileMustExist: false,
+        timeout: this.config.timeout || 5000,
+        verbose: this.config.verbose
+      });
+      
+      console.warn('⚠️ WARNING: Using temporary SQLite storage. Data may be lost on deployment!');
+      console.warn('⚠️ For production, configure ***REMOVED*** with Turso or PostgreSQL');
+    } catch (error) {
+      console.warn(`⚠️ Could not create file-based database: ${error.message}`);
+      // Final fallback to in-memory database
+      this.db = new Database(':memory:', {
+        readonly: false,
+        timeout: this.config.timeout || 5000,
+        verbose: this.config.verbose
+      });
+      console.log('📁 Using in-memory database as final fallback for build/serverless');
+    }
   }
 
   /**
@@ -145,16 +156,34 @@ export class DatabaseConnection {
     // Ensure directory exists
     const dataDir = dirname(this.config.filename);
     if (!existsSync(dataDir)) {
-      mkdirSync(dataDir, { recursive: true });
-      console.log(`📁 Created data directory: ${dataDir}`);
+      try {
+        mkdirSync(dataDir, { recursive: true });
+        console.log(`📁 Created data directory: ${dataDir}`);
+      } catch (error) {
+        console.warn(`⚠️ Could not create data directory: ${error.message}`);
+        // Use a fallback location for serverless environments
+        this.config.filename = '/tmp/yolovibe.db';
+        console.log(`📁 Using fallback database location: ${this.config.filename}`);
+      }
     }
     
-    this.db = new Database(this.config.filename, {
-      readonly: this.config.readonly || false,
-      fileMustExist: this.config.fileMustExist || false,
-      timeout: this.config.timeout || 5000,
-      verbose: this.config.verbose
-    });
+    try {
+      this.db = new Database(this.config.filename, {
+        readonly: this.config.readonly || false,
+        fileMustExist: false, // Always allow creation
+        timeout: this.config.timeout || 5000,
+        verbose: this.config.verbose
+      });
+    } catch (error) {
+      console.warn(`⚠️ Could not create database at ${this.config.filename}: ${error.message}`);
+      // Final fallback to in-memory database
+      this.db = new Database(':memory:', {
+        readonly: false,
+        timeout: this.config.timeout || 5000,
+        verbose: this.config.verbose
+      });
+      console.log('📁 Using in-memory database as final fallback');
+    }
   }
 
   /**
