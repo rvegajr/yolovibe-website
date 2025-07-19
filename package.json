@@ -18,7 +18,13 @@
     "backup:list": "npx tsx scripts/backup-list.ts",
     "backup:restore": "npx tsx scripts/backup-restore.ts",
     "backup:schedule": "node -e \"require('./src/registration/database/BackupManager.js').backupManager.startScheduledBackups()\"",
-    "turso:setup": "echo 'Run: curl -sSfL https://get.tur.so/install.sh | bash && turso auth login && turso db create yolovibe-prod'"
+    "usage:check": "npx tsx scripts/usage-monitor.ts check",
+    "usage:report": "npx tsx scripts/usage-monitor.ts report",
+    "usage:alerts": "npx tsx scripts/usage-monitor.ts alerts",
+    "usage:projection": "npx tsx scripts/usage-monitor.ts projection",
+    "usage:monitor": "npx tsx scripts/usage-monitor.ts",
+    "turso:setup": "echo 'Run: curl -sSfL https://get.tur.so/install.sh | bash && turso auth login && turso db create yolovibe-prod'",
+    "turso:usage": "turso db show yolovibe-prod --usage"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
