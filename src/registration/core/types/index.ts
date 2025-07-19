@@ -1,18 +1,17 @@
 /**
  * Core Business Types - Data Models for YOLOVibe Registration System
- * These types support our 13 core interfaces
+ * These types support our 13 core interfaces and provide type safety
+ * across the entire registration and workshop management system.
  */
 
-// Workshop & Product Types
+// =====================================================
+// WORKSHOP & PRODUCT TYPES
+// =====================================================
+
 export enum ProductType {
   THREE_DAY = '3-day',
   FIVE_DAY = '5-day',
   HOURLY_CONSULTING = 'hourly-consulting'
-}
-
-export enum WorkshopType {
-  THREE_DAY = '3-day',
-  FIVE_DAY = '5-day'
 }
 
 export interface Product {
@@ -20,10 +19,13 @@ export interface Product {
   name: string;
   type: ProductType;
   price: number;
-  duration: number; // days
+  duration: number; // days for workshops, hours for consulting
   description: string;
   maxCapacity: number;
   availableStartDays: string[]; // ['monday', 'tuesday', 'wednesday'] for 3-day
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Workshop {
@@ -31,61 +33,37 @@ export interface Workshop {
   productId: string;
   startDate: Date;
   endDate: Date;
-  capacity: number;
-  currentAttendees: number;
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
-  calendarEventId?: string;
-}
-
-export interface WorkshopMetrics {
-  workshopId: string;
-  totalBookings: number;
   currentCapacity: number;
   maxCapacity: number;
-  revenue: number;
-  attendeeCount: number;
-  completionRate: number;
+  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  location?: string;
+  instructorNotes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface CapacityStatus {
-  workshopId: string;
-  current: number;
-  maximum: number;
-  available: number;
-  isFull: boolean;
-  waitlistCount: number;
+export enum WorkshopType {
+  THREE_DAY_INTENSIVE = 'THREE_DAY_INTENSIVE',
+  FIVE_DAY_BOOTCAMP = 'FIVE_DAY_BOOTCAMP',
+  HOURLY_CONSULTING = 'HOURLY_CONSULTING'
 }
 
-// Consulting Types
 export interface TimeSlot {
-  startTime: string; // "09:00"
-  endTime: string;   // "11:00"
+  startTime: Date;
+  endTime: Date;
   available: boolean;
-  duration: number;  // hours
+  bookingId?: string;
 }
 
-export interface ConsultingSession {
-  id: string;
-  bookingId: string;
-  scheduledDate: Date;
-  startTime: string;
-  durationHours: number;
-  hourlyRate: number;
-  zoomLink?: string;
-  zoomMeetingId?: string;
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+export interface DateRange {
+  startDate: Date;
+  endDate: Date;
 }
 
-export interface ConsultingBookingRequest {
-  productId: string;
-  scheduledDate: Date;
-  startTime: string; // "14:00"
-  durationHours: number;
-  pointOfContact: ContactInfo;
-  paymentMethod: PaymentMethod;
-}
+// =====================================================
+// BOOKING TYPES
+// =====================================================
 
-// Booking Types
 export interface BookingRequest {
   productId: string;
   startDate: Date;
@@ -96,94 +74,64 @@ export interface BookingRequest {
   paymentMethod: PaymentMethod;
 }
 
+export interface ConsultingBookingRequest extends BookingRequest {
+  preferredTimeSlots: TimeSlot[];
+  consultingType: 'technical' | 'business' | 'strategy';
+  projectDescription?: string;
+}
+
 export interface BookingResult {
-  bookingId: string;
-  workshopId: string;
-  status: 'confirmed' | 'pending' | 'failed';
-  totalAmount: number;
-  discountApplied?: number;
-  paymentId?: string;
-  confirmationNumber: string;
+  success: boolean;
+  bookingId?: string;
+  confirmationNumber?: string;
+  totalAmount?: number;
+  finalAmount?: number;
+  discountAmount?: number;
+  errorMessage?: string;
+  paymentRequired?: boolean;
 }
 
 export interface Booking {
   id: string;
   workshopId: string;
+  userId?: string;
   pointOfContactId: string;
   attendees: Attendee[];
   totalAmount: number;
-  paymentStatus: 'pending' | 'paid' | 'refunded' | 'failed';
+  discountAmount: number;
+  finalAmount: number;
+  couponCode?: string;
+  paymentStatus: PaymentStatus;
   bookingDate: Date;
-  status: 'active' | 'cancelled' | 'completed';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   confirmationNumber: string;
+  paymentIntentId?: string;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Payment Types
-export interface PaymentRequest {
-  amount: number;
-  currency: string;
-  bookingId: string;
-  paymentMethod: PaymentMethod;
-  description: string;
+export interface CapacityStatus {
+  workshopId: string;
+  currentCapacity: number;
+  maxCapacity: number;
+  availableSpots: number;
+  isFullyBooked: boolean;
 }
 
-export interface PaymentMethod {
-  type: 'card' | 'bank_transfer';
-  cardToken?: string;
-  billingAddress?: Address;
-}
-
-export interface PaymentResult {
-  paymentId: string;
-  status: 'success' | 'failed' | 'pending';
-  transactionId?: string;
-  errorMessage?: string;
-  receiptUrl?: string;
-}
-
-export interface RefundResult {
-  refundId: string;
-  status: 'success' | 'failed' | 'pending';
-  amount: number;
-  errorMessage?: string;
-}
-
-export interface PaymentStatus {
-  paymentId: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  amount: number;
-  transactionDate: Date;
-}
-
-export interface PaymentSummary {
+export interface WorkshopMetrics {
+  workshopId: string;
+  totalBookings: number;
   totalRevenue: number;
-  totalTransactions: number;
-  averageTransactionAmount: number;
-  refundAmount: number;
-  netRevenue: number;
-  dateRange: DateRange;
+  averageBookingSize: number;
+  cancellationRate: number;
+  attendanceRate: number;
 }
 
-export interface RevenueAnalytics {
-  monthlyRevenue: MonthlyRevenue[];
-  productRevenue: ProductRevenue[];
-  refundRate: number;
-  averageBookingValue: number;
-}
+// =====================================================
+// PEOPLE TYPES
+// =====================================================
 
-export interface MonthlyRevenue {
-  month: string;
-  revenue: number;
-  bookingCount: number;
-}
-
-export interface ProductRevenue {
-  productType: ProductType;
-  revenue: number;
-  bookingCount: number;
-}
-
-// People Types
 export interface AttendeeInfo {
   firstName: string;
   lastName: string;
@@ -201,6 +149,9 @@ export interface Attendee extends AttendeeInfo {
   accessStatus: AccessStatus;
   registrationDate: Date;
   lastLoginDate?: Date;
+  workshopProgress?: WorkshopProgress;
+  certificateIssued?: boolean;
+  notes?: string;
 }
 
 export interface AttendeeUpdates {
@@ -211,6 +162,7 @@ export interface AttendeeUpdates {
   company?: string;
   dietaryRestrictions?: string;
   accessibilityNeeds?: string;
+  notes?: string;
 }
 
 export interface ContactInfo {
@@ -225,9 +177,20 @@ export interface ContactInfo {
 
 export interface PointOfContact extends ContactInfo {
   id: string;
-  bookingId: string;
-  isAttendee: boolean;
-  createdDate: Date;
+  bookingIds: string[];
+  preferredContactMethod: 'email' | 'phone' | 'sms';
+  timezone?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Address {
+  street1: string;
+  street2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
 }
 
 export interface AccessStatus {
@@ -235,42 +198,104 @@ export interface AccessStatus {
   hasAccess: boolean;
   passwordGenerated: boolean;
   lastAccessDate?: Date;
-  expirationDate?: Date;
+  accessExpiryDate?: Date;
+  loginAttempts?: number;
+  isLocked?: boolean;
 }
 
-export interface Address {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+export interface WorkshopProgress {
+  attendeeId: string;
+  workshopId: string;
+  completedModules: string[];
+  currentModule?: string;
+  overallProgress: number; // 0-100
+  lastActivityDate: Date;
+  timeSpent: number; // minutes
 }
 
-// Coupon Types
+// =====================================================
+// PAYMENT TYPES
+// =====================================================
+
+export interface PaymentMethod {
+  type: 'card' | 'ach' | 'wire' | 'check';
+  cardLast4?: string;
+  cardBrand?: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  billingAddress?: Address;
+}
+
+export interface PaymentRequest {
+  amount: number;
+  currency: 'USD';
+  paymentMethod: PaymentMethod;
+  bookingId: string;
+  description?: string;
+  metadata?: Record<string, string>;
+}
+
+export interface PaymentResult {
+  success: boolean;
+  paymentId?: string;
+  transactionId?: string;
+  amount?: number;
+  currency?: string;
+  status?: PaymentStatus;
+  errorMessage?: string;
+  receiptUrl?: string;
+}
+
+export interface RefundResult {
+  success: boolean;
+  refundId?: string;
+  amount?: number;
+  status?: 'pending' | 'completed' | 'failed';
+  errorMessage?: string;
+  processingTime?: string;
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED',
+  PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED'
+}
+
 export interface CouponValidation {
   isValid: boolean;
-  couponCode: string;
-  discountType: 'percentage' | 'fixed';
-  discountValue: number;
-  minimumAmount?: number;
-  expirationDate?: Date;
-  usageLimit?: number;
-  currentUsage: number;
+  couponCode?: string;
+  discountType?: 'percentage' | 'fixed_amount';
+  discountValue?: number;
+  discountAmount?: number;
   errorMessage?: string;
+  expiryDate?: Date;
+  usageLimit?: number;
+  usageCount?: number;
 }
 
 export interface CouponUsage {
   couponCode: string;
-  totalUsage: number;
-  usageLimit?: number;
-  remainingUses?: number;
-  lastUsedDate?: Date;
+  bookingId: string;
+  discountAmount: number;
+  usedAt: Date;
+  userId?: string;
 }
 
-// Authentication Types
+// =====================================================
+// AUTHENTICATION TYPES
+// =====================================================
+
 export interface Credentials {
   email: string;
   password: string;
+}
+
+export interface LoginCredentials extends Credentials {
+  rememberMe?: boolean;
 }
 
 export interface AuthResult {
@@ -282,24 +307,26 @@ export interface AuthResult {
   errorMessage?: string;
 }
 
+export interface AuthenticationResult {
+  success: boolean;
+  user?: User | null;
+  sessionToken?: string | null;
+  errorMessage?: string | null;
+}
+
 export interface Session {
   sessionId: string;
   userId: string;
   token: string;
   expiresAt: Date;
   createdAt: Date;
+  lastAccessedAt?: Date;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface AuthenticationResult {
-  success: boolean;
-  user?: User | null;
-  sessionToken?: string | null;
-  errorMessage?: string | null;
+export interface UserSession extends Session {
+  user: User;
 }
 
 export interface User {
@@ -315,14 +342,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;
-}
-
-export interface UserSession {
-  sessionId: string;
-  userId: string;
-  token: string;
-  expiresAt: string;
-  createdAt: string;
+  preferences?: UserPreferences;
 }
 
 export interface RegistrationData {
@@ -335,153 +355,306 @@ export interface RegistrationData {
   isAdmin?: boolean;
 }
 
-export interface PasswordResetRequest {
-  userId: string;
-  token: string;
-  expiresAt: string;
-  createdAt: string;
+export interface UserPreferences {
+  emailNotifications: boolean;
+  smsNotifications: boolean;
+  marketingEmails: boolean;
+  timezone?: string;
+  language?: string;
 }
 
-// Material Types
+export interface PasswordResetRequest {
+  email: string;
+  token: string;
+  expiresAt: Date;
+  used: boolean;
+  createdAt: Date;
+}
+
+// =====================================================
+// CONTENT & MATERIALS TYPES
+// =====================================================
+
 export interface Material {
   id: string;
   workshopId: string;
-  fileName: string;
-  originalName: string;
-  fileSize: number;
-  mimeType: string;
-  uploadDate: Date;
-  downloadUrl: string;
-  accessLevel: 'public' | 'attendees_only' | 'admin_only';
+  title: string;
+  description?: string;
+  type: 'pdf' | 'video' | 'link' | 'exercise' | 'quiz';
+  url?: string;
+  content?: string;
+  order: number;
+  isRequired: boolean;
+  accessLevel: 'public' | 'attendee_only' | 'admin_only';
+  downloadable: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Utility Types
-export interface DateRange {
-  startDate: Date;
-  endDate: Date;
-}
-
-export interface ExportResult {
-  success: boolean;
-  downloadUrl?: string;
-  fileName?: string;
-  errorMessage?: string;
-}
-
-// File handling (for browser compatibility)
 export interface File {
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-  arrayBuffer(): Promise<ArrayBuffer>;
-  text(): Promise<string>;
-}
-
-// Email Types
-export interface EmailRequest {
-  to: string;
-  subject: string;
-  content: string;
-  from: string;
-  cc?: string[];
-  bcc?: string[];
-  attachments?: EmailAttachment[];
-}
-
-export interface EmailResult {
-  emailId: string;
-  status: 'success' | 'failed' | 'pending';
-  messageId?: string;
-  errorMessage?: string;
-}
-
-export interface EmailStatus {
-  emailId: string;
-  status: 'sent' | 'delivered' | 'failed' | 'bounced';
-  recipient: string;
-  sentAt: Date;
-  deliveredAt?: Date;
-  templateId?: string;
-}
-
-export interface EmailTemplate {
   id: string;
-  name: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  uploadedBy: string;
+  uploadedAt: Date;
+  isPublic: boolean;
+  metadata?: Record<string, any>;
+}
+
+// =====================================================
+// COMMUNICATION TYPES
+// =====================================================
+
+export interface EmailRequest {
+  to: string | string[];
+  cc?: string | string[];
+  bcc?: string | string[];
   subject: string;
-  htmlContent: string;
+  htmlContent?: string;
   textContent?: string;
-  variables: string[];
+  templateId?: string;
+  templateData?: Record<string, any>;
+  attachments?: EmailAttachment[];
+  tags?: string[];
+  priority?: 'low' | 'normal' | 'high';
 }
 
 export interface EmailAttachment {
   filename: string;
-  content: string | Buffer;
+  content: Buffer | string;
   contentType: string;
+  disposition?: 'attachment' | 'inline';
+  contentId?: string;
 }
 
-// Calendar Management Types
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  description?: string;
-  startDateTime: Date;
-  endDateTime: Date;
-  location?: string;
-  attendees?: string[];
-  isAllDay?: boolean;
-  status?: 'confirmed' | 'cancelled' | 'tentative';
-  workshopId?: string;
+export interface EmailResult {
+  success: boolean;
+  messageId?: string;
+  errorMessage?: string;
+  deliveryStatus?: EmailStatus;
+  sentAt?: Date;
 }
 
-export interface CalendarEventRequest {
-  title: string;
-  description?: string;
-  startDateTime: Date;
-  endDateTime: Date;
-  location?: string;
-  attendees?: string[];
-  isAllDay?: boolean;
-  workshopId?: string;
+export enum EmailStatus {
+  QUEUED = 'QUEUED',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  BOUNCED = 'BOUNCED',
+  FAILED = 'FAILED',
+  OPENED = 'OPENED',
+  CLICKED = 'CLICKED'
 }
 
-export interface CalendarEventUpdate {
-  title?: string;
-  description?: string;
-  startDateTime?: Date;
-  endDateTime?: Date;
-  location?: string;
-  attendees?: string[];
-  isAllDay?: boolean;
-  status?: 'confirmed' | 'tentative' | 'cancelled';
+// =====================================================
+// REPORTING & ANALYTICS TYPES
+// =====================================================
+
+export interface PaymentSummary {
+  totalRevenue: number;
+  totalTransactions: number;
+  averageTransactionAmount: number;
+  refundAmount: number;
+  netRevenue: number;
+  currency: string;
+  periodStart: Date;
+  periodEnd: Date;
 }
 
-// Purchase Workflow Types
+export interface RevenueAnalytics {
+  dailyRevenue: DailyRevenue[];
+  monthlyRevenue: MonthlyRevenue[];
+  revenueByProduct: ProductRevenue[];
+  revenueByRegion?: RegionRevenue[];
+  totalRevenue: number;
+  projectedRevenue?: number;
+  growthRate?: number;
+}
+
+export interface DailyRevenue {
+  date: Date;
+  revenue: number;
+  transactions: number;
+  refunds: number;
+  netRevenue: number;
+}
+
+export interface MonthlyRevenue {
+  year: number;
+  month: number;
+  revenue: number;
+  transactions: number;
+  refunds: number;
+  netRevenue: number;
+  growth?: number;
+}
+
+export interface ProductRevenue {
+  productId: string;
+  productName: string;
+  revenue: number;
+  bookings: number;
+  averageBookingValue: number;
+  refunds: number;
+  netRevenue: number;
+}
+
+export interface RegionRevenue {
+  region: string;
+  revenue: number;
+  bookings: number;
+  averageBookingValue: number;
+}
+
+export interface ExportResult {
+  success: boolean;
+  fileUrl?: string;
+  filename?: string;
+  format: 'csv' | 'excel' | 'pdf';
+  recordCount?: number;
+  errorMessage?: string;
+  expiresAt?: Date;
+}
+
+// =====================================================
+// PURCHASE WORKFLOW TYPES
+// =====================================================
+
 export interface PurchaseRequest {
   bookingRequest: BookingRequest;
   paymentMethod: PaymentMethod;
   billingAddress?: Address;
   savePaymentMethod?: boolean;
+  agreeToTerms: boolean;
+  marketingOptIn?: boolean;
 }
 
 export interface PurchaseResult {
-  purchaseId: string;
-  bookingId: string;
-  paymentId: string;
-  status: 'completed' | 'failed' | 'pending';
-  totalAmount: number;
-  confirmationNumber: string;
-  receiptUrl?: string;
+  success: boolean;
+  purchaseId?: string;
+  bookingId?: string;
+  paymentId?: string;
+  confirmationNumber?: string;
+  totalAmount?: number;
+  discountAmount?: number;
+  finalAmount?: number;
+  paymentStatus?: PaymentStatus;
+  bookingStatus?: string;
   errorMessage?: string;
+  receiptUrl?: string;
+  nextSteps?: string[];
 }
 
 export interface PurchaseStatus {
   purchaseId: string;
-  bookingStatus: 'confirmed' | 'cancelled' | 'pending';
-  paymentStatus: 'completed' | 'failed' | 'pending' | 'refunded';
+  bookingStatus: string;
+  paymentStatus: PaymentStatus;
   totalAmount: number;
   paidAmount: number;
-  refundAmount?: number;
+  refundAmount: number;
   createdAt: Date;
   updatedAt: Date;
+  completedSteps: string[];
+  nextSteps: string[];
+  canCancel: boolean;
+  canRefund: boolean;
+}
+
+// =====================================================
+// SYSTEM TYPES
+// =====================================================
+
+export interface SystemHealth {
+  status: 'healthy' | 'degraded' | 'down';
+  checks: HealthCheck[];
+  timestamp: Date;
+  version: string;
+}
+
+export interface HealthCheck {
+  name: string;
+  status: 'pass' | 'fail' | 'warn';
+  responseTime?: number;
+  error?: string;
+  details?: Record<string, any>;
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+  timestamp: Date;
+  requestId?: string;
+}
+
+export interface PaginatedResponse<T = any> {
+  success: boolean;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  error?: string;
+  message?: string;
+}
+
+// =====================================================
+// ERROR TYPES
+// =====================================================
+
+export class BusinessError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode: number = 400,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'BusinessError';
+  }
+}
+
+export class ValidationError extends BusinessError {
+  constructor(message: string, details?: any) {
+    super(message, 'VALIDATION_ERROR', 400, details);
+    this.name = 'ValidationError';
+  }
+}
+
+export class NotFoundError extends BusinessError {
+  constructor(resource: string, identifier?: string) {
+    const message = identifier 
+      ? `${resource} with identifier '${identifier}' not found`
+      : `${resource} not found`;
+    super(message, 'NOT_FOUND', 404);
+    this.name = 'NotFoundError';
+  }
+}
+
+export class ConflictError extends BusinessError {
+  constructor(message: string, details?: any) {
+    super(message, 'CONFLICT', 409, details);
+    this.name = 'ConflictError';
+  }
+}
+
+export class UnauthorizedError extends BusinessError {
+  constructor(message: string = 'Unauthorized access') {
+    super(message, 'UNAUTHORIZED', 401);
+    this.name = 'UnauthorizedError';
+  }
+}
+
+export class ForbiddenError extends BusinessError {
+  constructor(message: string = 'Forbidden access') {
+    super(message, 'FORBIDDEN', 403);
+    this.name = 'ForbiddenError';
+  }
 }

@@ -13,7 +13,7 @@
  */
 
 import Database from 'better-sqlite3';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -41,12 +41,34 @@ export class DatabaseConnection {
    */
   async initialize(): Promise<void> {
     try {
-      this.db = new Database(this.config.filename, {
-        readonly: this.config.readonly || false,
-        fileMustExist: this.config.fileMustExist || false,
-        timeout: this.config.timeout || 5000,
-        verbose: this.config.verbose
-      });
+      // Handle Vercel serverless environment
+      if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+        // Use in-memory database for Vercel serverless functions
+        console.log('🔧 Vercel environment detected, using in-memory database');
+        this.db = new Database(':memory:', {
+          readonly: false,
+          fileMustExist: false,
+          timeout: this.config.timeout || 5000,
+          verbose: this.config.verbose
+        });
+      } else {
+        // Use file-based database for local development
+        console.log(`📁 Local environment, using database: ${this.config.filename}`);
+        
+        // Ensure directory exists
+        const dataDir = dirname(this.config.filename);
+        if (!existsSync(dataDir)) {
+          mkdirSync(dataDir, { recursive: true });
+          console.log(`📁 Created data directory: ${dataDir}`);
+        }
+        
+        this.db = new Database(this.config.filename, {
+          readonly: this.config.readonly || false,
+          fileMustExist: this.config.fileMustExist || false,
+          timeout: this.config.timeout || 5000,
+          verbose: this.config.verbose
+        });
+      }
 
       // Enable WAL mode for better performance
       this.db.pragma('journal_mode = WAL');
