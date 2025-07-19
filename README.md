@@ -14,6 +14,35 @@
 - ✅ **Core Types Defined:** 500+ lines of TypeScript definitions, 13 business interfaces
 - ✅ **Production Ready:** Zero build errors, all API routes configured for serverless
 
+## 🚨 **CRITICAL DATABASE WARNING**
+
+**⚠️ URGENT: The current setup WILL DELETE ALL DATA on deployment!**
+
+**Before deploying to production, you MUST configure a persistent database or ALL USER DATA WILL BE LOST.**
+
+👉 **READ THIS FIRST: [DATABASE_DEPLOYMENT_GUIDE.md](./DATABASE_DEPLOYMENT_GUIDE.md)**
+
+### **Quick Fix (5 minutes with Turso)**
+```bash
+# 1. Install Turso CLI and create account
+curl -sSfL https://get.tur.so/install.sh | bash
+turso auth login
+
+# 2. Create production database  
+turso db create yolovibe-prod
+turso db tokens create yolovibe-prod
+
+# 3. Set environment variables in Vercel
+vercel env add ***REMOVED***
+# Enter: libsql://your-database-url.turso.tech
+
+# 4. Deploy schema
+turso db shell yolovibe-prod < src/registration/database/schema.sql
+
+# 5. Now safe to deploy
+vercel --prod
+```
+
 ## 🚨 **QUICK DEPLOYMENT GUIDE**
 
 ### **Prerequisites**
@@ -23,6 +52,9 @@ npm install -g vercel
 
 # Ensure you're in the project directory
 cd YOLOVibeWebsite
+
+# ⚠️ CRITICAL: Configure persistent database first!
+# See DATABASE_DEPLOYMENT_GUIDE.md for details
 ```
 
 ### **1. Environment Setup**
