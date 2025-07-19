@@ -20,6 +20,8 @@
     "backup:schedule": "node -e \"require('./src/registration/database/BackupManager.js').backupManager.startScheduledBackups()\"",
     "usage:check": "npx tsx scripts/usage-monitor.ts check",
     "usage:report": "npx tsx scripts/usage-monitor.ts report",
+    "send-testing-invites": "npx tsx scripts/send-testing-invites.ts",
+    "test:coupons": "npx tsx scripts/test-coupons.ts",
     "usage:alerts": "npx tsx scripts/usage-monitor.ts alerts",
     "usage:projection": "npx tsx scripts/usage-monitor.ts projection",
     "usage:monitor": "npx tsx scripts/usage-monitor.ts",
