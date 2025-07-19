@@ -13,7 +13,12 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
-    "test:e2e:check": "npx tsx tests/e2e/utils/pre-test-check.ts"
+    "test:e2e:check": "npx tsx tests/e2e/utils/pre-test-check.ts",
+    "backup:create": "npx tsx scripts/backup-create.ts",
+    "backup:list": "npx tsx scripts/backup-list.ts",
+    "backup:restore": "npx tsx scripts/backup-restore.ts",
+    "backup:schedule": "node -e \"require('./src/registration/database/BackupManager.js').backupManager.startScheduledBackups()\"",
+    "turso:setup": "echo 'Run: curl -sSfL https://get.tur.so/install.sh | bash && turso auth login && turso db create yolovibe-prod'"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -29,6 +34,7 @@
     "@iconify-json/tabler": "^1.2.19",
     "@iconify-json/uil": "^1.2.3",
     "@iconify/json": "^2.2.359",
+    "@libsql/client": "^0.15.10",
     "@sendgrid/mail": "^8.1.5",
     "@tailwindcss/vite": "^4.1.11",
     "@types/bcrypt": "^6.0.0",
