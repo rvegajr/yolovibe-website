@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { BookingManagerDB } from '../../../../registration/implementations/database/BookingManagerDB.js';
 
+export const prerender = false;
+
 /**
  * GET /api/bookings/user/[userId]
  * Retrieves all bookings for a specific user

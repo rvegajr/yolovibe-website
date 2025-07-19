@@ -101,8 +101,89 @@ export class DatabaseConnection {
         .get('schema.sql');
 
       if (!schemaApplied) {
-        const schemaPath = join(__dirname, 'schema.sql');
-        const schemaSql = readFileSync(schemaPath, 'utf-8');
+        // Try multiple possible paths for schema.sql
+        const possiblePaths = [
+          join(__dirname, 'schema.sql'),
+          join(process.cwd(), 'src', 'registration', 'database', 'schema.sql'),
+          join(process.cwd(), 'dist', 'registration', 'database', 'schema.sql'),
+          join(process.cwd(), 'schema.sql')
+        ];
+        
+        let schemaSql = '';
+        let schemaPath = '';
+        
+        for (const path of possiblePaths) {
+          try {
+            if (existsSync(path)) {
+              schemaSql = readFileSync(path, 'utf-8');
+              schemaPath = path;
+              break;
+            }
+          } catch (error) {
+            // Continue to next path
+            continue;
+          }
+        }
+        
+        if (!schemaSql) {
+          console.warn('⚠️ Schema file not found, creating basic tables manually');
+          // Create basic tables manually if schema.sql is not found
+          schemaSql = `
+            CREATE TABLE IF NOT EXISTS users (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              email TEXT UNIQUE NOT NULL,
+              password_hash TEXT NOT NULL,
+              first_name TEXT NOT NULL,
+              last_name TEXT NOT NULL,
+              company TEXT,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS bookings (
+              id TEXT PRIMARY KEY,
+              product_id TEXT NOT NULL,
+              start_date TEXT NOT NULL,
+              attendee_count INTEGER NOT NULL,
+              status TEXT DEFAULT 'confirmed',
+              total_amount REAL NOT NULL,
+              coupon_code TEXT,
+              point_of_contact TEXT NOT NULL,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS attendees (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              booking_id TEXT NOT NULL,
+              first_name TEXT NOT NULL,
+              last_name TEXT NOT NULL,
+              email TEXT NOT NULL,
+              company TEXT,
+              dietary_restrictions TEXT,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              FOREIGN KEY (booking_id) REFERENCES bookings(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS calendar_blocks (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              date TEXT NOT NULL UNIQUE,
+              reason TEXT,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS coupons (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              code TEXT UNIQUE NOT NULL,
+              discount_percentage INTEGER NOT NULL,
+              usage_limit INTEGER,
+              usage_count INTEGER DEFAULT 0,
+              active BOOLEAN DEFAULT 1,
+              expires_at DATETIME,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+          `;
+        }
         
         // Execute schema in a transaction
         const transaction = this.db.transaction(() => {

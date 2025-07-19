@@ -8,6 +8,8 @@
 import type { APIRoute } from 'astro';
 import { PurchaseManager } from '../../../../registration/implementations/PurchaseManager.js';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ params }) => {
   console.log('📊 Purchase Status API: Getting purchase status...');
 

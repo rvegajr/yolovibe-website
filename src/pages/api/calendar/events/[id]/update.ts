@@ -9,6 +9,8 @@ import { GoogleCalendarService } from '../../../../../infrastructure/calendar/Go
 import { loadConfig } from '../../../../../infrastructure/config.js';
 import { calendar_v3 } from 'googleapis';
 
+export const prerender = false;
+
 interface UpdateEventRequest {
   summary?: string;
   description?: string;

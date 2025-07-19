@@ -8,6 +8,8 @@ import type { APIRoute } from 'astro';
 import { GoogleCalendarService } from '../../../../../infrastructure/calendar/GoogleCalendarService.js';
 import { loadConfig } from '../../../../../infrastructure/config.js';
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ params }) => {
   try {
     console.log('🔍 API: Get calendar event request received');
