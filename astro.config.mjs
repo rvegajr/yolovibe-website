@@ -9,7 +9,12 @@ import vercel from "@astrojs/vercel/serverless";
 export default defineConfig({
   site: "https://yolovibe-website.vercel.app",
   output: "hybrid", // Enable hybrid rendering for API routes
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true
+    },
+    functionPerRoute: false
+  }),
   integrations: [tailwind(), mdx(), sitemap(), icon()],
   vite: {
     build: {
