@@ -2,7 +2,27 @@
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/container.astro";
 import Sectionhead from "../components/sectionhead.astro";
-import Pricing from "../components/pricing.astro";
+import PricingCard from "../components/pricing.astro";
+
+const workshopPricing = {
+  name: "3-Day AI Coding Mastery",
+  price: "$3,000",
+  popular: true,
+  features: [
+    "Universal AI coding principles",
+    "Hands-on with Windsurf, Cursor, GitHub Copilot",
+    "Advanced prompt engineering",
+    "Voice-to-CLI interfaces",
+    "Rapid application scaffolding",
+    "Multi-tool workflow strategies",
+    "Team collaboration techniques",
+    "Certificate of completion"
+  ],
+  button: {
+    text: "Book Workshop",
+    link: "/book",
+  },
+};
 ---
 
 <Layout title="Product A - YOLOVibe">
@@ -130,7 +150,9 @@ import Pricing from "../components/pricing.astro";
     </div>
 
     <div class="mt-24">
-      <Pricing />
+      <div class="max-w-md mx-auto">
+        <PricingCard plan={workshopPricing} />
+      </div>
     </div>
   </Container>
 </Layout>

@@ -254,16 +254,7 @@ export class CalendarManagerDB implements ICalendarManager {
     console.log(`📅 Workshop ${workshopId} event would be cancelled`);
   }
 
-  // Legacy method for compatibility
-  async isDateAvailable(date: Date, workshopType: WorkshopType): Promise<boolean> {
-    const isBlocked = await this.isDateBlocked(date);
-    return !isBlocked;
-  }
 
-  // Legacy method for compatibility
-  async createWorkshopEvent(workshop: Workshop): Promise<string> {
-    return this.scheduleWorkshop(workshop.id);
-  }
 
   // Additional admin methods for enhanced functionality
   async unblockDate(date: Date): Promise<void> {
