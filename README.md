@@ -167,7 +167,7 @@ npm run test:e2e:report
 {
   "functions": {
     "src/pages/api/**/*.ts": {
-      "runtime": "nodejs20.x"
+      "runtime": "@vercel/node"
     }
   },
   "framework": "astro",
