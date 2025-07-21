@@ -2,7 +2,27 @@
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/container.astro";
 import Sectionhead from "../components/sectionhead.astro";
-import Pricing from "../components/pricing.astro";
+import PricingCard from "../components/pricing.astro";
+
+const workshopPricing = {
+  name: "5-Day AI Business Development",
+  price: "$4,500",
+  popular: true,
+  features: [
+    "Everything in 3-Day Workshop",
+    "Business strategy development",
+    "AI-powered market analysis",
+    "Revenue model validation",
+    "MVP development with AI tools",
+    "Go-to-market strategy",
+    "Technology adoption roadmap",
+    "Complete business plan deliverable"
+  ],
+  button: {
+    text: "Book Workshop",
+    link: "/book",
+  },
+};
 ---
 
 <Layout title="Product B - YOLOVibe">
@@ -156,7 +176,9 @@ import Pricing from "../components/pricing.astro";
     </div>
 
     <div class="mt-24">
-      <Pricing />
+      <div class="max-w-md mx-auto">
+        <PricingCard plan={workshopPricing} />
+      </div>
     </div>
   </Container>
 </Layout>
