@@ -5,8 +5,8 @@ import Link from "@/components/ui/link.astro";
 
 <section id="offerings" class="py-16">
   <div class="mb-8">
-    <h2 class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500 dark:from-pink-400 dark:via-purple-300 dark:to-indigo-400">Our Workshop Offerings</h2>
-    <p class="text-center text-lg text-slate-900 dark:text-white mt-4 max-w-3xl mx-auto enhanced-text">We bring our expert trainers directly to your location for hands-on, immersive learning experiences</p>
+    <h2 class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500 dark:from-pink-400 dark:via-purple-300 dark:to-indigo-400">Our Offerings</h2>
+    <p class="text-center text-lg text-slate-900 dark:text-white mt-4 max-w-3xl mx-auto enhanced-text">Choose from intensive workshops or personalized AI development consulting</p>
   </div>
 
   <div class="knowledge-sharing-panel">
@@ -23,7 +23,7 @@ import Link from "@/components/ui/link.astro";
     </p>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-6xl">
+  <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8 mx-auto max-w-7xl">
     <div class="workshop-card p-8 rounded-xl transition-all hover:shadow-xl hover:-translate-y-1">
       <div class="flex flex-col h-full">
         <h3 class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-700 dark:from-purple-200 dark:to-indigo-200 mb-2 workshop-title">3-Day Rapid VibeCode Workshop</h3>
@@ -69,5 +69,50 @@ import Link from "@/components/ui/link.astro";
         </div>
       </div>
     </div>
+
+    <div class="workshop-card p-8 rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-2 border-amber-200 dark:border-amber-700">
+      <div class="flex flex-col h-full">
+        <div class="flex items-center mb-2">
+          <Icon name="bx:bxs-star" class="w-6 h-6 text-amber-500 mr-2" />
+          <h3 class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-300 dark:to-orange-300 workshop-title">AI Development Consulting</h3>
+        </div>
+        <div class="text-center my-6">
+          <div class="text-3xl font-bold text-amber-600 dark:text-amber-400 price-tag">$200/hour</div>
+          <div class="text-sm text-amber-700 dark:text-amber-300 font-medium mt-1">2-hour minimum • Mon-Fri • 9 AM - 5 PM</div>
+        </div>
+        <p class="text-slate-900 font-medium dark:text-white mb-4 enhanced-text">Personalized AI development consulting for your specific projects and challenges:</p>
+        <ul class="text-slate-900 font-medium dark:text-white mb-4 space-y-2">
+          <li class="flex items-start workshop-list-item">
+            <Icon name="bx:bxs-check-circle" class="w-5 h-5 text-amber-500 mt-1 mr-2" />
+            <span><strong class="text-amber-700 dark:text-amber-300">One-on-One:</strong> Personalized AI coding guidance</span>
+          </li>
+          <li class="flex items-start workshop-list-item">
+            <Icon name="bx:bxs-check-circle" class="w-5 h-5 text-amber-500 mt-1 mr-2" />
+            <span><strong class="text-amber-700 dark:text-amber-300">Project Focus:</strong> Work on your real applications</span>
+          </li>
+          <li class="flex items-start workshop-list-item">
+            <Icon name="bx:bxs-check-circle" class="w-5 h-5 text-amber-500 mt-1 mr-2" />
+            <span><strong class="text-amber-700 dark:text-amber-300">Flexible:</strong> Schedule sessions when you need them</span>
+          </li>
+          <li class="flex items-start workshop-list-item">
+            <Icon name="bx:bxs-check-circle" class="w-5 h-5 text-amber-500 mt-1 mr-2" />
+            <span><strong class="text-amber-700 dark:text-amber-300">Expert Level:</strong> Advanced AI development techniques</span>
+          </li>
+        </ul>
+        <div class="mt-auto pt-4 text-center">
+          <Link href="/book" style="primary" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">Book Session</Link>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-12 text-center">
+    <p class="text-slate-600 dark:text-slate-400 text-lg mb-4">
+      Not sure which option is right for you?
+    </p>
+    <Link href="/contact" style="outline" size="lg">
+      <Icon name="bx:bx-chat" class="w-5 h-5 mr-2" />
+      Let's Chat About Your Needs
+    </Link>
   </div>
 </section>
