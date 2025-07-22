@@ -25,7 +25,6 @@ export default defineConfig({
       rollupOptions: {
         external: [
           "bcrypt", 
-          "better-sqlite3", 
           "googleapis", 
           "dotenv",
           "@sendgrid/mail",

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "astro dev",
@@ -55,7 +55,6 @@
     "astro-navbar": "^2.4.0",
     "astro-seo": "^0.8.4",
     "bcrypt": "^6.0.0",
-    "better-sqlite3": "^11.5.0",
     "dotenv": "^17.2.0",
     "googleapis": "^144.0.0",
     "square": "^43.0.1",
