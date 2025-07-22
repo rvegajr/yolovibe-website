@@ -20,30 +20,12 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Dynamic imports for database clients
-let Database: any = null;
-let createClient: any = null;
+// 🚀 PURE SERVERLESS DATABASE CONNECTION 🚀
+// Using LibSQL/Turso for ALL environments - no more native dependencies!
+import { createClient } from '@libsql/client';
 
-// Type definitions for database instances
-type DatabaseInstance = any;
-
-// Try to import LibSQL first (for serverless/Turso)
-try {
-  const libsql = await import('@libsql/client');
-  createClient = libsql.createClient;
-} catch (error) {
-  // LibSQL not available
-}
-
-// Try to import better-sqlite3 (for local development)
-if (!createClient) {
-  try {
-    const sqlite3Module = await import('better-sqlite3');
-    Database = sqlite3Module.default;
-  } catch (error) {
-    // better-sqlite3 not available, will use in-memory fallback
-  }
-}
+// Beautiful, clean, serverless-native types
+type DatabaseClient = any;
 
 export interface DatabaseConfig {
   filename: string;
@@ -98,107 +80,43 @@ export class DatabaseConnection {
   }
 
   /**
-   * Initialize production database with persistent storage
+   * 🎉 BEAUTIFUL SERVERLESS DATABASE INITIALIZATION 🎉
+   * Pure LibSQL/Turso - no more complexity!
    */
   private async initializeProductionDatabase(): Promise<void> {
-    console.log('🚀 Production environment detected, initializing persistent database');
+    console.log('🚀 Serverless database initialization - using LibSQL/Turso!');
 
-    // Check for external database URL (PostgreSQL, MySQL, Turso)
-    if (process.env.***REMOVED***) {
-      const dbUrl = process.env.***REMOVED***;
-      
-      if (dbUrl.startsWith('libsql://') || dbUrl.includes('turso.tech')) {
-        // Turso/LibSQL connection (SQLite-compatible cloud database)
-        console.log('☁️ Using Turso/LibSQL cloud database');
-        await this.initializeTurso(dbUrl);
-        return;
-      }
-      
-      if (dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://')) {
-        // PostgreSQL connection (recommended for enterprise)
-        console.log('🐘 Using PostgreSQL database');
-        await this.initializePostgreSQL(dbUrl);
-        return;
-      }
-      
-      if (dbUrl.startsWith('mysql://')) {
-        // MySQL connection
-        console.log('🐬 Using MySQL database');
-        await this.initializeMySQL(dbUrl);
-        return;
-      }
-    }
+    const dbUrl = process.env.***REMOVED*** || 'libsql://local.db';
+    const authToken = process.env.***REMOVED***;
 
-    // Fallback: Use file-based SQLite with Vercel persistent storage
-    console.log('💾 Using persistent SQLite with Vercel storage');
+    console.log('☁️ Connecting to LibSQL/Turso database');
+    this.db = createClient({
+      url: dbUrl,
+      authToken: authToken
+    });
     
-    // Use /tmp directory for Vercel functions (limited persistence)
-    // NOTE: This is not truly persistent across deployments
-    // For production, use external database service
-    const dbPath = '/tmp/yolovibe.db';
-    
-    try {
-      // Check if we can restore from backup
-      await this.restoreFromBackup(dbPath);
-      
-      this.db = new Database(dbPath, {
-        readonly: false,
-        fileMustExist: false,
-        timeout: this.config.timeout || 5000,
-        verbose: this.config.verbose
-      });
-      
-      console.warn('⚠️ WARNING: Using temporary SQLite storage. Data may be lost on deployment!');
-      console.warn('⚠️ For production, configure ***REMOVED*** with Turso or PostgreSQL');
-    } catch (error) {
-      console.warn(`⚠️ Could not create file-based database: ${error.message}`);
-      // Final fallback to in-memory database
-      this.db = new Database(':memory:', {
-        readonly: false,
-        timeout: this.config.timeout || 5000,
-        verbose: this.config.verbose
-      });
-      console.log('📁 Using in-memory database as final fallback for build/serverless');
-    }
+    this.isTurso = true;
+    console.log('✨ LibSQL/Turso connection established!');
   }
 
   /**
-   * Initialize local development database
+   * 🎉 CONSISTENT SERVERLESS DATABASE FOR DEVELOPMENT TOO! 🎉
+   * Same LibSQL everywhere - pure joy!
    */
   private async initializeLocalDatabase(): Promise<void> {
-    console.log(`📁 Local environment, using database: ${this.config.filename}`);
+    console.log('🎯 Development environment - using LibSQL for consistency!');
     
-    // Ensure directory exists
-    const dataDir = dirname(this.config.filename);
-    if (!existsSync(dataDir)) {
-      try {
-        mkdirSync(dataDir, { recursive: true });
-        console.log(`📁 Created data directory: ${dataDir}`);
-      } catch (error) {
-        console.warn(`⚠️ Could not create data directory: ${error.message}`);
-        // Use a fallback location for serverless environments
-        this.config.filename = '/tmp/yolovibe.db';
-        console.log(`📁 Using fallback database location: ${this.config.filename}`);
-      }
-    }
+    // Use file-based LibSQL for development
+    const dbUrl = process.env.***REMOVED*** || 'file:local.db';
     
-    try {
-      this.db = new Database(this.config.filename, {
-        readonly: this.config.readonly || false,
-        fileMustExist: false, // Always allow creation
-        timeout: this.config.timeout || 5000,
-        verbose: this.config.verbose
-      });
-    } catch (error) {
-      console.warn(`⚠️ Could not create database at ${this.config.filename}: ${error.message}`);
-      // Final fallback to in-memory database
-      this.db = new Database(':memory:', {
-        readonly: false,
-        timeout: this.config.timeout || 5000,
-        verbose: this.config.verbose
-      });
-      console.log('📁 Using in-memory database as final fallback');
-    }
+    console.log('☁️ Connecting to LibSQL database');
+    this.db = createClient({
+      url: dbUrl,
+      authToken: process.env.***REMOVED*** // Optional for local file
+    });
+    
+    this.isTurso = true;
+    console.log('✨ Development LibSQL connection established!');
   }
 
   /**
