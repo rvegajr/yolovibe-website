@@ -13,7 +13,6 @@
  * - Turso/LibSQL cloud database support for production
  */
 
-import Database from 'better-sqlite3';
 import { readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -21,13 +20,29 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Turso/LibSQL support
+// Dynamic imports for database clients
+let Database: any = null;
 let createClient: any = null;
+
+// Type definitions for database instances
+type DatabaseInstance = any;
+
+// Try to import LibSQL first (for serverless/Turso)
 try {
   const libsql = await import('@libsql/client');
   createClient = libsql.createClient;
 } catch (error) {
-  // LibSQL not available, will fall back to SQLite
+  // LibSQL not available
+}
+
+// Try to import better-sqlite3 (for local development)
+if (!createClient) {
+  try {
+    const sqlite3Module = await import('better-sqlite3');
+    Database = sqlite3Module.default;
+  } catch (error) {
+    // better-sqlite3 not available, will use in-memory fallback
+  }
 }
 
 export interface DatabaseConfig {
@@ -39,7 +54,7 @@ export interface DatabaseConfig {
 }
 
 export class DatabaseConnection {
-  private db: Database.Database | any = null;
+  private db: any = null;
   private config: DatabaseConfig;
   private isTurso: boolean = false;
 
@@ -698,7 +713,7 @@ export class DatabaseConnection {
   /**
    * Get the database instance
    */
-  getDatabase(): Database.Database | any {
+  getDatabase(): any {
     if (!this.db) {
       throw new Error('Database not initialized. Call initialize() first.');
     }
