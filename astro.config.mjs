@@ -13,11 +13,7 @@ export default defineConfig({
     webAnalytics: {
       enabled: true
     },
-    functionPerRoute: false,
-    // Force Node.js v18 compatibility to avoid AL2023/Lambda glibc issues
-    serverless: {
-      runtime: 'nodejs18.x'
-    }
+    functionPerRoute: false
   }),
   integrations: [tailwind(), mdx(), sitemap(), icon()],
   vite: {
