@@ -13,7 +13,7 @@
  * - Pagination support
  */
 
-import Database from 'better-sqlite3';
+// Database handled through DatabaseConnection service
 import { getDatabaseConnection } from '../connection.js';
 
 export interface PaginationOptions {
@@ -32,7 +32,7 @@ export interface PaginatedResult<T> {
 }
 
 export abstract class BaseRepository {
-  protected db: Database.Database;
+  protected db: any;
 
   constructor() {
     this.db = getDatabaseConnection().getDatabase();
@@ -75,7 +75,7 @@ export abstract class BaseRepository {
   /**
    * Execute an insert/update/delete query
    */
-  protected execute(sql: string, params: any[] = []): Database.RunResult {
+  protected execute(sql: string, params: any[] = []): any {
     try {
       const stmt = this.db.prepare(sql);
       return stmt.run(...params);

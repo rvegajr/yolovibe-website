@@ -7,7 +7,7 @@
 import type { ICalendarManager } from '../core/interfaces/index.js';
 import type { CalendarEvent, WorkshopType, Workshop, DateRange } from '../core/types/index.js';
 import { initializeDatabase } from '../database/connection.js';
-import Database from 'better-sqlite3';
+// Database import handled dynamically in DatabaseConnection
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 

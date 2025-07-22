@@ -3,7 +3,7 @@
  * Implements ICalendarManager with database persistence
  */
 
-import Database from 'better-sqlite3';
+// Database import handled dynamically in DatabaseConnection
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { ICalendarManager } from '../core/interfaces/index.js';
