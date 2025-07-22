@@ -86,10 +86,11 @@ export class DatabaseConnection {
   private async initializeProductionDatabase(): Promise<void> {
     console.log('🚀 Serverless database initialization - using LibSQL/Turso!');
 
-    const dbUrl = process.env.***REMOVED*** || 'libsql://local.db';
+    // 🎯 PERFECT SERVERLESS DATABASE CONFIGURATION!
+    const dbUrl = process.env.***REMOVED*** || 'file:local.db';
     const authToken = process.env.***REMOVED***;
 
-    console.log('☁️ Connecting to LibSQL/Turso database');
+    console.log('☁️ Connecting to LibSQL database:', dbUrl.startsWith('file:') ? 'local file' : 'remote');
     this.db = createClient({
       url: dbUrl,
       authToken: authToken
