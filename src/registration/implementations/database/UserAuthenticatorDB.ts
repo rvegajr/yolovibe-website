@@ -7,14 +7,15 @@
  * 
  * Features:
  * - Persistent user storage
- * - Secure password hashing with bcrypt
+ * - Secure password hashing with Argon2 (pure JavaScript!)
  * - Session management with database storage
  * - Password reset functionality
  * - Email verification
  * - Admin user management
  */
 
-import bcrypt from 'bcrypt';
+// 🚀 PURE JAVASCRIPT PASSWORD HASHING - No more native dependencies!
+import { hash, verify } from 'argon2-browser';
 import crypto from 'crypto';
 import type { IUserAuthenticator } from '../../core/interfaces/index.js';
 import type { User, UserSession, PasswordResetRequest, LoginCredentials, RegistrationData, Credentials, AuthResult, Session } from '../../core/types/index.js';
@@ -44,7 +45,8 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     this.validatePasswordStrength(registrationData.password);
 
     // Hash password
-    const passwordHash = await bcrypt.hash(registrationData.password, this.saltRounds);
+    // 🎉 Beautiful pure JavaScript password hashing!
+    const passwordHash = await hash({ pass: registrationData.password, salt: crypto.randomBytes(16) });
 
     // Create user data
     const userData = {
@@ -178,7 +180,8 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
       return false;
     }
 
-    return bcrypt.compare(password, result.password_hash);
+    // 🎉 Beautiful pure JavaScript password verification!
+    return verify({ pass: password, encoded: result.password_hash });
   }
 
   /**
@@ -217,8 +220,8 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     // Validate new password
     this.validatePasswordStrength(newPassword);
 
-    // Hash new password
-    const passwordHash = await bcrypt.hash(newPassword, this.saltRounds);
+    // 🎉 Hash new password with beautiful pure JavaScript!
+    const passwordHash = await hash({ pass: newPassword, salt: crypto.randomBytes(16) });
 
     // Update password
     const success = await this.userRepository.updatePassword(user.id, passwordHash);
@@ -250,8 +253,8 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     // Validate new password
     this.validatePasswordStrength(newPassword);
 
-    // Hash new password
-    const passwordHash = await bcrypt.hash(newPassword, this.saltRounds);
+    // 🎉 Hash new password with beautiful pure JavaScript!
+    const passwordHash = await hash({ pass: newPassword, salt: crypto.randomBytes(16) });
 
     // Update password
     const success = await this.userRepository.updatePassword(userId, passwordHash);

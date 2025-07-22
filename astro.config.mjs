@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 import vercel from "@astrojs/vercel/serverless";
 
-// https://astro.build/config
+// 🚀 PURE SERVERLESS JOY - Minimal configuration for maximum happiness!
 export default defineConfig({
   site: "https://yolovibe-website.vercel.app",
   output: "hybrid", // Enable hybrid rendering for API routes
@@ -17,14 +17,10 @@ export default defineConfig({
   }),
   integrations: [tailwind(), mdx(), sitemap(), icon()],
   vite: {
-    // Ensure Node 18 compatibility
-    define: {
-      'process.env.NODE_VERSION': '"18"'
-    },
+    // ✨ Clean, serverless-native build configuration
     build: {
       rollupOptions: {
         external: [
-          "bcrypt", 
           "googleapis", 
           "dotenv",
           "@sendgrid/mail",
