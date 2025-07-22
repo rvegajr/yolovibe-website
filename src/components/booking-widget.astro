@@ -127,7 +127,11 @@ import { Icon } from "astro-icon/components";
                     <option value="3">3 People</option>
                     <option value="4">4 People</option>
                     <option value="5">5 People (Group Discount!)</option>
-                    <option value="6">6+ People (Contact Us)</option>
+                    <option value="6">6 People</option>
+                    <option value="7">7 People</option>
+                    <option value="8">8 People</option>
+                    <option value="9">9 People</option>
+                    <option value="10">10 People (Max Capacity!)</option>
                   </select>
                 </div>
                 
@@ -283,6 +287,13 @@ import { Icon } from "astro-icon/components";
     private form: HTMLFormElement;
     private submitButton: HTMLButtonElement;
     private messageContainer: HTMLElement;
+    
+    // 🎯 SMART FORM PERSISTENCE - Remember attendee data!
+    private attendeeDataCache: Map<number, {
+      firstName: string;
+      lastName: string;
+      email: string;
+    }> = new Map();
 
     constructor() {
       this.workshopSelect = document.getElementById('workshop-select') as HTMLSelectElement;
@@ -761,6 +772,10 @@ import { Icon } from "astro-icon/components";
 
     private updateAttendeeFields(): void {
       const attendeeCount = parseInt(this.attendeeCountSelect.value);
+      
+      // 🎯 STEP 1: SAVE CURRENT DATA BEFORE REBUILDING
+      this.saveCurrentAttendeeData();
+      
       const container = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
       
       if (!container) {
@@ -772,20 +787,58 @@ import { Icon } from "astro-icon/components";
       const fieldsContainer = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
       fieldsContainer.innerHTML = '';
 
+      // 🎯 STEP 2: CREATE FORMS WITH SMART RESTORATION
       for (let i = 1; i <= attendeeCount; i++) {
         const attendeeDiv = document.createElement('div');
         attendeeDiv.className = 'grid grid-cols-2 gap-4 p-4 bg-black/20 rounded-lg border border-indigo-500/20';
+        
+        // Get cached data for this attendee (if exists)
+        const cachedData = this.attendeeDataCache.get(i) || { firstName: '', lastName: '', email: '' };
+        
         attendeeDiv.innerHTML = `
           <h5 class="col-span-2 text-cyan-300 font-semibold">Attendee ${i}</h5>
           <input type="text" name="attendee-${i}-firstName" placeholder="First Name" required
+            value="${cachedData.firstName}"
             class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
           <input type="text" name="attendee-${i}-lastName" placeholder="Last Name" required
+            value="${cachedData.lastName}"
             class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
           <input type="email" name="attendee-${i}-email" placeholder="Email Address" required
+            value="${cachedData.email}"
             class="col-span-2 p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
         `;
         fieldsContainer.appendChild(attendeeDiv);
       }
+      
+      // 🎯 STEP 3: ADD EVENT LISTENERS FOR REAL-TIME SAVING
+      this.setupAttendeeFieldListeners();
+    }
+
+    // 🎯 SAVE CURRENT ATTENDEE DATA BEFORE REBUILDING
+    private saveCurrentAttendeeData(): void {
+      const currentFields = this.attendeeFieldsContainer.querySelectorAll('.attendee-fields > div');
+      
+      currentFields.forEach((attendeeDiv, index) => {
+        const attendeeNumber = index + 1;
+        const firstName = (attendeeDiv.querySelector(`input[name="attendee-${attendeeNumber}-firstName"]`) as HTMLInputElement)?.value || '';
+        const lastName = (attendeeDiv.querySelector(`input[name="attendee-${attendeeNumber}-lastName"]`) as HTMLInputElement)?.value || '';
+        const email = (attendeeDiv.querySelector(`input[name="attendee-${attendeeNumber}-email"]`) as HTMLInputElement)?.value || '';
+        
+        if (firstName || lastName || email) {
+          this.attendeeDataCache.set(attendeeNumber, { firstName, lastName, email });
+        }
+      });
+    }
+
+    // 🎯 SETUP REAL-TIME SAVING AS USER TYPES
+    private setupAttendeeFieldListeners(): void {
+      const attendeeInputs = this.attendeeFieldsContainer.querySelectorAll('input[name^="attendee-"]');
+      
+      attendeeInputs.forEach(input => {
+        input.addEventListener('input', () => {
+          this.saveCurrentAttendeeData();
+        });
+      });
     }
   }
 
