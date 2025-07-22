@@ -359,11 +359,12 @@ import { Icon } from "astro-icon/components";
         this.workshopSelect.removeChild(this.workshopSelect.lastChild!);
       }
 
-      // Add workshop options
+      // 🎯 Add workshop options with CORRECT property names!
       this.workshops.forEach(workshop => {
         const option = document.createElement('option');
         option.value = workshop.id;
-        option.textContent = `${workshop.name} - $${workshop.pricePerSeat} (${workshop.durationDays} days)`;
+        // ✨ Using the correct property names: price and duration
+        option.textContent = `${workshop.name} - $${workshop.price} (${workshop.duration} ${workshop.type === 'hourly-consulting' ? 'hrs min' : 'days'})`;
         option.dataset.workshop = JSON.stringify(workshop);
         this.workshopSelect.appendChild(option);
       });
