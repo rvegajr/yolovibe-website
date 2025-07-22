@@ -48,7 +48,7 @@ import { Icon } from "astro-icon/components";
                     <option value="">Select a service...</option>
                     <option value="prod-3day" data-type="workshop" data-duration="3" data-price="3000">3-Day YOLO Workshop - $3,000</option>
                     <option value="prod-5day" data-type="workshop" data-duration="5" data-price="4500">5-Day YOLO Intensive - $4,500</option>
-                    <option value="ai-consulting" data-type="consulting" data-duration="2" data-price="200" data-hourly="true">AI Development Consulting - $200/hour (2hr min)</option>
+                    <option value="ai-consulting" data-type="consulting" data-duration="2" data-price="200" data-hourly="true">AI Business Development - $200/hour (Choose hours below)</option>
                   </select>
                 </div>
 
@@ -137,15 +137,19 @@ import { Icon } from "astro-icon/components";
                 
                 <!-- Consulting Duration (hidden by default) -->
                 <div id="consulting-duration-section" class="space-y-2 hidden">
-                  <label for="consulting-duration" class="block text-white font-semibold text-sm">Session Duration</label>
+                  <label for="consulting-duration" class="block text-white font-semibold text-sm">How Many Hours Would You Like?</label>
                   <select id="consulting-duration" name="consultingDuration"
                     class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
-                    <option value="2">2 Hours - $400</option>
-                    <option value="3">3 Hours - $600</option>
-                    <option value="4">4 Hours - $800</option>
+                    <option value="">Select hours...</option>
+                    <option value="2">2 Hours - $400 (Good start for focused ideas)</option>
+                    <option value="3">3 Hours - $600 (Perfect for multiple concepts)</option>
+                    <option value="4">4 Hours - $800 (Deep dive intensive)</option>
+                    <option value="5">5 Hours - $1,000 (Full day strategy)</option>
+                    <option value="6">6 Hours - $1,200 (Comprehensive planning)</option>
+                    <option value="8">8 Hours - $1,600 (Complete business transformation)</option>
                   </select>
                   <div class="text-xs text-cyan-300/80">
-                    💡 We'll work on as many ideas as we can fit in the time
+                    💡 <strong>Recommendation:</strong> 2 hours is great for focused ideas, but if you have multiple business concepts to explore, 3-4 hours allows us to dive deeper and develop more comprehensive solutions.
                   </div>
                 </div>
 
