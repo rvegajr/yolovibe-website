@@ -1,14 +1,41 @@
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
+import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
+import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://astroship.web3templates.com",
-  integrations: [mdx(), sitemap(), icon()],
+  site: "https://yolovibe-website.vercel.app",
+  output: "hybrid", // Enable hybrid rendering for API routes
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true
+    },
+    functionPerRoute: false,
+    // Force Node.js v18 compatibility to avoid AL2023/Lambda glibc issues
+    serverless: {
+      runtime: 'nodejs18.x'
+    }
+  }),
+  integrations: [tailwind(), mdx(), sitemap(), icon()],
   vite: {
-    plugins: [tailwindcss()],
+    // Ensure Node 18 compatibility
+    define: {
+      'process.env.NODE_VERSION': '"18"'
+    },
+    build: {
+      rollupOptions: {
+        external: [
+          "bcrypt", 
+          "better-sqlite3", 
+          "googleapis", 
+          "dotenv",
+          "@sendgrid/mail",
+          "square"
+        ]
+      }
+    }
   },
 });
