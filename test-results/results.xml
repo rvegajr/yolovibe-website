@@ -1,0 +1,325 @@
+<testsuites id="" name="" tests="10" failures="6" skipped="0" errors="0" time="39.701856">
+<testsuite name="01-homepage.spec.ts" timestamp="2025-07-19T00:40:31.537Z" hostname="chromium" tests="10" failures="6" skipped="0" time="90.781" errors="0">
+<testcase name="Homepage - Anonymous User Experience › should load homepage successfully" classname="01-homepage.spec.ts" time="7.545">
+<failure message="01-homepage.spec.ts:18:3 should load homepage successfully" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:18:3 › Homepage - Anonymous User Experience › should load homepage successfully 
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid="hero-section"], .hero, section:first-child') resolved to 7 elements:
+        1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })
+        2) <section id="integration-list">…</section> aka locator('#integration-list')
+        3) <section id="header-left">…</section> aka getByText('Audit 0')
+        4) <section>…</section> aka getByText('PlacementAdjust the placement')
+        5) <section>…</section> aka getByText('Verbose loggingLogs dev')
+        6) <section>…</section> aka getByText('Disable notificationsHide')
+        7) <section class="full-width">…</section> aka getByText('Hide toolbar Run astro')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('[data-testid="hero-section"], .hero, section:first-child')
+
+
+       at pages/HomePage.ts:65
+
+      63 |   async verifyPageContent(): Promise<void> {
+      64 |     // Verify hero section
+    > 65 |     await expect(this.heroSection).toBeVisible();
+         |                                    ^
+      66 |     await expect(this.heroTitle).toBeVisible();
+      67 |     await expect(this.heroTitle).toContainText(/YOLOVibe|AI|Code|Workshop/i);
+      68 |     
+        at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:25:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: Homepage loads successfully
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should display workshop offerings" classname="01-homepage.spec.ts" time="7.21">
+<failure message="01-homepage.spec.ts:35:3 should display workshop offerings" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:35:3 › Homepage - Anonymous User Experience › should display workshop offerings 
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid="workshop-offerings"], .workshop-offerings, section:has-text("Workshop")') resolved to 2 elements:
+        1) <section class="py-16" id="offerings">…</section> aka locator('#offerings')
+        2) <section id="book" class="py-20 bg-gradient-to-b from-gray-900 to-slate-900 dark:from-slate-900 dark:to-black">…</section> aka locator('#book')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('[data-testid="workshop-offerings"], .workshop-offerings, section:has-text("Workshop")')
+
+
+       at pages/HomePage.ts:124
+
+      122 |    */
+      123 |   async verifyWorkshopOfferings(): Promise<void> {
+    > 124 |     await expect(this.workshopOfferingsSection).toBeVisible();
+          |                                                 ^
+      125 |     
+      126 |     // Look for 3-day and 5-day workshop mentions
+      127 |     const pageContent = await this.page.textContent('body');
+        at HomePage.verifyWorkshopOfferings (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:124:49)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:41:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: Workshop offerings are displayed
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should have working navigation links" classname="01-homepage.spec.ts" time="30.225">
+<failure message="01-homepage.spec.ts:46:3 should have working navigation links" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:46:3 › Homepage - Anonymous User Experience › should have working navigation links 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a[href="/pricing"], nav a:has-text("Pricing")')
+
+
+       at pages/HomePage.ts:92
+
+      90 |    */
+      91 |   async goToPricing(): Promise<void> {
+    > 92 |     await this.pricingLink.click();
+         |                            ^
+      93 |     await this.page.waitForURL('**/pricing**');
+      94 |   }
+      95 |
+        at HomePage.goToPricing (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:92:28)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:52:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: Navigation links work correctly
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should navigate to booking page via CTA" classname="01-homepage.spec.ts" time="30.441">
+<failure message="01-homepage.spec.ts:68:3 should navigate to booking page via CTA" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:68:3 › Homepage - Anonymous User Experience › should navigate to booking page via CTA 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForURL: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/book**" until "load"
+    ============================================================
+
+       at pages/HomePage.ts:85
+
+      83 |   async clickBookNow(): Promise<void> {
+      84 |     await this.ctaButton.click();
+    > 85 |     await this.page.waitForURL('**/book**');
+         |                     ^
+      86 |   }
+      87 |
+      88 |   /**
+        at HomePage.clickBookNow (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:85:21)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:74:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: CTA button navigates to booking
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should display features section" classname="01-homepage.spec.ts" time="7.461">
+<system-out>
+<![CDATA[✅ Test: Features section is displayed
+✅ Features section verified
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should pass basic SEO checks" classname="01-homepage.spec.ts" time="1.163">
+<system-out>
+<![CDATA[✅ Test: Basic SEO elements are present
+✅ SEO basics verified
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Anonymous User Experience › should perform well (basic performance check)" classname="01-homepage.spec.ts" time="3.164">
+<system-out>
+<![CDATA[✅ Test: Basic performance requirements
+✅ Performance check passed
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Mobile Responsiveness › should be responsive on mobile devices" classname="01-homepage.spec.ts" time="1.167">
+<system-out>
+<![CDATA[✅ Test: Mobile responsiveness
+✅ Mobile responsiveness verified
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Mobile Responsiveness › should have accessible navigation on mobile" classname="01-homepage.spec.ts" time="1.045">
+<failure message="01-homepage.spec.ts:135:3 should have accessible navigation on mobile" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:135:3 › Homepage - Mobile Responsiveness › should have accessible navigation on mobile 
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid="hero-section"], .hero, section:first-child') resolved to 7 elements:
+        1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })
+        2) <section id="integration-list">…</section> aka locator('#integration-list')
+        3) <section id="header-left">…</section> aka getByText('Audit 0')
+        4) <section>…</section> aka getByText('PlacementAdjust the placement')
+        5) <section>…</section> aka getByText('Verbose loggingLogs dev')
+        6) <section>…</section> aka getByText('Disable notificationsHide')
+        7) <section class="full-width">…</section> aka getByText('Hide toolbar Run astro')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('[data-testid="hero-section"], .hero, section:first-child')
+
+
+       at pages/HomePage.ts:65
+
+      63 |   async verifyPageContent(): Promise<void> {
+      64 |     // Verify hero section
+    > 65 |     await expect(this.heroSection).toBeVisible();
+         |                                    ^
+      66 |     await expect(this.heroTitle).toBeVisible();
+      67 |     await expect(this.heroTitle).toContainText(/YOLOVibe|AI|Code|Workshop/i);
+      68 |     
+        at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:141:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: Mobile navigation accessibility
+
+[[ATTACHMENT|01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Homepage - Cross-Browser Compatibility › should work consistently across browsers" classname="01-homepage.spec.ts" time="1.36">
+<failure message="01-homepage.spec.ts:159:3 should work consistently across browsers" type="FAILURE">
+<![CDATA[  [chromium] › 01-homepage.spec.ts:159:3 › Homepage - Cross-Browser Compatibility › should work consistently across browsers 
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid="hero-section"], .hero, section:first-child') resolved to 7 elements:
+        1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })
+        2) <section id="integration-list">…</section> aka locator('#integration-list')
+        3) <section id="header-left">…</section> aka getByText('Audit 0')
+        4) <section>…</section> aka getByText('PlacementAdjust the placement')
+        5) <section>…</section> aka getByText('Verbose loggingLogs dev')
+        6) <section>…</section> aka getByText('Disable notificationsHide')
+        7) <section class="full-width">…</section> aka getByText('Hide toolbar Run astro')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('[data-testid="hero-section"], .hero, section:first-child')
+
+
+       at pages/HomePage.ts:65
+
+      63 |   async verifyPageContent(): Promise<void> {
+      64 |     // Verify hero section
+    > 65 |     await expect(this.heroSection).toBeVisible();
+         |                                    ^
+      66 |     await expect(this.heroTitle).toBeVisible();
+      67 |     await expect(this.heroTitle).toContainText(/YOLOVibe|AI|Code|Workshop/i);
+      68 |     
+        at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)
+        at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:165:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✅ Test: Cross-browser compatibility
+
+[[ATTACHMENT|01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/video.webm]]
+
+[[ATTACHMENT|01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

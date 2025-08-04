@@ -1,0 +1,32 @@
+[
+  {
+    "firstName": "Alice",
+    "email": "alice.developer@example.com",
+    "role": "Full-Stack Developer",
+    "notes": "Focus on technical functionality, booking flow, and error handling"
+  },
+  {
+    "firstName": "Bob",
+    "email": "bob.designer@example.com", 
+    "role": "UX/UI Designer",
+    "notes": "Evaluate user experience, visual design, and mobile responsiveness"
+  },
+  {
+    "firstName": "Carol",
+    "email": "carol.manager@example.com",
+    "role": "Project Manager", 
+    "notes": "Test from business user perspective, admin features, and workflow efficiency"
+  },
+  {
+    "firstName": "David",
+    "email": "david.student@example.com",
+    "role": "Student/End User",
+    "notes": "Represent typical workshop attendee, test booking process as new user"
+  },
+  {
+    "firstName": "Emma",
+    "email": "emma.entrepreneur@example.com",
+    "role": "Small Business Owner",
+    "notes": "Evaluate platform from workshop organizer perspective"
+  }
+] 

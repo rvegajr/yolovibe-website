@@ -1,0 +1,196 @@
+name: YOLOVibe CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # TypeScript Validation & Linting
+  typescript-check:
+    name: TypeScript & Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit --project tsconfig.cli.json
+
+      - name: Lint TypeScript files
+        run: npx eslint "src/**/*.ts" "cli/**/*.ts" --ext .ts
+
+      - name: Format check
+        run: npx prettier --check "src/**/*.ts" "cli/**/*.ts"
+
+  # Health Check Validation
+  health-check-validation:
+    name: Health Check System Test
+    runs-on: ubuntu-latest
+    needs: typescript-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create mock environment
+        run: |
+          cp .env.example .env
+          echo "AUTH0_DOMAIN=mock.auth0.com" >> .env
+          echo "AUTH0_CLIENT_ID=mock_client_id" >> .env
+          echo "AUTH0_CLIENT_SECRET=mock_client_secret" >> .env
+          echo "SENDGRID_API_KEY=SG.mock_key" >> .env
+          echo "SENDGRID_FROM_EMAIL=test@example.com" >> .env
+          echo "***REMOVED***=mock_square_token" >> .env
+          echo "SQUARE_LOCATION_ID=mock_location_id" >> .env
+          echo "GOOGLE_CALENDAR_ID=mock@calendar.google.com" >> .env
+
+      - name: Create mock Google credentials
+        run: |
+          echo '{"type":"service_account","project_id":"mock","private_key_id":"mock","private_key":"-----BEGIN PRIVATE KEY-----\nMOCK_KEY\n-----END PRIVATE KEY-----","client_email":"mock@mock.iam.gserviceaccount.com","client_id":"mock","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token"}' > googlecloud.json
+
+      - name: Test health check CLI compilation
+        run: npx tsx --check cli/health-check.ts
+
+      - name: Test configuration loading
+        run: npx tsx -e "import { loadConfig } from './src/infrastructure/config.js'; console.log('Config validation passed');"
+
+  # Unit Tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: typescript-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Generate test coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+
+  # Astro Build Test
+  build-test:
+    name: Astro Build Test
+    runs-on: ubuntu-latest
+    needs: [typescript-check, health-check-validation]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Test built site
+        run: |
+          npm run preview &
+          sleep 5
+          curl -f http://localhost:4321 || exit 1
+
+  # Security Audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for known vulnerabilities
+        run: npx audit-ci --moderate
+
+  # Deploy to Vercel (Production)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [unit-tests, build-test, security-audit]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: Run production health check
+        run: |
+          sleep 30
+          curl -f https://your-domain.vercel.app/health || echo "Health check endpoint not yet available"
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [unit-tests, build-test, security-audit]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

@@ -22,15 +22,15 @@ import { Icon } from "astro-icon/components";
       <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-400 rounded-2xl opacity-75 blur-lg animate-pulse"></div>
       
       <!-- Booking Widget Container -->
-      <div class="min-h-[500px] flex flex-col relative z-10">
+      <div class="min-h-[600px] flex flex-col relative z-10">
         <div class="grid md:grid-cols-5 gap-0 h-full rounded-2xl overflow-hidden">
-          <!-- Left Column: Calendar & Info -->
+          <!-- Left Column: Booking Form -->
           <div class="md:col-span-3 p-8 flex flex-col justify-between booking-left-column relative overflow-hidden">
             <!-- Decorative elements -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
             <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-pink-500/10 to-yellow-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
             
-            <div class="relative z-10">
+            <div class="relative z-10 flex-1">
               <div class="flex items-center mb-8">
                 <div class="w-12 h-12 rounded-full calendar-icon-container flex items-center justify-center mr-4">
                   <Icon name="bx:bxs-calendar" class="w-6 h-6 text-white" />
@@ -38,18 +38,159 @@ import { Icon } from "astro-icon/components";
                 <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 drop-shadow-md" style="text-shadow: 0 0 8px rgba(139, 92, 246, 0.5);">Book Your Workshop</h3>
               </div>
               
-              <div class="booking-form-container rounded-xl p-6 mb-8">
-                <p class="text-white text-lg mb-6 font-medium">Our calendar booking system will be integrated here.</p>
-                <div class="flex items-center justify-center bg-black/30 rounded-lg p-8 mb-6 border border-indigo-500/30">
-                  <img src="https://cdn-apps.acuityscheduling.com/images/logo-en-color.svg" alt="Acuity Scheduling" class="h-12 opacity-90" />
+              <!-- Booking Form -->
+              <form id="booking-form" class="space-y-6">
+                <!-- Workshop Selection -->
+                <div class="space-y-2">
+                  <label for="workshop-select" class="block text-white font-semibold text-sm">Choose Service</label>
+                  <select id="workshop-select" name="productId" required 
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                    <option value="">Select a service...</option>
+                    <option value="prod-3day" data-type="workshop" data-duration="3" data-price="3000">3-Day YOLO Workshop - $3,000</option>
+                    <option value="prod-5day" data-type="workshop" data-duration="5" data-price="4500">5-Day YOLO Intensive - $4,500</option>
+                    <option value="ai-consulting" data-type="consulting" data-duration="2" data-price="200" data-hourly="true">AI Development Consulting - $200/hour (2hr min)</option>
+                  </select>
                 </div>
-                <p class="text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400 font-bold text-lg animate-pulse">Coming soon!</p>
-              </div>
+
+                <!-- Date Selection -->
+                <div class="space-y-2">
+                  <label for="workshop-date" class="block text-white font-semibold text-sm">
+                    <span id="date-label">Workshop Date</span> 
+                    <span id="date-constraint" class="text-cyan-300 text-xs">(Monday, Wednesday, Friday)</span>
+                  </label>
+                  <input type="hidden" id="workshop-date" name="startDate" required />
+                  
+                  <!-- Simple date picker for consulting -->
+                  <div id="consulting-date-picker" class="hidden space-y-2">
+                    <input type="date" id="consulting-date" name="consultingDate"
+                      class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all"
+                      min={new Date().toISOString().split('T')[0]} />
+                    <select id="consulting-time" name="consultingTime"
+                      class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                      <option value="">Select time...</option>
+                      <option value="09:00">9:00 AM</option>
+                      <option value="11:00">11:00 AM</option>
+                      <option value="13:00">1:00 PM</option>
+                      <option value="15:00">3:00 PM</option>
+                    </select>
+                    <div class="text-xs text-cyan-300/80">
+                      📅 Monday-Friday, 9 AM - 5 PM • 2-hour minimum • 48-hour advance notice required
+                    </div>
+                  </div>
+                  
+                  <!-- Custom Calendar -->
+                  <div id="custom-calendar" class="bg-black/30 border border-indigo-500/30 rounded-lg p-4 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                      <button type="button" id="prev-month" class="text-cyan-400 hover:text-cyan-300 p-1">
+                        ← Previous
+                      </button>
+                      <h3 id="calendar-month-year" class="text-white font-semibold"></h3>
+                      <button type="button" id="next-month" class="text-cyan-400 hover:text-cyan-300 p-1">
+                        Next →
+                      </button>
+                    </div>
+                    
+                    <!-- Days of week header -->
+                    <div class="grid grid-cols-7 gap-1 mb-2">
+                      <div class="text-center text-xs text-gray-400 p-2">Sun</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Mon</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Tue</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Wed</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Thu</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Fri</div>
+                      <div class="text-center text-xs text-gray-400 p-2">Sat</div>
+                    </div>
+                    
+                    <!-- Calendar days -->
+                    <div id="calendar-days" class="grid grid-cols-7 gap-1">
+                      <!-- Days will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="mt-3 text-xs text-cyan-300/80">
+                      <div id="calendar-helper">Select a valid start date for your workshop</div>
+                    </div>
+                  </div>
+                  
+                  <!-- Selected date display -->
+                  <div id="selected-date-display" class="text-sm text-cyan-300 hidden">
+                    📅 Selected: <span id="selected-date-text"></span>
+                  </div>
+                </div>
+
+                <!-- Attendee Count -->
+                <div id="attendee-count-section" class="space-y-2">
+                  <label for="attendee-count" class="block text-white font-semibold text-sm">Number of Attendees</label>
+                  <select id="attendee-count" name="attendeeCount" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                    <option value="1">1 Person</option>
+                    <option value="2">2 People</option>
+                    <option value="3">3 People</option>
+                    <option value="4">4 People</option>
+                    <option value="5">5 People (Group Discount!)</option>
+                    <option value="6">6+ People (Contact Us)</option>
+                  </select>
+                </div>
+                
+                <!-- Consulting Duration (hidden by default) -->
+                <div id="consulting-duration-section" class="space-y-2 hidden">
+                  <label for="consulting-duration" class="block text-white font-semibold text-sm">Session Duration</label>
+                  <select id="consulting-duration" name="consultingDuration"
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                    <option value="2">2 Hours - $400</option>
+                    <option value="3">3 Hours - $600</option>
+                    <option value="4">4 Hours - $800</option>
+                  </select>
+                  <div class="text-xs text-cyan-300/80">
+                    💡 We'll work on as many ideas as we can fit in the time
+                  </div>
+                </div>
+
+                <!-- Point of Contact -->
+                <div class="space-y-4">
+                  <h4 class="text-white font-semibold">Point of Contact</h4>
+                  <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="contact-first-name" name="contactFirstName" placeholder="First Name" required
+                      class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                    <input type="text" id="contact-last-name" name="contactLastName" placeholder="Last Name" required
+                      class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                  </div>
+                  <input type="email" id="contact-email" name="contactEmail" placeholder="Email Address" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                  <input type="tel" id="contact-phone" name="contactPhone" placeholder="Phone Number" required
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                </div>
+
+                <!-- Attendees Container -->
+                <div id="attendees-container" class="space-y-4">
+                  <h4 class="text-white font-semibold">Attendee Information</h4>
+                  <!-- Attendee forms will be dynamically added here -->
+                </div>
+
+                <!-- Coupon Code -->
+                <div class="space-y-2">
+                  <label for="coupon-code" class="block text-white font-semibold text-sm">Coupon Code (Optional)</label>
+                  <input type="text" id="coupon-code" name="couponCode" placeholder="Enter coupon code"
+                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="book-workshop-btn"
+                  class="w-full py-4 px-6 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold text-lg hover:from-purple-700 hover:to-cyan-600 focus:ring-4 focus:ring-purple-500/50 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <span id="btn-text">Book Workshop</span>
+                  <span id="btn-loading" class="hidden">
+                    <Icon name="bx:bx-loader-alt" class="w-5 h-5 animate-spin inline mr-2" />
+                    Processing...
+                  </span>
+                </button>
+              </form>
+
+              <!-- Success/Error Messages -->
+              <div id="booking-message" class="hidden mt-4 p-4 rounded-lg"></div>
             </div>
             
-            <div class="flex items-center gap-2 text-sm text-indigo-200 mt-auto relative z-10 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+            <div class="flex items-center gap-2 text-sm text-indigo-200 mt-6 relative z-10 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
               <Icon name="bx:bxs-lock" class="w-4 h-4 text-cyan-400" />
-              <span>All payments handled securely by Stripe</span>
+              <span>All payments handled securely by Square</span>
             </div>
           </div>
           
@@ -107,3 +248,548 @@ import { Icon } from "astro-icon/components";
     </div>
   </div>
 </section>
+
+<!-- Booking Widget JavaScript -->
+<script>
+  interface Workshop {
+    id: string;
+    name: string;
+    type: string;
+    price: number;
+    duration: number;
+    description: string;
+    maxCapacity: number;
+    availableStartDays: string[];
+  }
+
+  interface ApiResponse<T> {
+    success: boolean;
+    data?: T;
+    error?: string;
+    message?: string;
+  }
+
+  class BookingWidget {
+    private workshopSelect: HTMLSelectElement;
+    private dateInput: HTMLInputElement;
+    private customCalendar: HTMLElement;
+    private calendarDays: HTMLElement;
+    private currentDate: Date;
+    private selectedDate: Date | null = null;
+    private currentWorkshop: Workshop | null = null;
+    private workshops: Workshop[] = [];
+    private attendeeCountSelect: HTMLSelectElement;
+    private attendeeFieldsContainer: HTMLElement;
+    private form: HTMLFormElement;
+    private submitButton: HTMLButtonElement;
+    private messageContainer: HTMLElement;
+
+    constructor() {
+      this.workshopSelect = document.getElementById('workshop-select') as HTMLSelectElement;
+    
+    // Handle service type changes
+    this.workshopSelect.addEventListener('change', () => {
+      this.handleServiceTypeChange();
+    });
+      this.dateInput = document.getElementById('workshop-date') as HTMLInputElement;
+      this.customCalendar = document.getElementById('custom-calendar') as HTMLElement;
+      this.calendarDays = document.getElementById('calendar-days') as HTMLElement;
+      this.currentDate = new Date(); // Use current date
+      this.attendeeCountSelect = document.getElementById('attendee-count') as HTMLSelectElement;
+      this.attendeeFieldsContainer = document.getElementById('attendees-container') as HTMLElement;
+      this.form = document.getElementById('booking-form') as HTMLFormElement;
+      this.submitButton = document.getElementById('book-workshop-btn') as HTMLButtonElement;
+      this.messageContainer = document.getElementById('booking-message') as HTMLElement;
+
+      this.init();
+    }
+
+    private async init(): Promise<void> {
+      await this.loadWorkshops();
+      this.setupEventListeners();
+      this.updateAttendeeFields();
+    }
+
+    private setupEventListeners(): void {
+      this.workshopSelect.addEventListener('change', () => {
+        this.updateAvailableDates();
+        this.updateAttendeeFields();
+      });
+
+      this.attendeeCountSelect.addEventListener('change', () => {
+        this.updateAttendeeFields();
+      });
+
+      this.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleSubmit();
+      });
+
+      // Calendar navigation
+      document.getElementById('prev-month')?.addEventListener('click', () => {
+        this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+        this.renderCalendar();
+      });
+
+      document.getElementById('next-month')?.addEventListener('click', () => {
+        this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+        this.renderCalendar();
+      });
+    }
+
+    private async loadWorkshops(): Promise<void> {
+      try {
+        const response = await fetch('/api/workshops/available');
+        const result: ApiResponse<Workshop[]> = await response.json();
+
+        if (result.success && result.data) {
+          this.workshops = result.data;
+          this.populateWorkshopDropdown();
+        } else {
+          throw new Error(result.error || 'Failed to load workshops');
+        }
+      } catch (error) {
+        this.showMessage('error', 'Failed to load available workshops. Please refresh the page.');
+      }
+    }
+
+    private populateWorkshopDropdown(): void {
+      // Clear existing options except the first one
+      while (this.workshopSelect.children.length > 1) {
+        this.workshopSelect.removeChild(this.workshopSelect.lastChild!);
+      }
+
+      // Add workshop options
+      this.workshops.forEach(workshop => {
+        const option = document.createElement('option');
+        option.value = workshop.id;
+        option.textContent = `${workshop.name} - $${workshop.pricePerSeat} (${workshop.durationDays} days)`;
+        option.dataset.workshop = JSON.stringify(workshop);
+        this.workshopSelect.appendChild(option);
+      });
+    }
+
+    private updateAvailableDates(): void {
+      const selectedOption = this.workshopSelect.selectedOptions[0];
+      
+      if (!selectedOption || !selectedOption.dataset.workshop) {
+        this.customCalendar.classList.add('hidden');
+        return;
+      }
+
+      this.currentWorkshop = JSON.parse(selectedOption.dataset.workshop);
+      this.customCalendar.classList.remove('hidden');
+
+      // Update the label to show constraints
+      const dateLabel = document.querySelector('label[for="workshop-date"]');
+      if (dateLabel) {
+        const constraints = this.getDateConstraintText(this.currentWorkshop.availableStartDays);
+        dateLabel.innerHTML = `Workshop Date <span class="text-cyan-300 text-xs">(${constraints})</span>`;
+      }
+
+      // Update calendar helper text
+      const helperDiv = document.getElementById('calendar-helper');
+      if (helperDiv) {
+        const duration = this.currentWorkshop.name.includes('3-Day') ? '3 days' : '5 days';
+        helperDiv.textContent = `📅 Select a ${constraints} to start your ${duration} workshop`;
+      }
+
+      this.renderCalendar();
+    }
+
+    private renderCalendar(): void {
+      if (!this.currentWorkshop) {
+        return;
+      }
+
+      const month = this.currentDate.getMonth();
+      const year = this.currentDate.getFullYear();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const firstDayOfWeek = firstDay.getDay();
+      const today = new Date(); // Use current date
+      today.setHours(0, 0, 0, 0);
+
+      // Update the month and year display
+      const monthYearDisplay = document.getElementById('calendar-month-year');
+      if (monthYearDisplay) {
+        monthYearDisplay.textContent = `${this.currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+      }
+
+      this.calendarDays.innerHTML = '';
+
+      // Add empty cells for the first week
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'p-2';
+        this.calendarDays.appendChild(emptyCell);
+      }
+
+      const allowedDays = this.getAllowedDayNumbers(this.currentWorkshop.availableStartDays);
+      
+      // Add cells for each day of the month
+      for (let i = 1; i <= daysInMonth; i++) {
+        const dayCell = document.createElement('div');
+        const currentDate = new Date(year, month, i);
+        const dayOfWeek = currentDate.getDay();
+        const isPastDate = currentDate < today;
+        const isValidDay = allowedDays.includes(dayOfWeek) && !isPastDate;
+        const workshopDuration = this.currentWorkshop.name.includes('3-Day') ? 3 : 5;
+
+        dayCell.textContent = i.toString();
+        
+        // Base styling
+        dayCell.className = 'text-center text-sm p-2 rounded transition-all duration-200 border';
+        
+        if (this.selectedDate && this.selectedDate.toDateString() === currentDate.toDateString()) {
+          dayCell.className += ' bg-cyan-500 text-black font-bold border-cyan-400';
+        } else if (isValidDay) {
+          dayCell.className += ' text-white bg-indigo-600 hover:bg-cyan-500 border-indigo-400 hover:border-cyan-400 cursor-pointer font-semibold';
+        } else {
+          dayCell.className += ' text-gray-500 bg-gray-800/30 cursor-not-allowed border-gray-700/30';
+        }
+
+        if (isValidDay) {
+          // Add hover effect to show workshop duration
+          dayCell.addEventListener('mouseenter', () => {
+            this.showWorkshopDuration(i, workshopDuration);
+          });
+
+          dayCell.addEventListener('mouseleave', () => {
+            this.clearWorkshopDuration();
+          });
+
+          dayCell.addEventListener('click', () => {
+            this.selectDate(new Date(year, month, i));
+          });
+        }
+
+        this.calendarDays.appendChild(dayCell);
+      }
+
+      // Add empty cells for the last week
+      const totalCells = this.calendarDays.children.length;
+      const remainingCells = 42 - totalCells; // 6 rows × 7 days
+      for (let i = 0; i < remainingCells; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'p-2';
+        this.calendarDays.appendChild(emptyCell);
+      }
+    }
+
+    private showWorkshopDuration(startDay: number, duration: number): void {
+      const allCells = Array.from(this.calendarDays.children) as HTMLElement[];
+      const firstDayOfWeek = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1).getDay();
+      
+      // Clear previous hover effects
+      this.clearWorkshopDuration();
+
+      // Highlight the workshop duration
+      for (let i = 0; i < duration; i++) {
+        const cellIndex = firstDayOfWeek + startDay - 1 + i;
+        if (cellIndex < allCells.length && allCells[cellIndex].textContent) {
+          const cell = allCells[cellIndex];
+          if (!cell.classList.contains('cursor-not-allowed')) {
+            cell.classList.add('bg-cyan-400/30', 'border-cyan-300');
+            if (i === 0) {
+              cell.classList.add('ring-2', 'ring-cyan-400');
+            }
+          }
+        }
+      }
+    }
+
+    private clearWorkshopDuration(): void {
+      const allCells = Array.from(this.calendarDays.children) as HTMLElement[];
+      allCells.forEach(cell => {
+        cell.classList.remove('bg-cyan-400/30', 'border-cyan-300', 'ring-2', 'ring-cyan-400');
+      });
+    }
+
+    private selectDate(date: Date): void {
+      this.selectedDate = date;
+      this.dateInput.value = date.toISOString().split('T')[0];
+      
+      // Update selected date display
+      const selectedDateDisplay = document.getElementById('selected-date-display');
+      const selectedDateText = document.getElementById('selected-date-text');
+      if (selectedDateDisplay && selectedDateText) {
+        selectedDateText.textContent = date.toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        selectedDateDisplay.classList.remove('hidden');
+      }
+
+      this.renderCalendar(); // Re-render to show selection
+      this.hideMessage(); // Clear any error messages
+    }
+
+    private async handleSubmit(): Promise<void> {
+      try {
+        this.setLoading(true);
+        this.hideMessage();
+
+        // Validate date before submission
+        const selectedOption = this.workshopSelect.selectedOptions[0];
+        if (selectedOption && selectedOption.dataset.workshop && this.dateInput.value) {
+          const workshop: Workshop = JSON.parse(selectedOption.dataset.workshop);
+          const selectedDate = new Date(this.dateInput.value);
+          const dayOfWeek = selectedDate.getDay();
+          const allowedDays = this.getAllowedDayNumbers(workshop.availableStartDays);
+          
+          if (!allowedDays.includes(dayOfWeek)) {
+            const constraintText = this.getDateConstraintText(workshop.availableStartDays);
+            throw new Error(`Invalid date selected. ${workshop.name} can only start on: ${constraintText}`);
+          }
+        }
+
+        const formData = new FormData(this.form);
+        const attendeeCount = parseInt(formData.get('attendeeCount') as string);
+
+        // Build attendees array
+        const attendees = [];
+        for (let i = 1; i <= attendeeCount; i++) {
+          attendees.push({
+            firstName: formData.get(`attendee-${i}-firstName`) as string,
+            lastName: formData.get(`attendee-${i}-lastName`) as string,
+            email: formData.get(`attendee-${i}-email`) as string,
+          });
+        }
+
+        // Build purchase request using our backend interface structure
+        const purchaseRequest = {
+          bookingRequest: {
+            productId: formData.get('productId') as string,
+            startDate: formData.get('startDate') as string,
+            attendeeCount: attendeeCount,
+            attendees: attendees,
+            pointOfContact: {
+              firstName: formData.get('contactFirstName') as string,
+              lastName: formData.get('contactLastName') as string,
+              email: formData.get('contactEmail') as string,
+              phone: formData.get('contactPhone') as string,
+            },
+            couponCode: formData.get('couponCode') as string || undefined,
+          },
+          paymentMethod: {
+            type: 'card',  // For now, default to card payment
+            amount: this.calculateTotal(formData.get('productId') as string, attendeeCount, formData.get('couponCode') as string)
+          }
+        };
+
+        const response = await fetch('/api/purchase/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(purchaseRequest),
+        });
+
+        const result: ApiResponse<any> = await response.json();
+
+        if (result.success) {
+          this.showMessage('success', `Workshop booked successfully! You'll receive a confirmation email shortly. ${result.data?.confirmationNumber ? `Confirmation: ${result.data.confirmationNumber}` : ''}`);
+          this.form.reset();
+          this.updateAttendeeFields();
+          this.dateInput.disabled = true;
+        } else {
+          throw new Error(result.error || result.message || 'Booking failed');
+        }
+
+      } catch (error) {
+        this.showMessage('error', `Sorry, there was an issue with your booking: ${error instanceof Error ? error.message : 'Please try again or contact support.'}`);
+      } finally {
+        this.setLoading(false);
+      }
+    }
+
+    private calculateTotal(productId: string, attendeeCount: number, couponCode?: string): number {
+      const workshop = this.workshops.find(w => w.id === productId);
+      if (!workshop) return 0;
+
+      let total = workshop.price * attendeeCount;
+      
+      // TODO: Apply coupon discount if provided
+      if (couponCode) {
+        // Coupon logic will be handled by backend
+      }
+
+      return total;
+    }
+
+    private setLoading(loading: boolean): void {
+      const btnText = document.getElementById('btn-text');
+      const btnLoading = document.getElementById('btn-loading');
+      
+      if (loading) {
+        btnText?.classList.add('hidden');
+        btnLoading?.classList.remove('hidden');
+        this.submitButton.disabled = true;
+      } else {
+        btnText?.classList.remove('hidden');
+        btnLoading?.classList.add('hidden');
+        this.submitButton.disabled = false;
+      }
+    }
+
+    private showMessage(type: 'success' | 'error', message: string): void {
+      this.messageContainer.className = `mt-4 p-4 rounded-lg ${
+        type === 'success' 
+          ? 'bg-green-500/20 border border-green-500/30 text-green-300' 
+          : 'bg-red-500/20 border border-red-500/30 text-red-300'
+      }`;
+      this.messageContainer.textContent = message;
+      this.messageContainer.classList.remove('hidden');
+
+      // Auto-hide success messages after 10 seconds
+      if (type === 'success') {
+        setTimeout(() => this.hideMessage(), 10000);
+      }
+    }
+
+    private hideMessage(): void {
+      this.messageContainer.classList.add('hidden');
+    }
+
+    private getAllowedDayNumbers(availableStartDays: string[]): number[] {
+      const dayMap: { [key: string]: number } = {
+        'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3,
+        'thursday': 4, 'friday': 5, 'saturday': 6
+      };
+      
+      return availableStartDays.map(day => dayMap[day.toLowerCase()]).filter(num => num !== undefined);
+    }
+
+    private getDateConstraintText(availableStartDays: string[]): string {
+      // Capitalize first letter for display
+      const capitalizedDays = availableStartDays.map(day => 
+        day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()
+      );
+      
+      if (capitalizedDays.length === 1) {
+        return `${capitalizedDays[0]} only`;
+      } else if (capitalizedDays.length === 2) {
+        return `${capitalizedDays[0]} or ${capitalizedDays[1]}`;
+      } else {
+        const lastDay = capitalizedDays[capitalizedDays.length - 1];
+        const otherDays = capitalizedDays.slice(0, -1);
+        return `${otherDays.join(', ')}, or ${lastDay}`;
+      }
+    }
+
+    private handleServiceTypeChange(): void {
+      const selectedOption = this.workshopSelect.selectedOptions[0];
+      const serviceType = selectedOption?.dataset.type;
+      
+      // Get UI elements
+      const dateLabel = document.getElementById('date-label');
+      const dateConstraint = document.getElementById('date-constraint');
+      const customCalendar = document.getElementById('custom-calendar');
+      const consultingDatePicker = document.getElementById('consulting-date-picker');
+      const attendeeCountSection = document.getElementById('attendee-count-section');
+      const consultingDurationSection = document.getElementById('consulting-duration-section');
+      const attendeesContainer = document.getElementById('attendees-container');
+      const submitButton = document.getElementById('book-workshop-btn');
+      const submitButtonText = document.getElementById('btn-text');
+      
+      if (serviceType === 'consulting') {
+        // Switch to consulting mode
+        if (dateLabel) dateLabel.textContent = 'Session Date';
+        if (dateConstraint) dateConstraint.textContent = '(Monday-Friday, 9 AM - 5 PM)';
+        if (customCalendar) customCalendar.classList.add('hidden');
+        if (consultingDatePicker) consultingDatePicker.classList.remove('hidden');
+        if (attendeeCountSection) attendeeCountSection.classList.add('hidden');
+        if (consultingDurationSection) consultingDurationSection.classList.remove('hidden');
+        if (attendeesContainer) attendeesContainer.classList.add('hidden');
+        if (submitButtonText) submitButtonText.textContent = 'Book Consulting Session';
+        
+        // Make consulting fields required
+        const consultingDate = document.getElementById('consulting-date') as HTMLInputElement;
+        const consultingTime = document.getElementById('consulting-time') as HTMLSelectElement;
+        const consultingDuration = document.getElementById('consulting-duration') as HTMLSelectElement;
+        if (consultingDate) consultingDate.required = true;
+        if (consultingTime) consultingTime.required = true;
+        if (consultingDuration) consultingDuration.required = true;
+        
+        // Remove workshop field requirements
+        this.dateInput.required = false;
+        const attendeeCount = document.getElementById('attendee-count') as HTMLSelectElement;
+        if (attendeeCount) attendeeCount.required = false;
+        
+      } else if (serviceType === 'workshop') {
+        // Switch to workshop mode
+        if (dateLabel) dateLabel.textContent = 'Workshop Date';
+        if (dateConstraint) dateConstraint.textContent = '(Monday, Wednesday, Friday)';
+        if (customCalendar) customCalendar.classList.remove('hidden');
+        if (consultingDatePicker) consultingDatePicker.classList.add('hidden');
+        if (attendeeCountSection) attendeeCountSection.classList.remove('hidden');
+        if (consultingDurationSection) consultingDurationSection.classList.add('hidden');
+        if (attendeesContainer) attendeesContainer.classList.remove('hidden');
+        if (submitButtonText) submitButtonText.textContent = 'Book Workshop';
+        
+        // Make workshop fields required
+        this.dateInput.required = true;
+        const attendeeCount = document.getElementById('attendee-count') as HTMLSelectElement;
+        if (attendeeCount) attendeeCount.required = true;
+        
+        // Remove consulting field requirements
+        const consultingDate = document.getElementById('consulting-date') as HTMLInputElement;
+        const consultingTime = document.getElementById('consulting-time') as HTMLSelectElement;
+        const consultingDuration = document.getElementById('consulting-duration') as HTMLSelectElement;
+        if (consultingDate) consultingDate.required = false;
+        if (consultingTime) consultingTime.required = false;
+        if (consultingDuration) consultingDuration.required = false;
+        
+        // Update attendee fields
+        this.updateAttendeeFields();
+        
+      } else {
+        // No service selected - hide all
+        if (customCalendar) customCalendar.classList.add('hidden');
+        if (consultingDatePicker) consultingDatePicker.classList.add('hidden');
+        if (attendeeCountSection) attendeeCountSection.classList.add('hidden');
+        if (consultingDurationSection) consultingDurationSection.classList.add('hidden');
+        if (attendeesContainer) attendeesContainer.classList.add('hidden');
+        if (submitButtonText) submitButtonText.textContent = 'Book Service';
+      }
+    }
+
+    private updateAttendeeFields(): void {
+      const attendeeCount = parseInt(this.attendeeCountSelect.value);
+      const container = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
+      
+      if (!container) {
+        const fieldsDiv = document.createElement('div');
+        fieldsDiv.className = 'attendee-fields space-y-4';
+        this.attendeeFieldsContainer.appendChild(fieldsDiv);
+      }
+
+      const fieldsContainer = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
+      fieldsContainer.innerHTML = '';
+
+      for (let i = 1; i <= attendeeCount; i++) {
+        const attendeeDiv = document.createElement('div');
+        attendeeDiv.className = 'grid grid-cols-2 gap-4 p-4 bg-black/20 rounded-lg border border-indigo-500/20';
+        attendeeDiv.innerHTML = `
+          <h5 class="col-span-2 text-cyan-300 font-semibold">Attendee ${i}</h5>
+          <input type="text" name="attendee-${i}-firstName" placeholder="First Name" required
+            class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+          <input type="text" name="attendee-${i}-lastName" placeholder="Last Name" required
+            class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+          <input type="email" name="attendee-${i}-email" placeholder="Email Address" required
+            class="col-span-2 p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+        `;
+        fieldsContainer.appendChild(attendeeDiv);
+      }
+    }
+  }
+
+  // Initialize booking widget when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new BookingWidget();
+  });
+</script>

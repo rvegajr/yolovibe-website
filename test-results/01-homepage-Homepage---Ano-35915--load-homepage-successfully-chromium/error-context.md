@@ -1,0 +1,144 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - link "YOLOVibeCode":
+    - /url: /
+  - navigation:
+    - list:
+      - listitem:
+        - link "Knowledge Unbound":
+          - /url: /knowledge-unbound
+      - listitem:
+        - list:
+          - button "Workshops":
+            - text: Workshops
+            - img
+      - listitem:
+        - link "Unprivacy":
+          - /url: /unprivacy
+      - listitem:
+        - link "Book Now New":
+          - /url: /#book
+- main:
+  - img "AI Coding Session"
+  - heading "YOLOVibeCoding Boot Camps" [level=1]
+  - paragraph: Accelerate your development workflow with cutting-edge AI-powered techniques. Learn the skills to transform your business processes and create applications at unprecedented speed. Our experts bring hands-on training directly to your team.
+  - link "Book a Workshop":
+    - /url: "#book"
+    - img
+    - text: Book a Workshop
+  - link "Knowledge Unbound":
+    - /url: /knowledge-unbound
+    - img
+    - text: Knowledge Unbound
+- heading "Our Workshop Offerings" [level=2]
+- paragraph: We bring our expert trainers directly to your location for hands-on, immersive learning experiences
+- heading "Share Your Knowledge" [level=3]
+- paragraph: We strongly encourage participants to share workshop materials and teach others what you've learned. This collaborative approach reinforces your own understanding and extends the benefits to your wider team.
+- paragraph: "Pro tip: The first few days' content is especially valuable for sharing with family, friends, and colleagues!"
+- paragraph: (Just keep those SSH keys and sensitive credentials to yourself — we trust you know that already.)
+- text: ✨
+- heading "3-Day Rapid VibeCode Workshop" [level=3]
+- text: $3,000 per seat
+- paragraph: "Learn how to use cutting-edge AI tools to accelerate your development process:"
+- list:
+  - listitem:
+    - img
+    - strong: "Day 1:"
+    - text: The Essence of Vibe Coding
+  - listitem:
+    - img
+    - strong: "Day 2:"
+    - text: CLI-ing Everything
+  - listitem:
+    - img
+    - strong: "Day 3:"
+    - text: Client Technology Integration
+- link "Learn More":
+  - /url: /product-a
+- heading "5-Day Rapid VibeCode Workshop" [level=3]
+- text: $4,500 per seat
+- paragraph: "Everything in the 3-Day Workshop, plus two additional days:"
+- list:
+  - listitem:
+    - img
+    - strong: "Day 4:"
+    - text: Automating Business Development
+  - listitem:
+    - img
+    - strong: "Day 5:"
+    - text: Idea Implementation & Prototyping
+- link "Learn More":
+  - /url: /product-b
+- img
+- text: Book Now
+- heading "Jump Into a Workshop" [level=2]
+- paragraph: Ready to level up? Pick a date that works for you and let's make some magic happen!
+- img
+- heading "Book Your Workshop" [level=3]
+- text: Choose Service
+- combobox "Choose Service":
+  - option "Select a service..." [selected]
+  - option "3-Day YOLO Workshop - $undefined (undefined days)"
+  - option "5-Day YOLO Intensive - $undefined (undefined days)"
+  - option "AI Business Development - $undefined (undefined days)"
+- text: Workshop Date (Monday, Wednesday, Friday) Number of Attendees
+- combobox "Number of Attendees":
+  - option "1 Person" [selected]
+  - option "2 People"
+  - option "3 People"
+  - option "4 People"
+  - option "5 People (Group Discount!)"
+  - option "6+ People (Contact Us)"
+- heading "Point of Contact" [level=4]
+- textbox "First Name"
+- textbox "Last Name"
+- textbox "Email Address"
+- textbox "Phone Number"
+- heading "Attendee Information" [level=4]
+- heading "Attendee 1" [level=5]
+- textbox "First Name"
+- textbox "Last Name"
+- textbox "Email Address"
+- text: Coupon Code (Optional)
+- textbox "Coupon Code (Optional)"
+- button "Book Workshop"
+- img
+- text: All payments handled securely by Square
+- heading "✨ Workshop Benefits" [level=3]
+- img
+- heading "Flexible Scheduling" [level=4]
+- paragraph: Choose dates that work perfectly for your entire team
+- img
+- heading "Secure Payments" [level=4]
+- paragraph: Pay safely with all major credit cards and payment methods
+- img
+- heading "Group Discounts" [level=4]
+- paragraph: Special rates available for teams of 5 or more
+- contentinfo:
+  - link "YOLO Vibe Code":
+    - /url: /
+  - paragraph: "Learn to harness cutting-edge AI tools to amplify your coding and business development skills. Our prime directive: Share knowledge freely."
+  - heading "Quick Links" [level=3]
+  - list:
+    - listitem:
+      - link "Knowledge Unbound":
+        - /url: /knowledge-unbound
+    - listitem:
+      - link "Unprivacy":
+        - /url: /unprivacy
+    - listitem:
+      - link "Workshops":
+        - /url: /#offerings
+    - listitem:
+      - link "Book Now":
+        - /url: /#book
+  - heading "Contact" [level=3]
+  - paragraph: "Email: contact@yolovibecodebootcamp.com"
+  - paragraph: NO Copyright 2025 YOLOVibeCodeBootCamp. ABSOLUTELY NO rights reserved.
+  - paragraph:
+    - text: Website template by
+    - link "Web3Templates":
+      - /url: https://web3templates.com
+```

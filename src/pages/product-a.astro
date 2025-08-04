@@ -1,103 +1,158 @@
 ---
-import Container from "@/components/container.astro";
-import MainLayout from "@/layouts/MainLayout.astro";
-import Link from "@/components/ui/link.astro";
-import { Icon } from "astro-icon/components";
+import Layout from "../layouts/Layout.astro";
+import Container from "../components/container.astro";
+import Sectionhead from "../components/sectionhead.astro";
+import PricingCard from "../components/pricing.astro";
+
+const workshopPricing = {
+  name: "3-Day AI Coding Mastery",
+  price: "$3,000",
+  popular: true,
+  features: [
+    "Universal AI coding principles",
+    "Hands-on with Windsurf, Cursor, GitHub Copilot",
+    "Advanced prompt engineering",
+    "Voice-to-CLI interfaces",
+    "Rapid application scaffolding",
+    "Multi-tool workflow strategies",
+    "Team collaboration techniques",
+    "Certificate of completion"
+  ],
+  button: {
+    text: "Book Workshop",
+    link: "/book",
+  },
+};
 ---
 
-<MainLayout title="3-Day Rapid VibeCode Workshop" description="Master AI coding and deployment in just 3 days">
+<Layout title="Product A - YOLOVibe">
   <Container>
-    <div class="max-w-4xl mx-auto py-12">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-cyan-500 mb-4">
-          3-Day Rapid VibeCode Workshop
-        </h1>
-        <p class="text-xl text-slate-600 dark:text-slate-400">
-          Master the art of AI-assisted coding in just three days
-        </p>
-      </div>
+    <Sectionhead>
+      <Fragment slot="title">3-Day AI Coding Mastery Workshop</Fragment>
+      <Fragment slot="desc">
+        Transform your development workflow with comprehensive training on leading AI coding assistants including Windsurf, Cursor, GitHub Copilot, and emerging platforms. Learn universal AI coding principles that work across all tools.
+      </Fragment>
+    </Sectionhead>
 
-      <div class="prose prose-lg dark:prose-invert max-w-none mb-12">
-        <p>
-          Our 3-Day Rapid VibeCode Workshop transforms your development capabilities by teaching 
-          you how to effectively use AI tools like Windsurf to accelerate your coding process.
-          Hands-on exercises ensure you leave with practical skills you can apply immediately.
-        </p>
-      </div>
+    <div class="mx-auto max-w-4xl mt-16">
+      <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
+        Master AI-Powered Development
+      </h2>
+      <p class="text-lg mt-4 text-slate-600">
+        This intensive 3-day workshop teaches you how to effectively use AI coding assistants like Windsurf, Cursor, GitHub Copilot, and other leading platforms to accelerate your coding process and build better software faster.
+      </p>
+    </div>
 
-      <div class="bg-gradient-to-r from-slate-900 to-purple-900 rounded-xl p-8 mb-12 shadow-xl border border-purple-500/30">
+    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-12">
+      <div>
+        <h3 class="font-semibold text-2xl text-gray-800">What You'll Master</h3>
+        <p class="mt-4 text-slate-500 text-lg">
+          Learn platform-agnostic AI coding principles and tool-specific techniques for maximum productivity.
+        </p>
+        <ul class="grid mt-6 text-left gap-y-4">
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Universal AI coding principles that work with any platform</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Hands-on experience with Windsurf, Cursor, and GitHub Copilot</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Advanced prompt engineering for optimal AI assistance</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Building voice-to-CLI interfaces with AI coding tools</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Rapid application scaffolding and prototyping techniques</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-2xl text-gray-800">Advanced Integration</h3>
+        <p class="mt-4 text-slate-500 text-lg">
+          Enterprise-ready AI coding implementation for your organization.
+        </p>
+        <ul class="grid mt-6 text-left gap-y-4">
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Multi-tool workflow strategies for maximum efficiency</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Team collaboration with AI coding assistants</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Adapting AI tools to your organization's security requirements</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Custom AI tool configuration and optimization</span>
+          </li>
+          <li class="flex items-start gap-3 text-slate-500">
+            <svg class="w-5 h-5 mt-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Future-proofing your AI development skills</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-2xl font-semibold text-center mb-8">3-Day Learning Journey</h3>
+      <div class="grid md:grid-cols-3 gap-8">
         <div class="text-center">
-          <div class="text-4xl font-bold text-green-500 mb-2 glow-sm">$3,000</div>
-          <p class="text-slate-300 mb-6">per seat • 3 full days • on-site</p>
-          <Link href="/book" style="primary" size="lg" class="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-purple-500/50 glow-sm transform hover:scale-105 transition-all">
-            <span>Book Now</span>
-            <Icon name="tabler:arrow-right" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-blue-600">1</span>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">AI Coding Foundations</h4>
+          <p class="text-slate-600">Master universal AI coding principles, prompt engineering, and platform comparison across Windsurf, Cursor, GitHub Copilot, and emerging tools.</p>
+        </div>
+        <div class="text-center">
+          <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-green-600">2</span>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">Advanced AI Integration</h4>
+          <p class="text-slate-600">Deep dive into CLI automation, voice interfaces, and multi-tool workflows for maximum development velocity.</p>
+        </div>
+        <div class="text-center">
+          <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-purple-600">3</span>
+          </div>
+          <h4 class="text-xl font-semibold mb-2">Enterprise Implementation</h4>
+          <p class="text-slate-600">Deploy AI coding solutions in your organization with security, compliance, and team collaboration best practices.</p>
         </div>
       </div>
+    </div>
 
-      <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">Detailed Curriculum</h2>
-
-      <div class="space-y-16">
-        <div class="relative border-l-4 border-purple-600 dark:border-purple-400 pl-8">
-          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-purple-600 dark:bg-purple-400 flex items-center justify-center text-white font-bold">1</div>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 1 — The Essence of Vibe Coding</h3>
-          
-          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
-            <li>Understanding the revolutionary AI Flow paradigm of development</li>
-            <li>Achieving previously unrealistic software development principles through AI</li>
-            <li>Radical openness: speaking your dreams to code</li>
-            <li>Setting up your personal AI coding environment for maximum efficiency</li>
-            <li>Hands-on: Creating your first vibe-driven application</li>
-            <li class="font-bold text-purple-600 dark:text-purple-400">
-              Deliverable: Personal coding "dream board" and AI-assisted dev environment
-            </li>
-          </ul>
-        </div>
-
-        <div class="relative border-l-4 border-blue-500 dark:border-blue-400 pl-8">
-          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-blue-500 dark:bg-blue-400 flex items-center justify-center text-white font-bold">2</div>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 2 — CLI-ing Everything</h3>
-          
-          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
-            <li>Transforming your workflow through command line mastery</li>
-            <li>Building voice-to-CLI interfaces with Windsurf</li>
-            <li>Script generation for repetitive development tasks</li>
-            <li>Creating personalized AI agents for your specific development workflow</li>
-            <li>Infrastructure automation: from zero to cloud in minutes</li>
-            <li class="font-bold text-blue-600 dark:text-blue-400">
-              Deliverable: Custom CLI toolkit that automates your daily tasks
-            </li>
-          </ul>
-        </div>
-
-        <div class="relative border-l-4 border-cyan-500 dark:border-cyan-400 pl-8">
-          <div class="absolute -left-4 top-0 h-8 w-8 rounded-full bg-cyan-500 dark:bg-cyan-400 flex items-center justify-center text-white font-bold">3</div>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Day 3 — Client Technology Integration</h3>
-          
-          <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300">
-            <li>Understanding each participant's unique technology landscape</li>
-            <li>Tailoring AI tools to integrate with existing company systems</li>
-            <li>Adapting Windsurf to your organization's specific security requirements</li>
-            <li>Creating custom plugins for your team's preferred development environments</li>
-            <li>Building an adoption roadmap for your organization</li>
-            <li class="font-bold text-cyan-600 dark:text-cyan-400">
-              Deliverable: Personalized integration plan and proof-of-concept
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="text-center mt-16">
-        <Link href="/book" style="primary" size="lg" class="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-purple-500/50 glow-sm transform hover:scale-105 transition-all">
-          <span>Book Your Workshop</span>
-          <Icon name="tabler:calendar-plus" class="h-4 w-4 ml-1" />
-        </Link>
-        
-        <p class="mt-8 text-sm text-slate-500 dark:text-slate-400">
-          Questions? Email us at contact@yolovibecodebootcamp.com
-        </p>
+    <div class="mt-24">
+      <div class="max-w-md mx-auto">
+        <PricingCard plan={workshopPricing} />
       </div>
     </div>
   </Container>
-</MainLayout>
+</Layout>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test YOLOVibe as a Real Customer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .coupon-box {
+            background: #fef3c7;
+            border: 3px dashed #f59e0b;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .coupon-code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 28px;
+            font-weight: bold;
+            color: #92400e;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 10px 0;
+            border: 2px solid #f59e0b;
+            letter-spacing: 2px;
+        }
+        .journey-step {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .journey-step h3 {
+            margin: 0 0 10px 0;
+            color: #1e40af;
+            font-size: 18px;
+        }
+        .action-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .action-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+            padding-left: 25px;
+        }
+        .action-list li:before {
+            content: "→ ";
+            color: #3b82f6;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .action-list li:last-child {
+            border-bottom: none;
+        }
+        .button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 15px 0;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background: #1d4ed8;
+        }
+        .mindset-box {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .important {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .important strong {
+            color: #dc2626;
+        }
+        .feedback-section {
+            background: #fffbeb;
+            border: 1px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            .hero h1 { font-size: 20px; }
+            .coupon-code { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">YOLOVibe</div>
+            <div style="color: #64748b; font-size: 16px;">Customer Journey Testing</div>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🛍️ Test YOLOVibe as a Real Customer</h1>
+            <p>Experience our platform exactly like someone ready to purchase</p>
+        </div>
+
+        <!-- Personal Message -->
+        <p>Hi {{firstName}},</p>
+        
+        <p>I need your help testing YOLOVibe from the perspective of a <strong>real customer who's ready to purchase</strong>. Please approach this as if you genuinely want to book a workshop and are willing to pay for it.</p>
+
+        <!-- Customer Mindset -->
+        <div class="mindset-box">
+            <h3 style="margin: 0 0 15px 0; color: #059669;">🎭 Your Customer Persona</h3>
+            <p style="margin: 0;"><strong>You are:</strong> A professional looking to upskill through hands-on workshops. You've heard good things about YOLOVibe and are ready to invest in your development. You have a budget and specific learning goals in mind.</p>
+        </div>
+
+        <!-- Free Testing Coupon -->
+        <div class="coupon-box">
+            <h3 style="margin: 0 0 10px 0; color: #92400e;">🎁 Your 100% OFF Coupon</h3>
+            <p style="margin: 0 0 15px 0; color: #92400e;">Use this code at checkout to complete your "purchase" for free:</p>
+            
+            <div class="coupon-code">BETATEST100</div>
+            <div style="font-size: 14px; color: #92400e; margin: 5px 0;">Valid until {{expiryDate}} • 100% off any workshop</div>
+        </div>
+
+        <div class="important">
+            <strong>Important:</strong> This is a real booking in our test environment. Go through the complete purchase process, but you won't be charged anything with the coupon code. No actual workshop will be scheduled.
+        </div>
+
+        <!-- Start Testing -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{websiteUrl}}" class="button">🚀 Start Shopping for Workshops</a>
+        </div>
+
+        <!-- Customer Journey Steps -->
+        <h2 style="color: #1f2937; margin-bottom: 20px;">🛒 Your Customer Journey</h2>
+        <p>Follow this realistic customer journey and pay attention to your experience at each step:</p>
+
+        <!-- Step 1: Discovery -->
+        <div class="journey-step">
+            <h3>1. 🔍 Discover & Evaluate</h3>
+            <p><strong>Mindset:</strong> You're exploring options and deciding if YOLOVibe is worth your time and money.</p>
+            <ul class="action-list">
+                <li>Browse the homepage - does it immediately communicate value?</li>
+                <li>Explore both workshop offerings (Product A & Product B)</li>
+                <li>Check the pricing - does it feel fair for what's offered?</li>
+                <li>Read some blog posts - do they build credibility?</li>
+                <li>Look for social proof, testimonials, or credentials</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Would I trust this company with my money and time?</p>
+        </div>
+
+        <!-- Step 2: Decision -->
+        <div class="journey-step">
+            <h3>2. 🤔 Make Your Decision</h3>
+            <p><strong>Mindset:</strong> You're convinced and ready to purchase. Which workshop matches your goals?</p>
+            <ul class="action-list">
+                <li>Choose the workshop that most appeals to you personally</li>
+                <li>Read all the details - curriculum, schedule, what's included</li>
+                <li>Check if the timing works for your schedule</li>
+                <li>Consider the investment vs. expected value</li>
+                <li>Click "Book Now" when you're genuinely ready to purchase</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Am I excited about this workshop? Does it solve my problem?</p>
+        </div>
+
+        <!-- Step 3: Registration -->
+        <div class="journey-step">
+            <h3>3. 📝 Complete Your Registration</h3>
+            <p><strong>Mindset:</strong> You're committed to purchasing and want a smooth, professional experience.</p>
+            <ul class="action-list">
+                <li>Create your account with real information (use a real email you check)</li>
+                <li>Fill out attendee details as if you're actually attending</li>
+                <li>Add any dietary restrictions or accessibility needs you actually have</li>
+                <li>Review your booking details carefully</li>
+                <li>Apply coupon code <strong>BETATEST100</strong> at checkout</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Does this feel secure and professional? Do I trust giving my information?</p>
+        </div>
+
+        <!-- Step 4: Purchase -->
+        <div class="journey-step">
+            <h3>4. 💳 Complete Your Purchase</h3>
+            <p><strong>Mindset:</strong> You're making a financial commitment and expect everything to work perfectly.</p>
+            <ul class="action-list">
+                <li>Verify the coupon applied correctly (should show $0.00 total)</li>
+                <li>Go through the payment process completely</li>
+                <li>Pay attention to confirmation messages and next steps</li>
+                <li>Check your email immediately for confirmation</li>
+                <li>Save/screenshot your confirmation for your records</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Do I feel confident my purchase was successful? What happens next?</p>
+        </div>
+
+        <!-- Step 5: Post-Purchase -->
+        <div class="journey-step">
+            <h3>5. ✅ Post-Purchase Experience</h3>
+            <p><strong>Mindset:</strong> You've paid and now expect excellent customer service and clear communication.</p>
+            <ul class="action-list">
+                <li>Log into your account and review your booking</li>
+                <li>Look for workshop materials, joining instructions, or preparation info</li>
+                <li>Try updating your profile or booking details</li>
+                <li>See if you can easily contact support if needed</li>
+                <li>Check if the experience meets your expectations as a paying customer</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Do I feel taken care of? Am I prepared for the workshop?</p>
+        </div>
+
+        <!-- Mobile Testing -->
+        <div class="journey-step">
+            <h3>6. 📱 Mobile Customer Experience</h3>
+            <p><strong>Mindset:</strong> You're busy and might want to book on your phone during a break or commute.</p>
+            <ul class="action-list">
+                <li>Visit the site on your mobile device</li>
+                <li>Try browsing workshops and reading details</li>
+                <li>Attempt to complete a booking on mobile</li>
+                <li>Test forms, buttons, and navigation on smaller screens</li>
+                <li>Check if you'd be comfortable making a real purchase on mobile</li>
+            </ul>
+            <p><strong>Ask yourself:</strong> Would I actually buy this on my phone? Is it trustworthy on mobile?</p>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <h3 style="margin: 0 0 15px 0; color: #92400e;">💭 Your Customer Feedback</h3>
+            <p>After completing your journey, please share your honest thoughts:</p>
+            <ul>
+                <li><strong>Trust Factor:</strong> Did you feel confident giving your information and "purchasing"?</li>
+                <li><strong>Value Perception:</strong> Does the pricing feel fair for what's offered?</li>
+                <li><strong>User Experience:</strong> Was the booking process smooth and intuitive?</li>
+                <li><strong>Communication:</strong> Were expectations clear at every step?</li>
+                <li><strong>Overall Impression:</strong> Would you recommend this to a colleague?</li>
+                <li><strong>Biggest Issues:</strong> What would prevent you from actually purchasing?</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="mailto:{{feedbackEmail}}?subject=Customer Journey Test Feedback" class="button" style="background: #f59e0b;">📧 Send Your Feedback</a>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0;">
+            <h3 style="margin: 0 0 15px 0; color: #374151;">⏰ Testing Details</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li><strong>Time needed:</strong> 15-20 minutes for complete journey</li>
+                <li><strong>Feedback deadline:</strong> {{feedbackDeadline}}</li>
+                <li><strong>Questions?</strong> Email {{supportEmail}}</li>
+            </ul>
+        </div>
+
+        <!-- Thank You -->
+        <div style="text-align: center; margin: 30px 0;">
+            <h3 style="color: #1f2937;">🙏 Thank You!</h3>
+            <p>Your perspective as a potential customer is invaluable. This feedback will help us create a platform that people actually want to buy from.</p>
+            
+            <a href="{{websiteUrl}}" class="button" style="font-size: 18px; padding: 15px 30px;">🛍️ Start Your Customer Journey</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>YOLOVibe</strong> - Customer Journey Testing</p>
+            <p>{{companyAddress}}</p>
+            <p>This is a test environment. Your "purchase" helps us improve the real customer experience.</p>
+        </div>
+    </div>
+</body>
+</html> 

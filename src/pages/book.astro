@@ -2,6 +2,7 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import Container from "../components/container.astro";
 import Sectionhead from "../components/sectionhead.astro";
+import BookingWidget from "../components/booking-widget.astro";
 import "../styles/neon-glow.css";
 ---
 
@@ -11,59 +12,74 @@ import "../styles/neon-glow.css";
       Book Your Workshop
     </h1>
     
-    <div class="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-12">
+    <div class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-12">
       <p class="text-lg text-center mb-8 text-slate-700 dark:text-slate-200">
-        Select your preferred workshop package and dates below. All workshops are conducted over consecutive business days.
+        Select your preferred workshop package and dates below. All workshops are conducted over consecutive business days with our new streamlined registration system.
       </p>
       
-      <!-- Workshop Package Options -->
+      <!-- Workshop Package Information -->
       <div class="grid md:grid-cols-2 gap-6 mb-8">
         <!-- 3-Day Workshop Package -->
         <div class="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 dark:from-purple-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-purple-500/30 dark:border-purple-700/50 shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-xl font-bold mb-3 text-purple-700 dark:text-purple-300">3-Day Rapid VibeCode Workshop</h3>
-          <p class="text-slate-700 dark:text-slate-300 mb-4">Intensive 3-day workshop covering AI-powered development fundamentals.</p>
-          <p class="font-bold text-lg mb-5 text-green-500 glow-sm">$3,000 per seat</p>
-          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465314" class="inline-flex items-center justify-center w-full py-3 px-4 text-white font-medium text-center rounded-lg transition-all whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 hover:scale-[1.02] hover:shadow-lg glow-sm">
-            <span>Book 3-Day Workshop</span>
-          </a>
+          <h3 class="text-xl font-bold mb-3 text-purple-700 dark:text-purple-300">3-Day YOLO Workshop</h3>
+          <p class="text-slate-700 dark:text-slate-300 mb-4">Intensive 3-day workshop covering core YOLO principles and practical applications. Can start Monday, Tuesday, or Wednesday.</p>
+          <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <p>• Maximum 12 attendees per session</p>
+            <p>• 3 consecutive business days</p>
+            <p>• Hands-on coding exercises</p>
+            <p>• Certificate of completion</p>
+          </div>
+          <p class="font-bold text-xl text-green-400 bg-black/20 px-4 py-2 rounded-lg border border-green-400/30">$3,000 per seat</p>
         </div>
         
         <!-- 5-Day Workshop Package -->
         <div class="bg-gradient-to-br from-blue-900/40 to-indigo-900/40 dark:from-blue-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-blue-500/30 dark:border-blue-700/50 shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-xl font-bold mb-3 text-blue-700 dark:text-blue-300">5-Day VibeCode + Business Plan</h3>
-          <p class="text-slate-700 dark:text-slate-300 mb-4">Complete 5-day workshop with business integration planning.</p>
-          <p class="font-bold text-lg mb-5 text-green-500 glow-sm">$4,500 per seat</p>
-          <a href="https://app.acuityscheduling.com/schedule.php?owner=35993562&appointmentType=79465467" class="inline-flex items-center justify-center w-full py-3 px-4 text-white font-medium text-center rounded-lg transition-all whitespace-nowrap bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 hover:scale-[1.02] hover:shadow-lg glow-sm">
-            <span>Book 5-Day Workshop</span>
-          </a>
+          <h3 class="text-xl font-bold mb-3 text-blue-700 dark:text-blue-300">5-Day YOLO Intensive</h3>
+          <p class="text-slate-700 dark:text-slate-300 mb-4">Comprehensive 5-day intensive program with advanced techniques and certification. Always starts on Monday.</p>
+          <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <p>• Maximum 8 attendees per session</p>
+            <p>• Monday through Friday</p>
+            <p>• Advanced project work</p>
+            <p>• Business integration planning</p>
+          </div>
+          <p class="font-bold text-xl text-green-400 bg-black/20 px-4 py-2 rounded-lg border border-green-400/30">$4,500 per seat</p>
         </div>
       </div>
-      
-      <!-- Acuity Scheduling Embed Code -->
-      <div class="acuity-embed-container bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-        <h3 class="text-xl font-bold mb-4 text-center text-slate-800 dark:text-slate-200">Full Scheduling Calendar</h3>
-        <iframe src="https://app.acuityscheduling.com/schedule.php?owner=35993562" 
-                width="100%" 
-                height="800" 
-                frameBorder="0">
-        </iframe>
-        <script src="https://embed.acuityscheduling.com/js/embed.js" type="text/javascript"></script>
-      </div>
     </div>
+
+    <!-- YOLOVibe Registration System -->
+    <BookingWidget />
     
-    <div class="max-w-3xl mx-auto text-center">
+    <div class="max-w-3xl mx-auto text-center mt-12">
       <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Need Help?</h2>
       <p class="text-slate-700 dark:text-slate-300 mb-6">
         If you have any questions about our workshops or need assistance with booking,
         please contact us at <a href="mailto:contact@yolovibecodebootcamp.com" class="text-indigo-600 dark:text-indigo-400 hover:underline">contact@yolovibecodebootcamp.com</a>
       </p>
+      
+      <div class="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 p-6 rounded-xl border border-indigo-200 dark:border-indigo-700">
+        <h3 class="text-lg font-semibold mb-3 text-slate-900 dark:text-white">Workshop Schedule</h3>
+        <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-400">
+          <div>
+            <p class="font-medium text-purple-600 dark:text-purple-400">3-Day Workshop:</p>
+            <p>• Monday-Wednesday</p>
+            <p>• Tuesday-Thursday</p>
+            <p>• Wednesday-Friday</p>
+          </div>
+          <div>
+            <p class="font-medium text-blue-600 dark:text-blue-400">5-Day Workshop:</p>
+            <p>• Monday-Friday only</p>
+            <p>• One session per week maximum</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </MainLayout>
 
 <style>
-  .acuity-embed-container {
-    width: 100%;
-    min-height: 800px;
+  /* Custom styles for the new registration system */
+  .glow-sm {
+    text-shadow: 0 0 10px currentColor;
   }
 </style>
