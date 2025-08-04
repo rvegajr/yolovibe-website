@@ -68,13 +68,13 @@ import { Icon } from "astro-icon/components";
                     <select id="consulting-time" name="consultingTime"
                       class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
                       <option value="">Select time...</option>
-                      <option value="09:00">9:00 AM</option>
-                      <option value="11:00">11:00 AM</option>
-                      <option value="13:00">1:00 PM</option>
-                      <option value="15:00">3:00 PM</option>
+                      <option value="09:00">9:00 AM (Central)</option>
+                      <option value="11:00">11:00 AM (Central)</option>
+                      <option value="13:00">1:00 PM (Central)</option>
+                      <option value="15:00">3:00 PM (Central)</option>
                     </select>
                     <div class="text-xs text-cyan-300/80">
-                      📅 Monday-Friday, 9 AM - 5 PM • 2-hour minimum • 48-hour advance notice required
+                      📅 Monday-Friday, 9 AM - 5 PM (Central Time) • 2-hour minimum • 48-hour advance notice required
                     </div>
                   </div>
                   
@@ -155,7 +155,16 @@ import { Icon } from "astro-icon/components";
 
                 <!-- Point of Contact -->
                 <div class="space-y-4">
-                  <h4 class="text-white font-semibold">Point of Contact</h4>
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-white font-semibold">Point of Contact</h4>
+                    <div id="include-contact-section" class="flex items-center space-x-2">
+                      <input type="checkbox" id="include-contact-as-attendee" name="includeContactAsAttendee" 
+                        class="w-4 h-4 text-cyan-500 bg-black/30 border-indigo-500/30 rounded focus:ring-cyan-500/20 focus:ring-2" />
+                      <label for="include-contact-as-attendee" class="text-sm text-cyan-300 cursor-pointer">
+                        Include as attendee
+                      </label>
+                    </div>
+                  </div>
                   <div class="grid grid-cols-2 gap-4">
                     <input type="text" id="contact-first-name" name="contactFirstName" placeholder="First Name" required
                       class="p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
@@ -164,8 +173,11 @@ import { Icon } from "astro-icon/components";
                   </div>
                   <input type="email" id="contact-email" name="contactEmail" placeholder="Email Address" required
                     class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
-                  <input type="tel" id="contact-phone" name="contactPhone" placeholder="Phone Number" required
-                    class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                  <div class="space-y-1">
+                    <input type="tel" id="contact-phone" name="contactPhone" placeholder="Phone Number (e.g., +1-555-123-4567)" required
+                      class="w-full p-3 rounded-lg bg-black/30 border border-indigo-500/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" />
+                    <div class="text-xs text-cyan-300/70">📞 Include country code for international numbers</div>
+                  </div>
                 </div>
 
                 <!-- Attendees Container -->
@@ -257,8 +269,21 @@ import { Icon } from "astro-icon/components";
   </div>
 </section>
 
-<!-- Booking Widget JavaScript -->
+<!-- 🎯 EVENT-DRIVEN BOOKING WIDGET JAVASCRIPT -->
 <script>
+  // 🎯 EVENT-DRIVEN INFRASTRUCTURE
+  // Using global event bus from SPAInitializer for compatibility
+  
+  // Event Types (simplified for compatibility)
+  const EventTypes = {
+    WORKSHOP_SELECTED: 'WORKSHOP_SELECTED',
+    DATE_SELECTED: 'DATE_SELECTED',
+    FORM_SUBMITTED: 'FORM_SUBMITTED',
+    USER_INTERACTION: 'USER_INTERACTION',
+    ERROR_OCCURRED: 'ERROR_OCCURRED',
+    BOOKING_SUBMITTED: 'BOOKING_SUBMITTED'
+  };
+
   interface Workshop {
     id: string;
     name: string;
@@ -277,7 +302,13 @@ import { Icon } from "astro-icon/components";
     message?: string;
   }
 
-  class BookingWidget {
+  /**
+   * 🎯 EVENT-DRIVEN BOOKING WIDGET
+   * 
+   * This is our NEW event-driven BookingWidget!
+   * It communicates entirely through events - no direct coupling!
+   */
+  class EventDrivenBookingWidget {
     private workshopSelect: HTMLSelectElement;
     private dateInput: HTMLInputElement;
     private customCalendar: HTMLElement;
@@ -292,24 +323,54 @@ import { Icon } from "astro-icon/components";
     private submitButton: HTMLButtonElement;
     private messageContainer: HTMLElement;
     
-    // 🎯 SMART FORM PERSISTENCE - Remember attendee data!
+    // 🎯 EVENT-DRIVEN ARCHITECTURE
+    private globalEventBus: any;
+    private componentId: string = 'booking-widget';
+    
+    // 📦 Persistent cache system (unchanged)
+    private static readonly CACHE_KEY = 'yolo-booking-form-cache';
+    private static readonly CACHE_VERSION = '1.0';
     private attendeeDataCache: Map<number, {
       firstName: string;
       lastName: string;
       email: string;
     }> = new Map();
 
+    private formCache = {
+      version: EventDrivenBookingWidget.CACHE_VERSION,
+      timestamp: Date.now(),
+      formData: {
+        productId: '',
+        startDate: '',
+        attendeeCount: '1',
+        contactFirstName: '',
+        contactLastName: '',
+        contactEmail: '',
+        contactPhone: '',
+        couponCode: '',
+        includeContactAsAttendee: false,
+        consultingDate: '',
+        consultingTime: '',
+        consultingDuration: '',
+        attendees: {} as { [key: number]: { firstName: string; lastName: string; email: string; } }
+      }
+    };
+
     constructor() {
+      // 🎯 INITIALIZE EVENT BUS
+      // Use global event bus from SPAInitializer
+      this.globalEventBus = (window as any).globalEventBus || {
+        emit: (type: string, payload: any) => console.log('Event:', type, payload),
+        on: (type: string, handler: Function) => {},
+        off: (type: string, handler?: Function) => {}
+      };
+      
+      // Initialize DOM elements
       this.workshopSelect = document.getElementById('workshop-select') as HTMLSelectElement;
-    
-    // Handle service type changes
-    this.workshopSelect.addEventListener('change', () => {
-      this.handleServiceTypeChange();
-    });
       this.dateInput = document.getElementById('workshop-date') as HTMLInputElement;
       this.customCalendar = document.getElementById('custom-calendar') as HTMLElement;
       this.calendarDays = document.getElementById('calendar-days') as HTMLElement;
-      this.currentDate = new Date(); // Use current date
+      this.currentDate = new Date();
       this.attendeeCountSelect = document.getElementById('attendee-count') as HTMLSelectElement;
       this.attendeeFieldsContainer = document.getElementById('attendees-container') as HTMLElement;
       this.form = document.getElementById('booking-form') as HTMLFormElement;
@@ -320,65 +381,369 @@ import { Icon } from "astro-icon/components";
     }
 
     private async init(): Promise<void> {
+      console.log('🎯 Initializing Event-Driven Booking Widget');
+      
+      // 🎯 SETUP EVENT HANDLERS FIRST
+      this.setupEventHandlers();
+      
+      // Load cached data
+      this.restoreFromCache();
+      
+      // Load workshops
       await this.loadWorkshops();
-      this.setupEventListeners();
+      
+      // Update attendee fields after cache restoration
       this.updateAttendeeFields();
+      
+      // Show cache restoration message if data was found
+      if (this.hasCachedData()) {
+        this.showCacheRestorationMessage();
+      }
+      
+      // Setup auto-save for all form changes
+      this.setupAutoSave();
+      
+      // 🎯 CHECK FOR URL PARAMETERS (support direct workshop links)
+      this.checkForWorkshopFromURL();
+      
+      // 🎯 EMIT INITIALIZATION EVENT
+      await this.emitEvent(EventTypes.USER_INTERACTION, {
+        action: 'view',
+        element: 'booking-widget',
+        page: 'booking',
+        timestamp: new Date(),
+        source: this.componentId,
+        metadata: { 
+          initialized: true,
+          hasCachedData: this.hasCachedData()
+        }
+      } as UserInteractionEvent);
+      
+      console.log('✅ Event-Driven Booking Widget initialized successfully!');
     }
 
-    private setupEventListeners(): void {
-      this.workshopSelect.addEventListener('change', () => {
+
+
+    // 🎯 TOGGLE ATTENDEE FIELDS VISIBILITY FOR AI CONSULTING
+    private toggleAttendeeFieldsVisibility(isAIConsulting: boolean): void {
+      // Get all the elements that should be hidden for AI consulting
+      const attendeeCountSection = document.getElementById('attendee-count-section') as HTMLElement;
+      const includeContactSection = document.getElementById('include-contact-section') as HTMLElement;
+      const attendeesContainer = document.getElementById('attendees-container') as HTMLElement;
+      const consultingDurationSection = document.getElementById('consulting-duration-section') as HTMLElement;
+      
+      if (isAIConsulting) {
+        // Hide attendee-related fields for AI consulting
+        attendeeCountSection?.classList.add('hidden');
+        includeContactSection?.classList.add('hidden');
+        attendeesContainer?.classList.add('hidden');
+        
+        // Show consulting duration section for AI consulting
+        consultingDurationSection?.classList.remove('hidden');
+        
+        console.log('🎯 AI Consulting selected - hiding attendee fields, showing duration selector');
+      } else {
+        // Show attendee-related fields for workshops
+        attendeeCountSection?.classList.remove('hidden');
+        includeContactSection?.classList.remove('hidden');
+        attendeesContainer?.classList.remove('hidden');
+        
+        // Hide consulting duration section for workshops
+        consultingDurationSection?.classList.add('hidden');
+        
+        console.log('🎯 Workshop selected - showing attendee fields, hiding duration selector');
+      }
+    }
+
+        // 🎯 HANDLE EXTERNAL WORKSHOP SELECTION (from modals, direct links, etc.)
+    private handleExternalWorkshopSelection(eventData: any): void {
+      console.log('🎯 External workshop selection received:', eventData);
+      
+      // Find the matching option in the dropdown
+      const workshopId = eventData.workshopId || eventData.id;
+      if (!workshopId) return;
+      
+      // Set the dropdown to the selected workshop
+      const option = this.workshopSelect.querySelector(`option[value="${workshopId}"]`) as HTMLOptionElement;
+      if (option) {
+        this.workshopSelect.value = workshopId;
+        
+        // Trigger the change event to update the form
+        const changeEvent = new Event('change', { bubbles: true });
+        this.workshopSelect.dispatchEvent(changeEvent);
+        
+        // Show a notification
+        this.showSuccessMessage(`✅ ${eventData.workshopName || option.textContent} selected!`);
+        
+        console.log(`✅ Workshop "${workshopId}" auto-selected in booking form`);
+      } else {
+        console.warn(`⚠️ Workshop option "${workshopId}" not found in dropdown`);
+      }
+    }
+
+     // 🎯 CHECK FOR WORKSHOP IN URL PARAMETERS
+     private checkForWorkshopFromURL(): void {
+       const urlParams = new URLSearchParams(window.location.search);
+       const workshopParam = urlParams.get('workshop') || urlParams.get('service');
+       
+       if (workshopParam) {
+         console.log(`🔗 Workshop "${workshopParam}" found in URL, auto-selecting...`);
+         
+         // Find the matching option
+         const option = this.workshopSelect.querySelector(`option[value="${workshopParam}"]`) as HTMLOptionElement;
+         if (option) {
+           this.workshopSelect.value = workshopParam;
+           
+           // Trigger change event
+           const changeEvent = new Event('change', { bubbles: true });
+           this.workshopSelect.dispatchEvent(changeEvent);
+           
+           // Show notification
+           this.showSuccessMessage(`🔗 Pre-selected ${option.textContent} from URL`);
+           
+           console.log(`✅ Workshop "${workshopParam}" auto-selected from URL`);
+         } else {
+           console.warn(`⚠️ Workshop "${workshopParam}" from URL not found in dropdown`);
+         }
+       }
+     }
+
+    // 🎯 EVENT EMISSION HELPER
+    private async emitEvent(eventType: string, payload: any): Promise<void> {
+      try {
+        // Add component context to all events
+        payload.componentId = this.componentId;
+        payload.timestamp = payload.timestamp || new Date();
+        payload.source = payload.source || this.componentId;
+        
+        // Emit to local event bus
+        await this.globalEventBus.emit(eventType, payload);
+        
+        // Also log for debugging
+        console.log(`🎯 Event Emitted: ${eventType}`, payload);
+      } catch (error) {
+        console.error(`❌ Failed to emit event ${eventType}:`, error);
+      }
+    }
+
+    private setupEventHandlers(): void {
+      // 🎯 LISTEN FOR EXTERNAL WORKSHOP SELECTION (from Learn More modals, direct links, etc.)
+      this.globalEventBus.on('WORKSHOP_SELECTED', (eventData: any) => {
+        this.handleExternalWorkshopSelection(eventData);
+      });
+
+      // 🎯 WORKSHOP SELECTION EVENT HANDLING
+      this.workshopSelect.addEventListener('change', async () => {
+        const selectedOption = this.workshopSelect.selectedOptions[0];
+        
+        if (selectedOption && selectedOption.dataset.workshop) {
+          const workshop = JSON.parse(selectedOption.dataset.workshop);
+          
+          // 🎯 EMIT WORKSHOP SELECTED EVENT
+          await this.emitEvent(EventTypes.WORKSHOP_SELECTED, {
+            workshopId: workshop.id,
+            workshopName: workshop.name,
+            workshopType: workshop.type.toUpperCase(),
+            price: workshop.price,
+            timestamp: new Date(),
+            source: this.componentId
+          } as WorkshopSelectedEvent);
+        }
+        
         this.updateAvailableDates();
         this.updateAttendeeFields();
+        setTimeout(() => this.saveToCache(), 300);
       });
 
-      this.attendeeCountSelect.addEventListener('change', () => {
+      // 🎯 ATTENDEE COUNT CHANGE EVENT HANDLING
+      this.attendeeCountSelect.addEventListener('change', async () => {
+        // 🎯 EMIT USER INTERACTION EVENT
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'click',
+          element: 'attendee-count-select',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId,
+          metadata: { 
+            newAttendeeCount: this.attendeeCountSelect.value,
+            workshopSelected: !!this.currentWorkshop
+          }
+        } as UserInteractionEvent);
+        
         this.updateAttendeeFields();
+        setTimeout(() => this.saveToCache(), 300);
       });
 
-      this.form.addEventListener('submit', (e) => {
+      // Handle "include contact as attendee" checkbox
+      const includeContactCheckbox = document.getElementById('include-contact-as-attendee') as HTMLInputElement;
+      if (includeContactCheckbox) {
+        includeContactCheckbox.addEventListener('change', async () => {
+          // 🎯 EMIT USER INTERACTION EVENT
+          await this.emitEvent(EventTypes.USER_INTERACTION, {
+            action: 'click',
+            element: 'include-contact-checkbox',
+            page: 'booking',
+            timestamp: new Date(),
+            source: this.componentId,
+            metadata: { 
+              checked: includeContactCheckbox.checked
+            }
+          } as UserInteractionEvent);
+          
+          this.updateAttendeeFields();
+          this.saveToCache();
+        });
+      }
+
+      // 🎯 FORM SUBMISSION EVENT HANDLING
+      this.form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // 🎯 EMIT FORM SUBMISSION EVENT
+        await this.emitEvent(EventTypes.FORM_SUBMITTED, {
+          action: 'submit',
+          element: 'booking-form',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId,
+          metadata: {
+            workshopId: this.currentWorkshop?.id,
+            attendeeCount: this.attendeeCountSelect.value,
+            hasSelectedDate: !!this.selectedDate
+          }
+        } as UserInteractionEvent);
+        
         this.handleSubmit();
       });
 
       // Calendar navigation
-      document.getElementById('prev-month')?.addEventListener('click', () => {
+      document.getElementById('prev-month')?.addEventListener('click', async () => {
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'click',
+          element: 'calendar-prev-month',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId
+        } as UserInteractionEvent);
+        
         this.currentDate.setMonth(this.currentDate.getMonth() - 1);
         this.renderCalendar();
       });
 
-      document.getElementById('next-month')?.addEventListener('click', () => {
+      document.getElementById('next-month')?.addEventListener('click', async () => {
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'click',
+          element: 'calendar-next-month',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId
+        } as UserInteractionEvent);
+        
         this.currentDate.setMonth(this.currentDate.getMonth() + 1);
         this.renderCalendar();
       });
+
+      // Setup contact field validation
+      this.setupContactFieldValidation();
+    }
+
+    private setupContactFieldValidation(): void {
+      const contactFields = [
+        document.getElementById('contact-email'),
+        document.getElementById('contact-phone'),
+        document.getElementById('contact-first-name'),
+        document.getElementById('contact-last-name')
+      ];
+
+      contactFields.forEach(field => {
+        if (field) {
+          field.addEventListener('input', () => {
+            this.validateFieldRealTime(field as HTMLInputElement);
+            this.syncContactToAttendee();
+          });
+          
+          field.addEventListener('blur', () => {
+            this.validateFieldRealTime(field as HTMLInputElement);
+            this.syncContactToAttendee();
+          });
+        }
+      });
+    }
+
+    private syncContactToAttendee(): void {
+      const includeContactCheckbox = document.getElementById('include-contact-as-attendee') as HTMLInputElement;
+      if (!includeContactCheckbox?.checked) return;
+
+      const contactFirstName = (document.getElementById('contact-first-name') as HTMLInputElement)?.value || '';
+      const contactLastName = (document.getElementById('contact-last-name') as HTMLInputElement)?.value || '';
+      const contactEmail = (document.getElementById('contact-email') as HTMLInputElement)?.value || '';
+
+      const attendeeFirstName = document.querySelector('input[name="attendee-1-firstName"]') as HTMLInputElement;
+      const attendeeLastName = document.querySelector('input[name="attendee-1-lastName"]') as HTMLInputElement;
+      const attendeeEmail = document.querySelector('input[name="attendee-1-email"]') as HTMLInputElement;
+
+      if (attendeeFirstName) attendeeFirstName.value = contactFirstName;
+      if (attendeeLastName) attendeeLastName.value = contactLastName;
+      if (attendeeEmail) attendeeEmail.value = contactEmail;
     }
 
     private async loadWorkshops(): Promise<void> {
       try {
+        // 🎯 EMIT LOADING EVENT
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'view',
+          element: 'workshop-loading',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId,
+          metadata: { operation: 'loading_workshops' }
+        } as UserInteractionEvent);
+        
         const response = await fetch('/api/workshops/available');
         const result: ApiResponse<Workshop[]> = await response.json();
 
         if (result.success && result.data) {
           this.workshops = result.data;
           this.populateWorkshopDropdown();
+          
+          // 🎯 EMIT SUCCESS EVENT
+          await this.emitEvent(EventTypes.USER_INTERACTION, {
+            action: 'view',
+            element: 'workshops-loaded',
+            page: 'booking',
+            timestamp: new Date(),
+            source: this.componentId,
+            metadata: { 
+              workshopCount: this.workshops.length,
+              workshops: this.workshops.map(w => ({ id: w.id, name: w.name }))
+            }
+          } as UserInteractionEvent);
         } else {
           throw new Error(result.error || 'Failed to load workshops');
         }
       } catch (error) {
+        // 🎯 EMIT ERROR EVENT
+        await this.emitEvent(EventTypes.ERROR_OCCURRED, {
+          error: error instanceof Error ? error.message : 'Unknown error loading workshops',
+          page: 'booking',
+          action: 'load_workshops',
+          severity: 'medium',
+          timestamp: new Date(),
+          source: this.componentId
+        } as ErrorOccurredEvent);
+        
         this.showMessage('error', 'Failed to load available workshops. Please refresh the page.');
       }
     }
 
     private populateWorkshopDropdown(): void {
-      // Clear existing options except the first one
       while (this.workshopSelect.children.length > 1) {
         this.workshopSelect.removeChild(this.workshopSelect.lastChild!);
       }
 
-      // 🎯 Add workshop options with CORRECT property names!
       this.workshops.forEach(workshop => {
         const option = document.createElement('option');
         option.value = workshop.id;
-        // ✨ Using the correct property names: price and duration
         option.textContent = `${workshop.name} - $${workshop.price} (${workshop.duration} ${workshop.type === 'hourly-consulting' ? 'hrs min' : 'days'})`;
         option.dataset.workshop = JSON.stringify(workshop);
         this.workshopSelect.appendChild(option);
@@ -396,18 +761,25 @@ import { Icon } from "astro-icon/components";
       this.currentWorkshop = JSON.parse(selectedOption.dataset.workshop);
       this.customCalendar.classList.remove('hidden');
 
-      // Update the label to show constraints
+      const isAIConsulting = this.currentWorkshop.id === 'ai-consulting';
+      
       const dateLabel = document.querySelector('label[for="workshop-date"]');
       if (dateLabel) {
         const constraints = this.getDateConstraintText(this.currentWorkshop.availableStartDays);
-        dateLabel.innerHTML = `Workshop Date <span class="text-cyan-300 text-xs">(${constraints})</span>`;
+        const labelText = isAIConsulting ? 'Session Date' : 'Workshop Date';
+        dateLabel.innerHTML = `${labelText} <span class="text-cyan-300 text-xs">(${constraints})</span>`;
       }
 
-      // Update calendar helper text
       const helperDiv = document.getElementById('calendar-helper');
       if (helperDiv) {
-        const duration = this.currentWorkshop.name.includes('3-Day') ? '3 days' : '5 days';
-        helperDiv.textContent = `📅 Select a ${constraints} to start your ${duration} workshop`;
+        const constraints = this.getDateConstraintText(this.currentWorkshop.availableStartDays);
+        
+        if (isAIConsulting) {
+          helperDiv.textContent = `📅 Select a ${constraints} for your consulting session`;
+        } else {
+          const duration = this.currentWorkshop.name.includes('3-Day') ? '3 days' : '5 days';
+          helperDiv.textContent = `📅 Select a ${constraints} to start your ${duration} workshop`;
+        }
       }
 
       this.renderCalendar();
@@ -424,10 +796,9 @@ import { Icon } from "astro-icon/components";
       const lastDay = new Date(year, month + 1, 0);
       const daysInMonth = lastDay.getDate();
       const firstDayOfWeek = firstDay.getDay();
-      const today = new Date(); // Use current date
+      const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // Update the month and year display
       const monthYearDisplay = document.getElementById('calendar-month-year');
       if (monthYearDisplay) {
         monthYearDisplay.textContent = `${this.currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
@@ -435,7 +806,6 @@ import { Icon } from "astro-icon/components";
 
       this.calendarDays.innerHTML = '';
 
-      // Add empty cells for the first week
       for (let i = 0; i < firstDayOfWeek; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'p-2';
@@ -444,22 +814,34 @@ import { Icon } from "astro-icon/components";
 
       const allowedDays = this.getAllowedDayNumbers(this.currentWorkshop.availableStartDays);
       
-      // Add cells for each day of the month
       for (let i = 1; i <= daysInMonth; i++) {
         const dayCell = document.createElement('div');
         const currentDate = new Date(year, month, i);
         const dayOfWeek = currentDate.getDay();
         const isPastDate = currentDate < today;
         const isValidDay = allowedDays.includes(dayOfWeek) && !isPastDate;
-        const workshopDuration = this.currentWorkshop.name.includes('3-Day') ? 3 : 5;
+        
+        // 🎯 SET DURATION BASED ON WORKSHOP TYPE
+        let workshopDuration;
+        if (this.currentWorkshop.id === 'ai-consulting') {
+          workshopDuration = 1; // Single day for consulting sessions
+        } else if (this.currentWorkshop.name.includes('3-Day')) {
+          workshopDuration = 3;
+        } else {
+          workshopDuration = 5;
+        }
 
         dayCell.textContent = i.toString();
         
-        // Base styling
         dayCell.className = 'text-center text-sm p-2 rounded transition-all duration-200 border';
         
-        if (this.selectedDate && this.selectedDate.toDateString() === currentDate.toDateString()) {
-          dayCell.className += ' bg-cyan-500 text-black font-bold border-cyan-400';
+        const isPartOfSelectedWorkshop = this.selectedDate && this.isDateInWorkshopRange(currentDate, this.selectedDate, workshopDuration);
+        const isSelectedStartDate = this.selectedDate && this.selectedDate.toDateString() === currentDate.toDateString();
+        
+        if (isSelectedStartDate) {
+          dayCell.className += ' bg-cyan-500 text-black font-bold border-cyan-400 ring-2 ring-cyan-300';
+        } else if (isPartOfSelectedWorkshop) {
+          dayCell.className += ' bg-cyan-500/30 text-white font-semibold border-cyan-400 border-2';
         } else if (isValidDay) {
           dayCell.className += ' text-white bg-indigo-600 hover:bg-cyan-500 border-indigo-400 hover:border-cyan-400 cursor-pointer font-semibold';
         } else {
@@ -467,7 +849,6 @@ import { Icon } from "astro-icon/components";
         }
 
         if (isValidDay) {
-          // Add hover effect to show workshop duration
           dayCell.addEventListener('mouseenter', () => {
             this.showWorkshopDuration(i, workshopDuration);
           });
@@ -484,9 +865,8 @@ import { Icon } from "astro-icon/components";
         this.calendarDays.appendChild(dayCell);
       }
 
-      // Add empty cells for the last week
       const totalCells = this.calendarDays.children.length;
-      const remainingCells = 42 - totalCells; // 6 rows × 7 days
+      const remainingCells = 42 - totalCells;
       for (let i = 0; i < remainingCells; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'p-2';
@@ -498,18 +878,22 @@ import { Icon } from "astro-icon/components";
       const allCells = Array.from(this.calendarDays.children) as HTMLElement[];
       const firstDayOfWeek = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1).getDay();
       
-      // Clear previous hover effects
       this.clearWorkshopDuration();
 
-      // Highlight the workshop duration
       for (let i = 0; i < duration; i++) {
         const cellIndex = firstDayOfWeek + startDay - 1 + i;
         if (cellIndex < allCells.length && allCells[cellIndex].textContent) {
           const cell = allCells[cellIndex];
           if (!cell.classList.contains('cursor-not-allowed')) {
-            cell.classList.add('bg-cyan-400/30', 'border-cyan-300');
+            if (!cell.classList.contains('bg-cyan-500')) {
+              cell.classList.add('bg-cyan-400/40', 'border-cyan-300', 'border-2');
+            }
             if (i === 0) {
-              cell.classList.add('ring-2', 'ring-cyan-400');
+              cell.classList.add('ring-2', 'ring-cyan-400', 'shadow-lg', 'shadow-cyan-400/50');
+            } else if (i === duration - 1) {
+              cell.classList.add('ring-2', 'ring-purple-400', 'shadow-lg', 'shadow-purple-400/50');
+            } else {
+              cell.classList.add('ring-1', 'ring-cyan-300');
             }
           }
         }
@@ -519,29 +903,66 @@ import { Icon } from "astro-icon/components";
     private clearWorkshopDuration(): void {
       const allCells = Array.from(this.calendarDays.children) as HTMLElement[];
       allCells.forEach(cell => {
-        cell.classList.remove('bg-cyan-400/30', 'border-cyan-300', 'ring-2', 'ring-cyan-400');
+        cell.classList.remove(
+          'bg-cyan-400/30', 'bg-cyan-400/40', 'border-cyan-300', 'border-2',
+          'ring-1', 'ring-2', 'ring-cyan-400', 'ring-cyan-300', 'ring-purple-400',
+          'shadow-lg', 'shadow-cyan-400/50', 'shadow-purple-400/50'
+        );
       });
     }
 
-    private selectDate(date: Date): void {
+    private async selectDate(date: Date): Promise<void> {
       this.selectedDate = date;
       this.dateInput.value = date.toISOString().split('T')[0];
       
-      // Update selected date display
+      // 🎯 EMIT DATE SELECTED EVENT
+      if (this.currentWorkshop) {
+        await this.emitEvent(EventTypes.DATE_SELECTED, {
+          date,
+          workshopId: this.currentWorkshop.id,
+          workshopType: this.currentWorkshop.type.toUpperCase(),
+          duration: this.currentWorkshop.duration,
+          timestamp: new Date(),
+          source: this.componentId
+        } as DateSelectedEvent);
+      }
+      
       const selectedDateDisplay = document.getElementById('selected-date-display');
       const selectedDateText = document.getElementById('selected-date-text');
-      if (selectedDateDisplay && selectedDateText) {
-        selectedDateText.textContent = date.toLocaleDateString('en-US', {
+      if (selectedDateDisplay && selectedDateText && this.currentWorkshop) {
+        const isAIConsulting = this.currentWorkshop.id === 'ai-consulting';
+        
+        const startDateStr = date.toLocaleDateString('en-US', {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
           day: 'numeric'
         });
+        
+        if (isAIConsulting) {
+          // Single day display for AI consulting
+          selectedDateText.innerHTML = `${startDateStr} <span class="text-purple-300">(Consulting Session)</span>`;
+        } else {
+          // Multi-day display for workshops
+          const duration = this.currentWorkshop.name.includes('3-Day') ? 3 : 5;
+          const endDate = new Date(date);
+          endDate.setDate(date.getDate() + duration - 1);
+          
+          const endDateStr = endDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric'
+          });
+          
+          selectedDateText.innerHTML = `${startDateStr} <span class="text-cyan-400">→</span> ${endDateStr} <span class="text-purple-300">(${duration} days)</span>`;
+        }
+        
         selectedDateDisplay.classList.remove('hidden');
       }
 
-      this.renderCalendar(); // Re-render to show selection
-      this.hideMessage(); // Clear any error messages
+      this.renderCalendar();
+      this.hideMessage();
+      this.saveToCache();
     }
 
     private async handleSubmit(): Promise<void> {
@@ -549,7 +970,11 @@ import { Icon } from "astro-icon/components";
         this.setLoading(true);
         this.hideMessage();
 
-        // Validate date before submission
+        if (!this.validateForm()) {
+          this.setLoading(false);
+          return;
+        }
+
         const selectedOption = this.workshopSelect.selectedOptions[0];
         if (selectedOption && selectedOption.dataset.workshop && this.dateInput.value) {
           const workshop: Workshop = JSON.parse(selectedOption.dataset.workshop);
@@ -565,8 +990,8 @@ import { Icon } from "astro-icon/components";
 
         const formData = new FormData(this.form);
         const attendeeCount = parseInt(formData.get('attendeeCount') as string);
+        const includeContactAsAttendee = formData.get('includeContactAsAttendee') === 'on';
 
-        // Build attendees array
         const attendees = [];
         for (let i = 1; i <= attendeeCount; i++) {
           attendees.push({
@@ -576,7 +1001,6 @@ import { Icon } from "astro-icon/components";
           });
         }
 
-        // Build purchase request using our backend interface structure
         const purchaseRequest = {
           bookingRequest: {
             productId: formData.get('productId') as string,
@@ -589,10 +1013,11 @@ import { Icon } from "astro-icon/components";
               email: formData.get('contactEmail') as string,
               phone: formData.get('contactPhone') as string,
             },
+            includeContactAsAttendee: includeContactAsAttendee,
             couponCode: formData.get('couponCode') as string || undefined,
           },
           paymentMethod: {
-            type: 'card',  // For now, default to card payment
+            type: 'card',
             amount: this.calculateTotal(formData.get('productId') as string, attendeeCount, formData.get('couponCode') as string)
           }
         };
@@ -608,6 +1033,25 @@ import { Icon } from "astro-icon/components";
         const result: ApiResponse<any> = await response.json();
 
         if (result.success) {
+          // 🎯 EMIT BOOKING SUBMITTED EVENT
+          await this.emitEvent(EventTypes.BOOKING_SUBMITTED, {
+            bookingId: result.data?.id || `booking-${Date.now()}`,
+            workshopId: purchaseRequest.bookingRequest.productId,
+            userId: 'anonymous', // In real app, get from auth
+            attendeeCount: attendeeCount,
+            totalAmount: purchaseRequest.paymentMethod.amount,
+            startDate: new Date(purchaseRequest.bookingRequest.startDate),
+            pointOfContact: {
+              name: `${purchaseRequest.bookingRequest.pointOfContact.firstName} ${purchaseRequest.bookingRequest.pointOfContact.lastName}`,
+              email: purchaseRequest.bookingRequest.pointOfContact.email,
+              phone: purchaseRequest.bookingRequest.pointOfContact.phone
+            },
+            timestamp: new Date(),
+            source: this.componentId
+          } as BookingSubmittedEvent);
+          
+          this.clearCache();
+          
           this.showMessage('success', `Workshop booked successfully! You'll receive a confirmation email shortly. ${result.data?.confirmationNumber ? `Confirmation: ${result.data.confirmationNumber}` : ''}`);
           this.form.reset();
           this.updateAttendeeFields();
@@ -617,6 +1061,16 @@ import { Icon } from "astro-icon/components";
         }
 
       } catch (error) {
+        // 🎯 EMIT ERROR EVENT
+        await this.emitEvent(EventTypes.ERROR_OCCURRED, {
+          error: error instanceof Error ? error.message : 'Unknown booking error',
+          page: 'booking',
+          action: 'submit_booking',
+          severity: 'high',
+          timestamp: new Date(),
+          source: this.componentId
+        } as ErrorOccurredEvent);
+        
         this.showMessage('error', `Sorry, there was an issue with your booking: ${error instanceof Error ? error.message : 'Please try again or contact support.'}`);
       } finally {
         this.setLoading(false);
@@ -629,7 +1083,6 @@ import { Icon } from "astro-icon/components";
 
       let total = workshop.price * attendeeCount;
       
-      // TODO: Apply coupon discount if provided
       if (couponCode) {
         // Coupon logic will be handled by backend
       }
@@ -658,10 +1111,15 @@ import { Icon } from "astro-icon/components";
           ? 'bg-green-500/20 border border-green-500/30 text-green-300' 
           : 'bg-red-500/20 border border-red-500/30 text-red-300'
       }`;
-      this.messageContainer.textContent = message;
+      
+      if (message.includes('\n')) {
+        this.messageContainer.innerHTML = message.replace(/\n/g, '<br>');
+      } else {
+        this.messageContainer.textContent = message;
+      }
+      
       this.messageContainer.classList.remove('hidden');
 
-      // Auto-hide success messages after 10 seconds
       if (type === 'success') {
         setTimeout(() => this.hideMessage(), 10000);
       }
@@ -681,7 +1139,6 @@ import { Icon } from "astro-icon/components";
     }
 
     private getDateConstraintText(availableStartDays: string[]): string {
-      // Capitalize first letter for display
       const capitalizedDays = availableStartDays.map(day => 
         day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()
       );
@@ -697,11 +1154,92 @@ import { Icon } from "astro-icon/components";
       }
     }
 
+    private isDateInWorkshopRange(checkDate: Date, startDate: Date, duration: number): boolean {
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + duration - 1);
+      
+      return checkDate >= startDate && checkDate <= endDate;
+    }
+
+    private validateForm(): boolean {
+      const errors: string[] = [];
+
+      const contactEmail = (document.getElementById('contact-email') as HTMLInputElement).value;
+      const contactPhone = (document.getElementById('contact-phone') as HTMLInputElement).value;
+      const contactFirstName = (document.getElementById('contact-first-name') as HTMLInputElement).value;
+      const contactLastName = (document.getElementById('contact-last-name') as HTMLInputElement).value;
+
+      if (!contactFirstName.trim()) {
+        errors.push('Contact first name is required');
+      }
+
+      if (!contactLastName.trim()) {
+        errors.push('Contact last name is required');
+      }
+
+      if (!this.validateEmail(contactEmail)) {
+        errors.push('Contact email address is invalid');
+      }
+
+      if (!this.validatePhone(contactPhone)) {
+        errors.push('Contact phone number is invalid');
+      }
+
+      const selectedOption = this.workshopSelect.selectedOptions[0];
+      const serviceType = selectedOption?.dataset.type;
+      
+      if (serviceType === 'workshop') {
+        const attendeeCount = parseInt(this.attendeeCountSelect.value);
+        
+        for (let i = 1; i <= attendeeCount; i++) {
+          const firstName = (document.querySelector(`input[name="attendee-${i}-firstName"]`) as HTMLInputElement)?.value;
+          const lastName = (document.querySelector(`input[name="attendee-${i}-lastName"]`) as HTMLInputElement)?.value;
+          const email = (document.querySelector(`input[name="attendee-${i}-email"]`) as HTMLInputElement)?.value;
+
+          if (!firstName?.trim()) {
+            errors.push(`Attendee ${i}: First name is required`);
+          }
+
+          if (!lastName?.trim()) {
+            errors.push(`Attendee ${i}: Last name is required`);
+          }
+
+          if (!this.validateEmail(email)) {
+            errors.push(`Attendee ${i}: Email address is invalid`);
+          }
+        }
+      }
+
+      if (errors.length > 0) {
+        this.showMessage('error', `Please fix the following errors:\n• ${errors.join('\n• ')}`);
+        return false;
+      }
+
+      return true;
+    }
+
+    private validateEmail(email: string): boolean {
+      if (!email || !email.trim()) {
+        return false;
+      }
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email.trim());
+    }
+
+    private validatePhone(phone: string): boolean {
+      if (!phone || !phone.trim()) {
+        return false;
+      }
+      
+      const cleanPhone = phone.replace(/\D/g, '');
+      return cleanPhone.length >= 10 && cleanPhone.length <= 15;
+    }
+
     private handleServiceTypeChange(): void {
       const selectedOption = this.workshopSelect.selectedOptions[0];
       const serviceType = selectedOption?.dataset.type;
       
-      // Get UI elements
       const dateLabel = document.getElementById('date-label');
       const dateConstraint = document.getElementById('date-constraint');
       const customCalendar = document.getElementById('custom-calendar');
@@ -709,11 +1247,11 @@ import { Icon } from "astro-icon/components";
       const attendeeCountSection = document.getElementById('attendee-count-section');
       const consultingDurationSection = document.getElementById('consulting-duration-section');
       const attendeesContainer = document.getElementById('attendees-container');
+      const includeContactSection = document.getElementById('include-contact-section');
       const submitButton = document.getElementById('book-workshop-btn');
       const submitButtonText = document.getElementById('btn-text');
       
       if (serviceType === 'consulting') {
-        // Switch to consulting mode
         if (dateLabel) dateLabel.textContent = 'Session Date';
         if (dateConstraint) dateConstraint.textContent = '(Monday-Friday, 9 AM - 5 PM)';
         if (customCalendar) customCalendar.classList.add('hidden');
@@ -721,9 +1259,9 @@ import { Icon } from "astro-icon/components";
         if (attendeeCountSection) attendeeCountSection.classList.add('hidden');
         if (consultingDurationSection) consultingDurationSection.classList.remove('hidden');
         if (attendeesContainer) attendeesContainer.classList.add('hidden');
+        if (includeContactSection) includeContactSection.classList.add('hidden');
         if (submitButtonText) submitButtonText.textContent = 'Book Consulting Session';
         
-        // Make consulting fields required
         const consultingDate = document.getElementById('consulting-date') as HTMLInputElement;
         const consultingTime = document.getElementById('consulting-time') as HTMLSelectElement;
         const consultingDuration = document.getElementById('consulting-duration') as HTMLSelectElement;
@@ -731,28 +1269,27 @@ import { Icon } from "astro-icon/components";
         if (consultingTime) consultingTime.required = true;
         if (consultingDuration) consultingDuration.required = true;
         
-        // Remove workshop field requirements
         this.dateInput.required = false;
         const attendeeCount = document.getElementById('attendee-count') as HTMLSelectElement;
         if (attendeeCount) attendeeCount.required = false;
         
       } else if (serviceType === 'workshop') {
-        // Switch to workshop mode
         if (dateLabel) dateLabel.textContent = 'Workshop Date';
         if (dateConstraint) dateConstraint.textContent = '(Monday, Wednesday, Friday)';
+        
+        if (attendeeCountSection) attendeeCountSection.classList.remove('hidden');
+        if (attendeesContainer) attendeesContainer.classList.remove('hidden');
+        if (includeContactSection) includeContactSection.classList.remove('hidden');
+        
         if (customCalendar) customCalendar.classList.remove('hidden');
         if (consultingDatePicker) consultingDatePicker.classList.add('hidden');
-        if (attendeeCountSection) attendeeCountSection.classList.remove('hidden');
         if (consultingDurationSection) consultingDurationSection.classList.add('hidden');
-        if (attendeesContainer) attendeesContainer.classList.remove('hidden');
         if (submitButtonText) submitButtonText.textContent = 'Book Workshop';
         
-        // Make workshop fields required
         this.dateInput.required = true;
         const attendeeCount = document.getElementById('attendee-count') as HTMLSelectElement;
         if (attendeeCount) attendeeCount.required = true;
         
-        // Remove consulting field requirements
         const consultingDate = document.getElementById('consulting-date') as HTMLInputElement;
         const consultingTime = document.getElementById('consulting-time') as HTMLSelectElement;
         const consultingDuration = document.getElementById('consulting-duration') as HTMLSelectElement;
@@ -760,24 +1297,40 @@ import { Icon } from "astro-icon/components";
         if (consultingTime) consultingTime.required = false;
         if (consultingDuration) consultingDuration.required = false;
         
-        // Update attendee fields
-        this.updateAttendeeFields();
+        setTimeout(() => {
+          this.updateAttendeeFields();
+        }, 100);
         
       } else {
-        // No service selected - hide all
         if (customCalendar) customCalendar.classList.add('hidden');
         if (consultingDatePicker) consultingDatePicker.classList.add('hidden');
         if (attendeeCountSection) attendeeCountSection.classList.add('hidden');
         if (consultingDurationSection) consultingDurationSection.classList.add('hidden');
         if (attendeesContainer) attendeesContainer.classList.add('hidden');
+        if (includeContactSection) includeContactSection.classList.add('hidden');
         if (submitButtonText) submitButtonText.textContent = 'Book Service';
       }
+      
+      setTimeout(() => this.saveToCache(), 500);
     }
 
     private updateAttendeeFields(): void {
-      const attendeeCount = parseInt(this.attendeeCountSelect.value);
+      // 🎯 CHECK IF AI CONSULTING IS SELECTED - HIDE ATTENDEE FIELDS
+      const selectedWorkshop = this.workshopSelect.value;
+      const isAIConsulting = selectedWorkshop === 'ai-consulting';
       
-      // 🎯 STEP 1: SAVE CURRENT DATA BEFORE REBUILDING
+      // Hide/show attendee-related sections based on workshop type
+      this.toggleAttendeeFieldsVisibility(isAIConsulting);
+      
+      // If AI consulting, don't process attendee fields
+      if (isAIConsulting) {
+        return;
+      }
+      
+      const attendeeCount = parseInt(this.attendeeCountSelect.value);
+      const includeContactCheckbox = document.getElementById('include-contact-as-attendee') as HTMLInputElement;
+      const includeContact = includeContactCheckbox?.checked || false;
+      
       this.saveCurrentAttendeeData();
       
       const container = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
@@ -791,12 +1344,41 @@ import { Icon } from "astro-icon/components";
       const fieldsContainer = this.attendeeFieldsContainer.querySelector('.attendee-fields') as HTMLElement;
       fieldsContainer.innerHTML = '';
 
-      // 🎯 STEP 2: CREATE FORMS WITH SMART RESTORATION
-      for (let i = 1; i <= attendeeCount; i++) {
+      let attendeeIndex = 1;
+      
+      if (includeContact) {
+        const contactDiv = document.createElement('div');
+        contactDiv.className = 'grid grid-cols-2 gap-4 p-4 bg-cyan-500/10 rounded-lg border border-cyan-400/30';
+        
+        const contactFirstName = (document.getElementById('contact-first-name') as HTMLInputElement)?.value || '';
+        const contactLastName = (document.getElementById('contact-last-name') as HTMLInputElement)?.value || '';
+        const contactEmail = (document.getElementById('contact-email') as HTMLInputElement)?.value || '';
+        
+        contactDiv.innerHTML = `
+          <h5 class="col-span-2 text-cyan-300 font-semibold flex items-center">
+            <span class="mr-2">👤</span> Contact Person (Attendee ${attendeeIndex})
+          </h5>
+          <input type="text" name="attendee-${attendeeIndex}-firstName" placeholder="First Name" required
+            value="${contactFirstName}"
+            class="p-3 rounded-lg bg-black/30 border border-cyan-400/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" readonly />
+          <input type="text" name="attendee-${attendeeIndex}-lastName" placeholder="Last Name" required
+            value="${contactLastName}"
+            class="p-3 rounded-lg bg-black/30 border border-cyan-400/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" readonly />
+          <input type="email" name="attendee-${attendeeIndex}-email" placeholder="Email Address" required
+            value="${contactEmail}"
+            class="col-span-2 p-3 rounded-lg bg-black/30 border border-cyan-400/30 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all" readonly />
+          <div class="col-span-2 text-xs text-cyan-300/70">
+            ℹ️ This information is automatically filled from your contact details above
+          </div>
+        `;
+        fieldsContainer.appendChild(contactDiv);
+        attendeeIndex++;
+      }
+      
+      for (let i = attendeeIndex; i <= attendeeCount; i++) {
         const attendeeDiv = document.createElement('div');
         attendeeDiv.className = 'grid grid-cols-2 gap-4 p-4 bg-black/20 rounded-lg border border-indigo-500/20';
         
-        // Get cached data for this attendee (if exists)
         const cachedData = this.attendeeDataCache.get(i) || { firstName: '', lastName: '', email: '' };
         
         attendeeDiv.innerHTML = `
@@ -814,11 +1396,9 @@ import { Icon } from "astro-icon/components";
         fieldsContainer.appendChild(attendeeDiv);
       }
       
-      // 🎯 STEP 3: ADD EVENT LISTENERS FOR REAL-TIME SAVING
       this.setupAttendeeFieldListeners();
     }
 
-    // 🎯 SAVE CURRENT ATTENDEE DATA BEFORE REBUILDING
     private saveCurrentAttendeeData(): void {
       const currentFields = this.attendeeFieldsContainer.querySelectorAll('.attendee-fields > div');
       
@@ -834,20 +1414,284 @@ import { Icon } from "astro-icon/components";
       });
     }
 
-    // 🎯 SETUP REAL-TIME SAVING AS USER TYPES
     private setupAttendeeFieldListeners(): void {
       const attendeeInputs = this.attendeeFieldsContainer.querySelectorAll('input[name^="attendee-"]');
       
       attendeeInputs.forEach(input => {
         input.addEventListener('input', () => {
           this.saveCurrentAttendeeData();
+          this.validateFieldRealTime(input as HTMLInputElement);
+        });
+        
+        input.addEventListener('blur', () => {
+          this.validateFieldRealTime(input as HTMLInputElement);
         });
       });
     }
+
+    private validateFieldRealTime(field: HTMLInputElement): void {
+      const value = field.value.trim();
+      const fieldName = field.name;
+      let isValid = true;
+      let errorMessage = '';
+
+      if (field.type === 'email' || fieldName.includes('email')) {
+        if (value && !this.validateEmail(value)) {
+          isValid = false;
+          errorMessage = 'Invalid email format';
+        }
+      }
+
+      if (field.type === 'tel' || fieldName.includes('phone')) {
+        if (value && !this.validatePhone(value)) {
+          isValid = false;
+          errorMessage = 'Phone number must be 10-15 digits';
+        }
+      }
+
+      if (fieldName.includes('firstName') || fieldName.includes('lastName')) {
+        if (value && value.length < 2) {
+          isValid = false;
+          errorMessage = 'Name must be at least 2 characters';
+        }
+      }
+
+      if (value && !isValid) {
+        field.classList.add('border-red-500', 'ring-red-500/20');
+        field.classList.remove('border-indigo-500/30', 'border-cyan-400');
+        this.showFieldError(field, errorMessage);
+      } else {
+        field.classList.remove('border-red-500', 'ring-red-500/20');
+        field.classList.add('border-indigo-500/30');
+        this.hideFieldError(field);
+      }
+    }
+
+    private showFieldError(field: HTMLInputElement, message: string): void {
+      this.hideFieldError(field);
+      
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'field-error text-xs text-red-400 mt-1';
+      errorDiv.textContent = `⚠️ ${message}`;
+      
+      field.parentNode?.insertBefore(errorDiv, field.nextSibling);
+    }
+
+    private hideFieldError(field: HTMLInputElement): void {
+      const existingError = field.parentNode?.querySelector('.field-error');
+      if (existingError) {
+        existingError.remove();
+      }
+    }
+
+    // ===== PERSISTENT CACHE SYSTEM (UNCHANGED) =====
+    private saveToCache(): void {
+      try {
+        this.formCache.timestamp = Date.now();
+        
+        this.formCache.formData.productId = this.workshopSelect.value;
+        this.formCache.formData.startDate = this.dateInput.value;
+        this.formCache.formData.attendeeCount = this.attendeeCountSelect.value;
+        
+        const contactFirstName = document.getElementById('contact-first-name') as HTMLInputElement;
+        const contactLastName = document.getElementById('contact-last-name') as HTMLInputElement;
+        const contactEmail = document.getElementById('contact-email') as HTMLInputElement;
+        const contactPhone = document.getElementById('contact-phone') as HTMLInputElement;
+        const couponCode = document.getElementById('coupon-code') as HTMLInputElement;
+        const includeContactCheckbox = document.getElementById('include-contact-as-attendee') as HTMLInputElement;
+        
+        if (contactFirstName) this.formCache.formData.contactFirstName = contactFirstName.value;
+        if (contactLastName) this.formCache.formData.contactLastName = contactLastName.value;
+        if (contactEmail) this.formCache.formData.contactEmail = contactEmail.value;
+        if (contactPhone) this.formCache.formData.contactPhone = contactPhone.value;
+        if (couponCode) this.formCache.formData.couponCode = couponCode.value;
+        if (includeContactCheckbox) this.formCache.formData.includeContactAsAttendee = includeContactCheckbox.checked;
+        
+        const consultingDate = document.getElementById('consulting-date') as HTMLInputElement;
+        const consultingTime = document.getElementById('consulting-time') as HTMLSelectElement;
+        const consultingDuration = document.getElementById('consulting-duration') as HTMLSelectElement;
+        
+        if (consultingDate) this.formCache.formData.consultingDate = consultingDate.value;
+        if (consultingTime) this.formCache.formData.consultingTime = consultingTime.value;
+        if (consultingDuration) this.formCache.formData.consultingDuration = consultingDuration.value;
+        
+        this.saveCurrentAttendeeData();
+        this.formCache.formData.attendees = Object.fromEntries(this.attendeeDataCache);
+        
+        localStorage.setItem(EventDrivenBookingWidget.CACHE_KEY, JSON.stringify(this.formCache));
+        
+        this.showCacheFeedback('💾 Form saved automatically');
+        
+      } catch (error) {
+        console.warn('Failed to save form cache:', error);
+      }
+    }
+
+    private restoreFromCache(): void {
+      try {
+        const cachedData = localStorage.getItem(EventDrivenBookingWidget.CACHE_KEY);
+        if (!cachedData) return;
+        
+        const cache = JSON.parse(cachedData);
+        
+        if (cache.version !== EventDrivenBookingWidget.CACHE_VERSION) {
+          this.clearCache();
+          return;
+        }
+        
+        const cacheAge = Date.now() - cache.timestamp;
+        const maxAge = 24 * 60 * 60 * 1000;
+        
+        if (cacheAge > maxAge) {
+          this.clearCache();
+          return;
+        }
+        
+        this.formCache = cache;
+        
+        if (cache.formData.productId) this.workshopSelect.value = cache.formData.productId;
+        if (cache.formData.startDate) this.dateInput.value = cache.formData.startDate;
+        if (cache.formData.attendeeCount) this.attendeeCountSelect.value = cache.formData.attendeeCount;
+        
+        this.restoreField('contact-first-name', cache.formData.contactFirstName);
+        this.restoreField('contact-last-name', cache.formData.contactLastName);
+        this.restoreField('contact-email', cache.formData.contactEmail);
+        this.restoreField('contact-phone', cache.formData.contactPhone);
+        this.restoreField('coupon-code', cache.formData.couponCode);
+        
+        const includeContactCheckbox = document.getElementById('include-contact-as-attendee') as HTMLInputElement;
+        if (includeContactCheckbox) includeContactCheckbox.checked = cache.formData.includeContactAsAttendee;
+        
+        this.restoreField('consulting-date', cache.formData.consultingDate);
+        this.restoreField('consulting-time', cache.formData.consultingTime);
+        this.restoreField('consulting-duration', cache.formData.consultingDuration);
+        
+        this.attendeeDataCache.clear();
+        Object.entries(cache.formData.attendees || {}).forEach(([key, value]) => {
+          this.attendeeDataCache.set(parseInt(key), value as any);
+        });
+        
+        if (cache.formData.startDate && cache.formData.productId) {
+          this.selectedDate = new Date(cache.formData.startDate);
+          this.handleServiceTypeChange();
+          
+          if (this.workshopSelect.value && this.selectedDate) {
+            this.updateAvailableDates();
+          }
+        }
+        
+      } catch (error) {
+        console.warn('Failed to restore form cache:', error);
+        this.clearCache();
+      }
+    }
+
+    private restoreField(fieldId: string, value: string): void {
+      if (!value) return;
+      
+      const field = document.getElementById(fieldId) as HTMLInputElement | HTMLSelectElement;
+      if (field) {
+        field.value = value;
+        field.classList.add('border-yellow-400/50');
+        setTimeout(() => {
+          field.classList.remove('border-yellow-400/50');
+        }, 2000);
+      }
+    }
+
+    private clearCache(): void {
+      try {
+        localStorage.removeItem(EventDrivenBookingWidget.CACHE_KEY);
+        this.attendeeDataCache.clear();
+        this.formCache.formData = {
+          productId: '', startDate: '', attendeeCount: '1',
+          contactFirstName: '', contactLastName: '', contactEmail: '', contactPhone: '',
+          couponCode: '', includeContactAsAttendee: false,
+          consultingDate: '', consultingTime: '', consultingDuration: '',
+          attendees: {}
+        };
+      } catch (error) {
+        console.warn('Failed to clear form cache:', error);
+      }
+    }
+
+    private hasCachedData(): boolean {
+      const cache = this.formCache.formData;
+      return !!(
+        cache.productId || cache.contactFirstName || cache.contactEmail ||
+        cache.consultingDate || Object.keys(cache.attendees).length > 0
+      );
+    }
+
+    private showCacheRestorationMessage(): void {
+      const cacheAge = Date.now() - this.formCache.timestamp;
+      const minutes = Math.floor(cacheAge / (1000 * 60));
+      const timeText = minutes < 60 ? `${minutes} minutes ago` : 
+                     minutes < 1440 ? `${Math.floor(minutes / 60)} hours ago` : 'recently';
+      
+      this.showMessage('success', `✨ Welcome back! Your form data from ${timeText} has been restored. You can continue where you left off.`);
+      
+      setTimeout(() => this.hideMessage(), 8000);
+    }
+
+    private showCacheFeedback(message: string): void {
+      let feedback = document.getElementById('cache-feedback');
+      if (!feedback) {
+        feedback = document.createElement('div');
+        feedback.id = 'cache-feedback';
+        feedback.className = 'fixed bottom-4 right-4 bg-green-600/20 border border-green-500/30 text-green-300 px-3 py-2 rounded-lg text-sm backdrop-blur-sm z-50 transition-all duration-300';
+        document.body.appendChild(feedback);
+      }
+      
+      feedback.textContent = message;
+      feedback.style.opacity = '1';
+      
+      setTimeout(() => {
+        feedback.style.opacity = '0';
+        setTimeout(() => feedback.remove(), 300);
+      }, 2000);
+    }
+
+    private setupAutoSave(): void {
+      let lastSaveTime = 0;
+      const autoSaveInterval = 10000;
+      
+      const autoSave = () => {
+        const now = Date.now();
+        if (now - lastSaveTime > autoSaveInterval) {
+          this.saveToCache();
+          lastSaveTime = now;
+        }
+      };
+      
+      const allInputs = this.form.querySelectorAll('input, select, textarea');
+      allInputs.forEach(input => {
+        input.addEventListener('input', () => {
+          clearTimeout(this.saveTimeout);
+          this.saveTimeout = setTimeout(() => this.saveToCache(), 1000);
+        });
+        
+        input.addEventListener('change', () => this.saveToCache());
+      });
+      
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.saveToCache();
+        }
+      });
+      
+      window.addEventListener('beforeunload', () => {
+        this.saveToCache();
+      });
+    }
+    
+    private saveTimeout: number = 0;
   }
 
-  // Initialize booking widget when DOM is loaded
+  // 🎯 INITIALIZE EVENT-DRIVEN BOOKING WIDGET
   document.addEventListener('DOMContentLoaded', () => {
-    new BookingWidget();
+    console.log('🚀 Initializing Event-Driven Booking Widget...');
+    new EventDrivenBookingWidget();
+    console.log('✅ Event-Driven Booking Widget ready!');
   });
 </script>

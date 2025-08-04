@@ -39,9 +39,14 @@ export class DatabaseConnection {
   private db: any = null;
   private config: DatabaseConfig;
   private isTurso: boolean = false;
+  private initialized: boolean = false;
 
   constructor(config: DatabaseConfig) {
     this.config = config;
+  }
+  
+  isInitialized(): boolean {
+    return this.initialized && this.db !== null;
   }
 
   /**
@@ -72,6 +77,9 @@ export class DatabaseConnection {
       
       // Run migrations
       await this.runMigrations();
+      
+      // Mark as initialized
+      this.initialized = true;
       
     } catch (error) {
       console.error('❌ Failed to initialize database:', error);

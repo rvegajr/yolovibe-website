@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { UserAuthenticatorDB } from '../../../registration/implementations/database/UserAuthenticatorDB.js';
-import { initializeDatabase } from '../../../registration/database/connection.js';
+import { UserAuthenticator } from '../../../registration/implementations/UserAuthenticator.js';
 import type { Credentials } from '../../../registration/core/types/index.js';
 
 export const prerender = false;
@@ -12,9 +11,6 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('🔐 API: User login attempt');
-    
-    // Initialize database if not already done
-    await initializeDatabase();
     
     const body = await request.json();
     const { email, password } = body;
@@ -33,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.log(`🔍 API: Authenticating user: ${email}`);
     
     const credentials: Credentials = { email, password };
-    const userAuth = new UserAuthenticatorDB();
+    const userAuth = new UserAuthenticator();
     const authResult = await userAuth.authenticate(credentials);
     
     if (!authResult.success) {

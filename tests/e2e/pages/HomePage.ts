@@ -13,32 +13,32 @@ export class HomePage {
   readonly heroSubtitle: Locator;
   readonly ctaButton: Locator;
   readonly navigationMenu: Locator;
-  readonly aboutLink: Locator;
-  readonly pricingLink: Locator;
+  readonly knowledgeUnboundLink: Locator;
+  readonly workshopsLink: Locator;
   readonly bookLink: Locator;
-  readonly contactLink: Locator;
+  readonly unprivacyLink: Locator;
   readonly featuresSection: Locator;
   readonly workshopOfferingsSection: Locator;
 
   constructor(page: Page) {
     this.page = page;
     
-    // Hero section elements
-    this.heroSection = page.locator('[data-testid="hero-section"], .hero, section:first-child');
-    this.heroTitle = page.locator('h1').first();
-    this.heroSubtitle = page.locator('[data-testid="hero-subtitle"], .hero p, h1 + p').first();
-    this.ctaButton = page.locator('[data-testid="cta-button"], .cta-button, a[href*="book"]').first();
+    // Hero section elements - use specific test IDs
+    this.heroSection = page.locator('[data-testid="hero-section"]');
+    this.heroTitle = page.locator('[data-testid="hero-section"] h1').first();
+    this.heroSubtitle = page.locator('[data-testid="hero-section"] p').first();
+    this.ctaButton = page.locator('[data-testid="cta-button"]');
     
-    // Navigation elements
-    this.navigationMenu = page.locator('nav, [data-testid="navigation"]');
-    this.aboutLink = page.locator('a[href="/about"], nav a:has-text("About")');
-    this.pricingLink = page.locator('a[href="/pricing"], nav a:has-text("Pricing")');
-    this.bookLink = page.locator('a[href="/book"], nav a:has-text("Book")');
-    this.contactLink = page.locator('a[href="/contact"], nav a:has-text("Contact")');
+    // Navigation elements - be more specific
+    this.navigationMenu = page.locator('nav').first();
+    this.knowledgeUnboundLink = page.locator('nav a[href="/knowledge-unbound"]');
+    this.workshopsLink = page.locator('nav button:has-text("Workshops")');
+    this.bookLink = page.locator('nav a[href*="#book"]');
+    this.unprivacyLink = page.locator('nav a[href="/unprivacy"]');
     
-    // Content sections
-    this.featuresSection = page.locator('[data-testid="features"], .features, section:has-text("Features")');
-    this.workshopOfferingsSection = page.locator('[data-testid="workshop-offerings"], .workshop-offerings, section:has-text("Workshop")');
+    // Content sections - use specific test IDs
+    this.featuresSection = page.locator('[data-testid="features"]');
+    this.workshopOfferingsSection = page.locator('[data-testid="workshop-offerings"]');
   }
 
   /**
@@ -68,8 +68,8 @@ export class HomePage {
     
     // Verify navigation
     await expect(this.navigationMenu).toBeVisible();
-    await expect(this.aboutLink).toBeVisible();
-    await expect(this.pricingLink).toBeVisible();
+    await expect(this.knowledgeUnboundLink).toBeVisible();
+    await expect(this.workshopsLink).toBeVisible();
     await expect(this.bookLink).toBeVisible();
     
     // Verify main CTA button
@@ -82,31 +82,36 @@ export class HomePage {
    */
   async clickBookNow(): Promise<void> {
     await this.ctaButton.click();
-    await this.page.waitForURL('**/book**');
+    // CTA button scrolls to #book section on same page
+    await this.page.waitForTimeout(1000);
+    // Verify the booking section is visible
+    await expect(this.page.locator('#book')).toBeVisible();
   }
 
   /**
-   * Navigate to pricing page
+   * Navigate to knowledge unbound page
    */
-  async goToPricing(): Promise<void> {
-    await this.pricingLink.click();
-    await this.page.waitForURL('**/pricing**');
+  async goToKnowledgeUnbound(): Promise<void> {
+    await this.knowledgeUnboundLink.click();
+    await this.page.waitForURL('**/knowledge-unbound**');
   }
 
   /**
-   * Navigate to about page
+   * Navigate to workshops section
    */
-  async goToAbout(): Promise<void> {
-    await this.aboutLink.click();
-    await this.page.waitForURL('**/about**');
+  async goToWorkshops(): Promise<void> {
+    await this.workshopsLink.click();
+    // Click on the first workshop option in the dropdown
+    await this.page.locator('nav a[href="/product-a"]').click();
+    await this.page.waitForURL('**/product-a**');
   }
 
   /**
-   * Navigate to contact page
+   * Navigate to unprivacy page
    */
-  async goToContact(): Promise<void> {
-    await this.contactLink.click();
-    await this.page.waitForURL('**/contact**');
+  async goToUnprivacy(): Promise<void> {
+    await this.unprivacyLink.click();
+    await this.page.waitForURL('**/unprivacy**');
   }
 
   /**

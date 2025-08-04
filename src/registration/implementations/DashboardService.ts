@@ -136,7 +136,7 @@ export class AdminCalendarService implements IAdminCalendarService {
           tasks.push({
             id: `followup-${workshop.id}`,
             title: `Follow up on ${workshop.product_name}`,
-            description: `Send completion certificates and gather feedback`,
+            description: `Send follow-up materials and gather feedback`,
             dueDate: followUpDate,
             priority: 'medium',
             type: 'workshop',

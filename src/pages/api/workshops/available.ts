@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { ProductCatalogManager } from '../../../registration/implementations/ProductCatalogManager.js';
+import { ProductCatalogManagerDB } from '../../../registration/implementations/ProductCatalogManagerDB.js';
 import type { Product } from '../../../registration/core/types/index.js';
 
 export const prerender = false;
@@ -12,6 +12,15 @@ export const GET: APIRoute = async ({ request }) => {
   try {
     console.log('🔍 API: Getting available workshops');
     
+    // Initialize database connection if needed
+    const { getDatabaseConnection } = await import('../../../registration/database/connection.js');
+    const dbConnection = getDatabaseConnection();
+    if (!dbConnection.isInitialized()) {
+      await dbConnection.initialize();
+    }
+    
+    // TODO: Switch to ProductCatalogManagerDB when database is ready
+    const { ProductCatalogManager } = await import('../../../registration/implementations/ProductCatalogManager.js');
     const productCatalog = new ProductCatalogManager();
     const products = await productCatalog.getAvailableProducts();
     

@@ -1,0 +1,23 @@
+{
+  "monthlyMetrics": {
+    "2025-07": {
+      "timestamp": "2025-07-26T05:23:10.304Z",
+      "rowsRead": 2,
+      "rowsWritten": 0,
+      "storageUsedMB": 0,
+      "queryCount": 2,
+      "connectionCount": 0,
+      "averageQueryTime": 0
+    },
+    "2025-08": {
+      "timestamp": "2025-08-04T04:30:34.647Z",
+      "rowsRead": 2,
+      "rowsWritten": 0,
+      "storageUsedMB": 0.01171875,
+      "queryCount": 2,
+      "connectionCount": 0,
+      "averageQueryTime": 1
+    }
+  },
+  "lastUpdated": "2025-08-04T04:30:34.647Z"
+}

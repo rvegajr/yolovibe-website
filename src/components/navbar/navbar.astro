@@ -13,8 +13,8 @@ const menuitems = [
     title: "Workshops",
     path: "/#offerings",
     children: [
-      { title: "3-Day Rapid VibeCode", path: "/product-a" },
-      { title: "5-Day Business Plan Intensive", path: "/product-b" },
+      { title: "3-Day Rapid VibeCode", path: "/#offerings" },
+      { title: "5-Day Business Plan Intensive", path: "/#offerings" },
     ],
   },
   {
@@ -57,8 +57,9 @@ const menuitems = [
                   <li>
                     <a
                       href={item.path}
-                      class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900">
-                      <span> {item.title}</span>
+                      class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900 dark:text-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-400 dark:hover:to-blue-400 dark:hover:bg-clip-text dark:hover:text-transparent dark:font-medium transition-all duration-300"
+                      style="color: white !important;">
+                      <span class="dark:bg-gradient-to-r dark:from-gray-100 dark:to-white dark:bg-clip-text dark:text-transparent dark:font-semibold"> {item.title}</span>
                       {item.badge && (
                         <span class="ml-1 px-2 py-0.5 text-[10px] animate-pulse font-semibold uppercase text-white bg-indigo-600 rounded-full">
                           New
@@ -71,9 +72,19 @@ const menuitems = [
             ))
           }
         </ul>
-        <!-- Login/Signup buttons hidden per user request -->
+        <div class="flex items-center gap-3 mt-4 lg:mt-0">
+          <a
+            href="/login"
+            class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900 dark:text-white dark:hover:bg-gradient-to-r dark:hover:from-purple-400 dark:hover:to-pink-400 dark:hover:bg-clip-text dark:hover:text-transparent dark:font-semibold transition-all duration-300"
+            style="color: white !important;"
+          >
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Login
+          </a>
+        </div>
       </MenuItems>
     </Astronav>
-    <!-- Desktop Login/Signup buttons hidden per user request -->
   </header>
 </Container>

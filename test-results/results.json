@@ -11,7 +11,7 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "actualWorkers": 5
+      "actualWorkers": 1
     },
     "preserveOutput": "always",
     "reporter": [
@@ -43,7 +43,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "chromium",
         "name": "chromium",
@@ -59,7 +59,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "firefox",
         "name": "firefox",
@@ -75,7 +75,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "webkit",
         "name": "webkit",
@@ -91,7 +91,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "Mobile Chrome",
         "name": "Mobile Chrome",
@@ -107,7 +107,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "Mobile Safari",
         "name": "Mobile Safari",
@@ -123,7 +123,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "actualWorkers": 5
+          "actualWorkers": 1
         },
         "id": "Microsoft Edge",
         "name": "Microsoft Edge",
@@ -149,20 +149,20 @@
   },
   "suites": [
     {
-      "title": "01-homepage.spec.ts",
-      "file": "01-homepage.spec.ts",
+      "title": "04-admin-dashboard.spec.ts",
+      "file": "04-admin-dashboard.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Homepage - Anonymous User Experience",
-          "file": "01-homepage.spec.ts",
-          "line": 10,
+          "title": "Admin Dashboard",
+          "file": "04-admin-dashboard.spec.ts",
+          "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "should load homepage successfully",
+              "title": "should login and display dashboard with expected data",
               "ok": false,
               "tags": [],
               "tests": [
@@ -177,620 +177,75 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 7545,
+                      "duration": 9225,
                       "error": {
-                        "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n",
-                        "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\n    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:25:20",
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: 'Admin Dashboard' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: 'Admin Dashboard' })\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: 'Admin Dashboard' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: 'Admin Dashboard' })\u001b[22m\n\n    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/04-admin-dashboard.spec.ts:35:34",
                         "location": {
-                          "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                          "column": 36,
-                          "line": 65
+                          "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/04-admin-dashboard.spec.ts",
+                          "column": 34,
+                          "line": 35
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m"
+                        "snippet": "\u001b[0m \u001b[90m 33 |\u001b[39m     \u001b[90m// Check for dashboard title with gradient styling\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[36mconst\u001b[39m dashboardTitle \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[32m'Admin Dashboard'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m expect(dashboardTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 36 |\u001b[39m     \n \u001b[90m 37 |\u001b[39m     \u001b[90m// Verify dark theme background\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[36mconst\u001b[39m bodyBg \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'div.min-h-screen.bg-gradient-to-b'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 36,
-                            "line": 65
+                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/04-admin-dashboard.spec.ts",
+                            "column": 34,
+                            "line": 35
                           },
-                          "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m\n\u001b[2m    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:25:20\u001b[22m"
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: 'Admin Dashboard' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: 'Admin Dashboard' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 33 |\u001b[39m     \u001b[90m// Check for dashboard title with gradient styling\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[36mconst\u001b[39m dashboardTitle \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[32m'Admin Dashboard'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m expect(dashboardTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 36 |\u001b[39m     \n \u001b[90m 37 |\u001b[39m     \u001b[90m// Verify dark theme background\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[36mconst\u001b[39m bodyBg \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'div.min-h-screen.bg-gradient-to-b'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/04-admin-dashboard.spec.ts:35:34\u001b[22m"
                         }
                       ],
                       "stdout": [
                         {
-                          "text": "✅ Test: Homepage loads successfully\n"
+                          "text": "🧪 Testing Admin Dashboard Login and Data Display\n"
+                        },
+                        {
+                          "text": "📝 Step 1: Filling login form...\n"
+                        },
+                        {
+                          "text": "🚀 Step 2: Navigating to admin dashboard...\n"
+                        },
+                        {
+                          "text": "🎨 Step 3: Verifying dashboard header and dark theme...\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-07-19T00:40:32.074Z",
+                      "startTime": "2025-07-23T04:22:15.843Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/test-failed-1.png"
+                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/04-admin-dashboard-Admin-D-dd365-ashboard-with-expected-data-chromium/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/video.webm"
+                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/04-admin-dashboard-Admin-D-dd365-ashboard-with-expected-data-chromium/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-35915--load-homepage-successfully-chromium/error-context.md"
+                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/04-admin-dashboard-Admin-D-dd365-ashboard-with-expected-data-chromium/error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                        "column": 36,
-                        "line": 65
+                        "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/04-admin-dashboard.spec.ts",
+                        "column": 34,
+                        "line": 35
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "9992779f7716d889cb78-99004973afefaa4e33c9",
-              "file": "01-homepage.spec.ts",
-              "line": 18,
-              "column": 3
-            },
-            {
-              "title": "should display workshop offerings",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "failed",
-                      "duration": 7210,
-                      "error": {
-                        "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")') resolved to 2 elements:\n    1) <section class=\"py-16\" id=\"offerings\">…</section> aka locator('#offerings')\n    2) <section id=\"book\" class=\"py-20 bg-gradient-to-b from-gray-900 to-slate-900 dark:from-slate-900 dark:to-black\">…</section> aka locator('#book')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")')\u001b[22m\n",
-                        "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")') resolved to 2 elements:\n    1) <section class=\"py-16\" id=\"offerings\">…</section> aka locator('#offerings')\n    2) <section id=\"book\" class=\"py-20 bg-gradient-to-b from-gray-900 to-slate-900 dark:from-slate-900 dark:to-black\">…</section> aka locator('#book')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")')\u001b[22m\n\n    at HomePage.verifyWorkshopOfferings (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:124:49)\n    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:41:20",
-                        "location": {
-                          "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                          "column": 49,
-                          "line": 124
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpages/HomePage.ts:124\n\n\u001b[0m \u001b[90m 122 |\u001b[39m \u001b[90m   */\u001b[39m\n \u001b[90m 123 |\u001b[39m   \u001b[36masync\u001b[39m verifyWorkshopOfferings()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 124 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mworkshopOfferingsSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 125 |\u001b[39m     \n \u001b[90m 126 |\u001b[39m     \u001b[90m// Look for 3-day and 5-day workshop mentions\u001b[39m\n \u001b[90m 127 |\u001b[39m     \u001b[36mconst\u001b[39m pageContent \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mtextContent(\u001b[32m'body'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 49,
-                            "line": 124
-                          },
-                          "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")') resolved to 2 elements:\n    1) <section class=\"py-16\" id=\"offerings\">…</section> aka locator('#offerings')\n    2) <section id=\"book\" class=\"py-20 bg-gradient-to-b from-gray-900 to-slate-900 dark:from-slate-900 dark:to-black\">…</section> aka locator('#book')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"workshop-offerings\"], .workshop-offerings, section:has-text(\"Workshop\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:124\n\n\u001b[0m \u001b[90m 122 |\u001b[39m \u001b[90m   */\u001b[39m\n \u001b[90m 123 |\u001b[39m   \u001b[36masync\u001b[39m verifyWorkshopOfferings()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 124 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mworkshopOfferingsSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 125 |\u001b[39m     \n \u001b[90m 126 |\u001b[39m     \u001b[90m// Look for 3-day and 5-day workshop mentions\u001b[39m\n \u001b[90m 127 |\u001b[39m     \u001b[36mconst\u001b[39m pageContent \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mtextContent(\u001b[32m'body'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at HomePage.verifyWorkshopOfferings (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:124:49)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:41:20\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Workshop offerings are displayed\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:32.059Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-9fcb7--display-workshop-offerings-chromium/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                        "column": 49,
-                        "line": 124
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-2b4f841fff17339b22a4",
-              "file": "01-homepage.spec.ts",
-              "line": 35,
-              "column": 3
-            },
-            {
-              "title": "should have working navigation links",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 2,
-                      "status": "timedOut",
-                      "duration": 30225,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
-                        {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 28,
-                            "line": 92
-                          },
-                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href=\"/pricing\"], nav a:has-text(\"Pricing\")')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:92\n\n\u001b[0m \u001b[90m 90 |\u001b[39m \u001b[90m   */\u001b[39m\n \u001b[90m 91 |\u001b[39m   \u001b[36masync\u001b[39m goToPricing()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 92 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpricingLink\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/pricing**'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m   }\n \u001b[90m 95 |\u001b[39m\u001b[0m\n\u001b[2m    at HomePage.goToPricing (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:92:28)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:52:20\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Navigation links work correctly\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:32.061Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-076dc-ve-working-navigation-links-chromium/error-context.md"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-7ea99de3bb9a78692dea",
-              "file": "01-homepage.spec.ts",
-              "line": 46,
-              "column": 3
-            },
-            {
-              "title": "should navigate to booking page via CTA",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 3,
-                      "status": "timedOut",
-                      "duration": 30441,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
-                        {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 21,
-                            "line": 85
-                          },
-                          "message": "Error: page.waitForURL: Test timeout of 30000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/book**\" until \"load\"\n============================================================\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:85\n\n\u001b[0m \u001b[90m 83 |\u001b[39m   \u001b[36masync\u001b[39m clickBookNow()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 84 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mctaButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 85 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/book**'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 86 |\u001b[39m   }\n \u001b[90m 87 |\u001b[39m\n \u001b[90m 88 |\u001b[39m   \u001b[90m/**\u001b[39m\u001b[0m\n\u001b[2m    at HomePage.clickBookNow (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:85:21)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:74:5\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: CTA button navigates to booking\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:32.065Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Ano-c0b1c-ate-to-booking-page-via-CTA-chromium/error-context.md"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-3908054d2e171bf640cf",
-              "file": "01-homepage.spec.ts",
-              "line": 68,
-              "column": 3
-            },
-            {
-              "title": "should display features section",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 7461,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Features section is displayed\n"
-                        },
-                        {
-                          "text": "✅ Features section verified\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:32.064Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-39e96d111993842fb9c8",
-              "file": "01-homepage.spec.ts",
-              "line": 82,
-              "column": 3
-            },
-            {
-              "title": "should pass basic SEO checks",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 1163,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Basic SEO elements are present\n"
-                        },
-                        {
-                          "text": "✅ SEO basics verified\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:42.676Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-51ea194fb89a167220d1",
-              "file": "01-homepage.spec.ts",
-              "line": 93,
-              "column": 3
-            },
-            {
-              "title": "should perform well (basic performance check)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 3164,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Basic performance requirements\n"
-                        },
-                        {
-                          "text": "✅ Performance check passed\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:43.842Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-be2ebf55441e0d4b0da5",
-              "file": "01-homepage.spec.ts",
-              "line": 104,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "Homepage - Mobile Responsiveness",
-          "file": "01-homepage.spec.ts",
-          "line": 116,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should be responsive on mobile devices",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 1167,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Mobile responsiveness\n"
-                        },
-                        {
-                          "text": "✅ Mobile responsiveness verified\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:47.009Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-8fa7993a2bbec7de7f5b",
-              "file": "01-homepage.spec.ts",
-              "line": 124,
-              "column": 3
-            },
-            {
-              "title": "should have accessible navigation on mobile",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 4,
-                      "status": "failed",
-                      "duration": 1045,
-                      "error": {
-                        "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n",
-                        "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\n    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:141:20",
-                        "location": {
-                          "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                          "column": 36,
-                          "line": 65
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 36,
-                            "line": 65
-                          },
-                          "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m\n\u001b[2m    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:141:20\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Mobile navigation accessibility\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:48.179Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Mob-7ad73-ssible-navigation-on-mobile-chromium/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                        "column": 36,
-                        "line": 65
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-1734385bb7882176a70f",
-              "file": "01-homepage.spec.ts",
-              "line": 135,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "Homepage - Cross-Browser Compatibility",
-          "file": "01-homepage.spec.ts",
-          "line": 151,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should work consistently across browsers",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 5,
-                      "parallelIndex": 1,
-                      "status": "failed",
-                      "duration": 1360,
-                      "error": {
-                        "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n",
-                        "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\n    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:165:20",
-                        "location": {
-                          "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                          "column": 36,
-                          "line": 65
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                            "column": 36,
-                            "line": 65
-                          },
-                          "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('[data-testid=\"hero-section\"], .hero, section:first-child') resolved to 7 elements:\n    1) <section>…</section> aka locator('section').filter({ hasText: '5.9.2' })\n    2) <section id=\"integration-list\">…</section> aka locator('#integration-list')\n    3) <section id=\"header-left\">…</section> aka getByText('Audit 0')\n    4) <section>…</section> aka getByText('PlacementAdjust the placement')\n    5) <section>…</section> aka getByText('Verbose loggingLogs dev')\n    6) <section>…</section> aka getByText('Disable notificationsHide')\n    7) <section class=\"full-width\">…</section> aka getByText('Hide toolbar Run astro')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"hero-section\"], .hero, section:first-child')\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages/HomePage.ts:65\n\n\u001b[0m \u001b[90m 63 |\u001b[39m   \u001b[36masync\u001b[39m verifyPageContent()\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[36mvoid\u001b[39m\u001b[33m>\u001b[39m {\n \u001b[90m 64 |\u001b[39m     \u001b[90m// Verify hero section\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 65 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 67 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mheroTitle)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/YOLOVibe|AI|Code|Workshop/i\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 68 |\u001b[39m     \u001b[0m\n\u001b[2m    at HomePage.verifyPageContent (/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts:65:36)\u001b[22m\n\u001b[2m    at /Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/01-homepage.spec.ts:165:20\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "✅ Test: Cross-browser compatibility\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-19T00:40:49.233Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/test-results/01-homepage-Homepage---Cro-7d3ea-onsistently-across-browsers-chromium/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/Users/xcode/Documents/YOLOVibeCode/YOLOVibeWebsite/tests/e2e/pages/HomePage.ts",
-                        "column": 36,
-                        "line": 65
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9992779f7716d889cb78-e5b6bd275b7369f2758e",
-              "file": "01-homepage.spec.ts",
-              "line": 159,
+              "id": "f2045d3e615eac9d0d3a-4b696d7bded200df1b56",
+              "file": "04-admin-dashboard.spec.ts",
+              "line": 9,
               "column": 3
             }
           ]
@@ -800,11 +255,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-07-19T00:40:26.138Z",
-    "duration": 39701.856,
-    "expected": 4,
+    "startTime": "2025-07-23T04:22:11.268Z",
+    "duration": 14839.623000000001,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 6,
+    "unexpected": 1,
     "flaky": 0
   }
 }

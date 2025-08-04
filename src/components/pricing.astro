@@ -37,7 +37,11 @@ const { plan } = Astro.props;
       <Link
         href={plan.button.link || "#"}
         block
-        style={plan.popular ? "primary" : "outline"}>
+        style={plan.popular ? "primary" : "outline"}
+        data-workshop-id={plan.workshopId}
+        data-workshop-name={plan.name}
+        data-workshop-price={typeof plan.price === "object" ? plan.price.amount : plan.price.replace(/[^0-9]/g, "")}
+        data-workshop-duration={plan.duration || 3}>
         {plan.button.text || "Get Started"}
       </Link>
     </div>

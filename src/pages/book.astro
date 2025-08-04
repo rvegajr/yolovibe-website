@@ -3,6 +3,8 @@ import MainLayout from '../layouts/MainLayout.astro';
 import Container from "../components/container.astro";
 import Sectionhead from "../components/sectionhead.astro";
 import BookingWidget from "../components/booking-widget.astro";
+import EventDrivenAnalytics from "../components/EventDrivenAnalytics.astro";
+import EventDrivenNotificationService from "../components/EventDrivenNotificationService.astro";
 import "../styles/neon-glow.css";
 ---
 
@@ -12,43 +14,82 @@ import "../styles/neon-glow.css";
       Book Your Workshop
     </h1>
     
-    <div class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-12">
+    <div class="max-w-6xl mx-auto bg-purple-50/20 dark:bg-slate-800/90 rounded-xl shadow-lg p-6 mb-12">
       <p class="text-lg text-center mb-8 text-slate-700 dark:text-slate-200">
         Select your preferred workshop package and dates below. All workshops are conducted over consecutive business days with our new streamlined registration system.
       </p>
       
       <!-- Workshop Package Information -->
-      <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
         <!-- 3-Day Workshop Package -->
-        <div class="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 dark:from-purple-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-purple-500/30 dark:border-purple-700/50 shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-xl font-bold mb-3 text-purple-700 dark:text-purple-300">3-Day YOLO Workshop</h3>
-          <p class="text-slate-700 dark:text-slate-300 mb-4">Intensive 3-day workshop covering core YOLO principles and practical applications. Can start Monday, Tuesday, or Wednesday.</p>
+        <div class="bg-white/80 dark:bg-slate-700/50 p-6 rounded-xl border border-purple-200/60 dark:border-purple-400/30 shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-xl font-bold mb-3 text-slate-800 dark:text-slate-100">3-Day YOLO Workshop</h3>
+          <p class="text-slate-600 dark:text-slate-300 mb-4">Intensive 3-day workshop covering core YOLO principles and practical applications. Can start Monday, Tuesday, or Wednesday. <span class="text-sm text-purple-600 dark:text-purple-400 font-medium">(All times Central US Time Zone)</span></p>
           <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-4">
-            <p>• Maximum 12 attendees per session</p>
+            <p>• Maximum 10 attendees per session</p>
             <p>• 3 consecutive business days</p>
             <p>• Hands-on coding exercises</p>
-            <p>• Certificate of completion</p>
+            
           </div>
-          <p class="font-bold text-xl text-green-400 bg-black/20 px-4 py-2 rounded-lg border border-green-400/30">$3,000 per seat</p>
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-2xl text-slate-800 dark:text-slate-100">$3,000 per seat</p>
+            <button type="button" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold" 
+                    onclick="window.globalEventBus?.selectWorkshop('prod-3day', {workshopName: '3-Day YOLO Workshop', price: 3000, duration: 3})">
+              Book Now
+            </button>
+          </div>
         </div>
         
         <!-- 5-Day Workshop Package -->
-        <div class="bg-gradient-to-br from-blue-900/40 to-indigo-900/40 dark:from-blue-900/60 dark:to-indigo-900/60 p-6 rounded-xl border border-blue-500/30 dark:border-blue-700/50 shadow-md hover:shadow-lg transition-shadow">
-          <h3 class="text-xl font-bold mb-3 text-blue-700 dark:text-blue-300">5-Day YOLO Intensive</h3>
-          <p class="text-slate-700 dark:text-slate-300 mb-4">Comprehensive 5-day intensive program with advanced techniques and certification. Always starts on Monday.</p>
+        <div class="bg-white/80 dark:bg-slate-700/50 p-6 rounded-xl border border-purple-200/60 dark:border-purple-400/30 shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-xl font-bold mb-3 text-slate-800 dark:text-slate-100">5-Day YOLO Intensive</h3>
+          <p class="text-slate-600 dark:text-slate-300 mb-4">Comprehensive 5-day intensive program with advanced techniques and certification. Always starts on Monday.</p>
           <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-4">
-            <p>• Maximum 8 attendees per session</p>
+            <p>• Maximum 10 attendees per session</p>
             <p>• Monday through Friday</p>
             <p>• Advanced project work</p>
             <p>• Business integration planning</p>
           </div>
-          <p class="font-bold text-xl text-green-400 bg-black/20 px-4 py-2 rounded-lg border border-green-400/30">$4,500 per seat</p>
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-2xl text-slate-800 dark:text-slate-100">$4,500 per seat</p>
+            <button type="button" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold"
+                    onclick="window.globalEventBus?.selectWorkshop('prod-5day', {workshopName: '5-Day YOLO Intensive', price: 4500, duration: 5})">
+              Book Now
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Business Development Package -->
+        <div class="bg-white/80 dark:bg-slate-700/50 p-6 rounded-xl border border-purple-200/60 dark:border-purple-400/30 shadow-md hover:shadow-lg transition-shadow">
+          <h3 class="text-xl font-bold mb-3 text-slate-800 dark:text-slate-100">AI Business Development</h3>
+          <p class="text-slate-600 dark:text-slate-300 mb-4">Personalized AI development consulting for your specific projects and challenges. Flexible scheduling available.</p>
+          <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <p>• One-on-one sessions</p>
+            <p>• 2-hour minimum booking</p>
+            <p>• Monday-Friday, 9 AM - 5 PM <span class="text-purple-600 dark:text-purple-400 font-medium">(Central Time)</span></p>
+            <p>• Custom project focus</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-2xl text-slate-800 dark:text-slate-100">$200<span class="text-lg font-normal">/hour</span></p>
+            <button type="button" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold"
+                    onclick="window.globalEventBus?.selectWorkshop('ai-consulting', {workshopName: 'AI Business Development', price: 200, duration: 2})">
+              Book Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- YOLOVibe Registration System -->
     <BookingWidget />
+    
+    <!-- 🎯 EVENT-DRIVEN ANALYTICS COMPONENT -->
+    <!-- This component automatically tracks all events from the BookingWidget -->
+    <EventDrivenAnalytics />
+    
+    <!-- 🎯 EVENT-DRIVEN NOTIFICATION SERVICE -->
+    <!-- This component provides real-time user feedback for all booking events -->
+    <EventDrivenNotificationService />
     
     <div class="max-w-3xl mx-auto text-center mt-12">
       <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Need Help?</h2>
@@ -58,7 +99,7 @@ import "../styles/neon-glow.css";
       </p>
       
       <div class="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 p-6 rounded-xl border border-indigo-200 dark:border-indigo-700">
-        <h3 class="text-lg font-semibold mb-3 text-slate-900 dark:text-white">Workshop Schedule</h3>
+        <h3 class="text-lg font-semibold mb-3 text-slate-900 dark:text-white">Workshop Schedule <span class="text-sm text-purple-600 dark:text-purple-400 font-normal">(Central US Time Zone)</span></h3>
         <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-400">
           <div>
             <p class="font-medium text-purple-600 dark:text-purple-400">3-Day Workshop:</p>

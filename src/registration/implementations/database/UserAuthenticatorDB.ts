@@ -15,7 +15,7 @@
  */
 
 // 🚀 PURE JAVASCRIPT PASSWORD HASHING - No more native dependencies!
-import { hash, verify } from 'argon2-browser';
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import type { IUserAuthenticator } from '../../core/interfaces/index.js';
 import type { User, UserSession, PasswordResetRequest, LoginCredentials, RegistrationData, Credentials, AuthResult, Session } from '../../core/types/index.js';
@@ -46,7 +46,7 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
 
     // Hash password
     // 🎉 Beautiful pure JavaScript password hashing!
-    const passwordHash = await hash({ pass: registrationData.password, salt: crypto.randomBytes(16) });
+    const passwordHash = await bcrypt.hash(registrationData.password, 10);
 
     // Create user data
     const userData = {
@@ -181,7 +181,7 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     }
 
     // 🎉 Beautiful pure JavaScript password verification!
-    return verify({ pass: password, encoded: result.password_hash });
+    return bcrypt.compare(password, result.password_hash);
   }
 
   /**
@@ -221,7 +221,7 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     this.validatePasswordStrength(newPassword);
 
     // 🎉 Hash new password with beautiful pure JavaScript!
-    const passwordHash = await hash({ pass: newPassword, salt: crypto.randomBytes(16) });
+    const passwordHash = await bcrypt.hash(newPassword, 10);
 
     // Update password
     const success = await this.userRepository.updatePassword(user.id, passwordHash);
@@ -254,7 +254,7 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     this.validatePasswordStrength(newPassword);
 
     // 🎉 Hash new password with beautiful pure JavaScript!
-    const passwordHash = await hash({ pass: newPassword, salt: crypto.randomBytes(16) });
+    const passwordHash = await bcrypt.hash(newPassword, 10);
 
     // Update password
     const success = await this.userRepository.updatePassword(userId, passwordHash);

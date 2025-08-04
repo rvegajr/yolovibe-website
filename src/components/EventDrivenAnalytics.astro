@@ -1,0 +1,359 @@
+---
+// Event-Driven Analytics Component
+// This component demonstrates how to subscribe to events from other components
+---
+
+<!-- 🎯 EVENT-DRIVEN ANALYTICS COMPONENT -->
+<!-- This component listens to all booking events and tracks user behavior -->
+
+<div id="analytics-dashboard" class="hidden fixed bottom-4 left-4 bg-black/80 text-white p-4 rounded-lg border border-purple-500/30 backdrop-blur-sm z-50 max-w-sm">
+  <div class="flex items-center justify-between mb-2">
+    <h4 class="font-bold text-purple-300">📊 Live Analytics</h4>
+    <button id="analytics-toggle" class="text-gray-400 hover:text-white">×</button>
+  </div>
+  <div id="analytics-content" class="space-y-2 text-sm">
+    <div>Events: <span id="event-count" class="text-cyan-400 font-mono">0</span></div>
+    <div>Workshop Views: <span id="workshop-views" class="text-green-400 font-mono">0</span></div>
+    <div>Date Selections: <span id="date-selections" class="text-blue-400 font-mono">0</span></div>
+    <div>Form Submissions: <span id="form-submissions" class="text-yellow-400 font-mono">0</span></div>
+    <div>Errors: <span id="error-count" class="text-red-400 font-mono">0</span></div>
+  </div>
+  <div id="recent-events" class="mt-3 space-y-1 text-xs">
+    <div class="text-gray-400">Recent Events:</div>
+    <div id="event-log" class="max-h-20 overflow-y-auto space-y-1"></div>
+  </div>
+</div>
+
+<!-- Analytics Toggle Button -->
+<button id="show-analytics" class="fixed bottom-4 left-4 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 p-2 rounded-full border border-purple-500/30 backdrop-blur-sm z-50 transition-all">
+  📊
+</button>
+
+<script>
+  // 🎯 EVENT-DRIVEN INFRASTRUCTURE
+  // Using global event bus from SPAInitializer for compatibility
+  
+  // Event Types (simplified for compatibility)
+  const EventTypes = {
+    WORKSHOP_SELECTED: 'WORKSHOP_SELECTED',
+    DATE_SELECTED: 'DATE_SELECTED',
+    FORM_SUBMITTED: 'FORM_SUBMITTED',
+    USER_INTERACTION: 'USER_INTERACTION',
+    ERROR_OCCURRED: 'ERROR_OCCURRED',
+    BOOKING_SUBMITTED: 'BOOKING_SUBMITTED'
+  };
+
+  /**
+   * 🎯 EVENT-DRIVEN ANALYTICS SERVICE
+   * 
+   * This service demonstrates the power of event-driven architecture:
+   * - It automatically tracks ALL events from ANY component
+   * - No direct coupling to the BookingWidget
+   * - Easy to add/remove without affecting other components
+   * - Perfect for A/B testing, user behavior analysis, etc.
+   */
+  class EventDrivenAnalyticsService {
+    private globalEventBus: any;
+    private componentId = 'analytics-service';
+    
+    // Analytics data
+    private eventCount = 0;
+    private workshopViews = 0;
+    private dateSelections = 0;
+    private formSubmissions = 0;
+    private errorCount = 0;
+    private recentEvents: Array<{ type: string; time: string; data?: any }> = [];
+    
+    // UI elements
+    private dashboard: HTMLElement;
+    private showButton: HTMLElement;
+    private eventCountEl: HTMLElement;
+    private workshopViewsEl: HTMLElement;
+    private dateSelectionsEl: HTMLElement;
+    private formSubmissionsEl: HTMLElement;
+    private errorCountEl: HTMLElement;
+    private eventLogEl: HTMLElement;
+
+    constructor() {
+      // Use global event bus from SPAInitializer
+      this.globalEventBus = (window as any).globalEventBus || {
+        emit: (type: string, payload: any) => console.log('Event:', type, payload),
+        on: (type: string, handler: Function) => {},
+        off: (type: string, handler?: Function) => {}
+      };
+      
+      // Get UI elements
+      this.dashboard = document.getElementById('analytics-dashboard')!;
+      this.showButton = document.getElementById('show-analytics')!;
+      this.eventCountEl = document.getElementById('event-count')!;
+      this.workshopViewsEl = document.getElementById('workshop-views')!;
+      this.dateSelectionsEl = document.getElementById('date-selections')!;
+      this.formSubmissionsEl = document.getElementById('form-submissions')!;
+      this.errorCountEl = document.getElementById('error-count')!;
+      this.eventLogEl = document.getElementById('event-log')!;
+      
+      this.init();
+    }
+
+    private async init(): Promise<void> {
+      console.log('🎯 Initializing Event-Driven Analytics Service');
+      
+      // 🎯 SETUP EVENT SUBSCRIPTIONS
+      this.setupEventSubscriptions();
+      
+      // Setup UI interactions
+      this.setupUI();
+      
+      console.log('✅ Event-Driven Analytics Service ready!');
+      
+      // Show a welcome message in the analytics
+      this.addEventToLog('ANALYTICS_INITIALIZED', 'Analytics service started');
+    }
+
+    // 🎯 SUBSCRIBE TO ALL RELEVANT EVENTS
+    private setupEventSubscriptions(): void {
+      console.log('📊 Setting up analytics event subscriptions...');
+      
+      // 1. Workshop Selection Events
+      this.globalEventBus.on(EventTypes.WORKSHOP_SELECTED, async (event: any) => {
+        this.workshopViews++;
+        this.trackEvent('WORKSHOP_SELECTED', {
+          workshopId: event.workshopId,
+          workshopName: event.workshopName,
+          price: event.price
+        });
+        
+        console.log(`📊 Analytics: Workshop selected - ${event.workshopName} ($${event.price})`);
+      });
+
+      // 2. Date Selection Events
+      this.globalEventBus.on(EventTypes.DATE_SELECTED, async (event: any) => {
+        this.dateSelections++;
+        this.trackEvent('DATE_SELECTED', {
+          date: event.date.toDateString(),
+          workshopType: event.workshopType,
+          duration: event.duration
+        });
+        
+        console.log(`📊 Analytics: Date selected - ${event.date.toDateString()}`);
+      });
+
+      // 3. Form Submission Events
+      this.globalEventBus.on(EventTypes.FORM_SUBMITTED, async (event: any) => {
+        this.formSubmissions++;
+        this.trackEvent('FORM_SUBMITTED', {
+          element: event.element,
+          metadata: event.metadata
+        });
+        
+        console.log(`📊 Analytics: Form submitted`);
+      });
+
+      // 4. Booking Completion Events
+      this.globalEventBus.on(EventTypes.BOOKING_SUBMITTED, async (event: any) => {
+        this.trackEvent('BOOKING_COMPLETED', {
+          bookingId: event.bookingId,
+          revenue: event.totalAmount,
+          attendeeCount: event.attendeeCount
+        });
+        
+        console.log(`📊 Analytics: Booking completed - $${event.totalAmount} revenue!`);
+        
+        // 🎯 EMIT CONVERSION EVENT TO GLOBAL BUS
+        await this.globalEventBus.emit('CONVERSION_TRACKED', {
+          type: 'booking_completion',
+          revenue: event.totalAmount,
+          bookingId: event.bookingId,
+          timestamp: new Date(),
+          source: this.componentId
+        });
+      });
+
+      // 5. Error Events
+      this.globalEventBus.on(EventTypes.ERROR_OCCURRED, async (event: any) => {
+        this.errorCount++;
+        this.trackEvent('ERROR_OCCURRED', {
+          error: event.error,
+          severity: event.severity,
+          page: event.page
+        });
+        
+        console.log(`📊 Analytics: Error tracked - ${event.error}`);
+      });
+
+      // 6. General User Interactions
+      this.globalEventBus.on(EventTypes.USER_INTERACTION, async (event: any) => {
+        this.trackEvent('USER_INTERACTION', {
+          action: event.action,
+          element: event.element,
+          metadata: event.metadata
+        });
+        
+        // Only log important interactions to avoid spam
+        if (['click', 'submit'].includes(event.action)) {
+          console.log(`📊 Analytics: User ${event.action} on ${event.element}`);
+        }
+      });
+
+      console.log('✅ Analytics event subscriptions configured');
+    }
+
+    // 🎯 TRACK AND RECORD EVENTS
+    private trackEvent(eventType: string, data?: any): void {
+      this.eventCount++;
+      
+      // Add to recent events log
+      this.recentEvents.unshift({
+        type: eventType,
+        time: new Date().toLocaleTimeString(),
+        data
+      });
+      
+      // Keep only last 10 events
+      if (this.recentEvents.length > 10) {
+        this.recentEvents = this.recentEvents.slice(0, 10);
+      }
+      
+      // Update UI
+      this.updateUI();
+      
+      // In a real app, you'd send this data to your analytics service
+      // analytics.track(eventType, data);
+    }
+
+    private addEventToLog(eventType: string, description: string): void {
+      this.recentEvents.unshift({
+        type: eventType,
+        time: new Date().toLocaleTimeString(),
+        data: { description }
+      });
+      
+      if (this.recentEvents.length > 10) {
+        this.recentEvents = this.recentEvents.slice(0, 10);
+      }
+      
+      this.updateUI();
+    }
+
+    // 🎯 UPDATE ANALYTICS UI
+    private updateUI(): void {
+      // Update counters
+      this.eventCountEl.textContent = this.eventCount.toString();
+      this.workshopViewsEl.textContent = this.workshopViews.toString();
+      this.dateSelectionsEl.textContent = this.dateSelections.toString();
+      this.formSubmissionsEl.textContent = this.formSubmissions.toString();
+      this.errorCountEl.textContent = this.errorCount.toString();
+      
+      // Update event log
+      this.eventLogEl.innerHTML = this.recentEvents.map(event => {
+        const color = this.getEventColor(event.type);
+        const description = event.data?.description || event.type.replace(/_/g, ' ').toLowerCase();
+        return `<div class="text-${color}-400">${event.time}: ${description}</div>`;
+      }).join('');
+    }
+
+    private getEventColor(eventType: string): string {
+      const colorMap: { [key: string]: string } = {
+        'WORKSHOP_SELECTED': 'green',
+        'DATE_SELECTED': 'blue',
+        'FORM_SUBMITTED': 'yellow',
+        'BOOKING_COMPLETED': 'purple',
+        'ERROR_OCCURRED': 'red',
+        'USER_INTERACTION': 'gray',
+        'ANALYTICS_INITIALIZED': 'cyan'
+      };
+      
+      return colorMap[eventType] || 'gray';
+    }
+
+    // 🎯 SETUP UI INTERACTIONS
+    private setupUI(): void {
+      // Show analytics dashboard
+      this.showButton.addEventListener('click', () => {
+        this.dashboard.classList.remove('hidden');
+        this.showButton.classList.add('hidden');
+      });
+      
+      // Hide analytics dashboard
+      document.getElementById('analytics-toggle')?.addEventListener('click', () => {
+        this.dashboard.classList.add('hidden');
+        this.showButton.classList.remove('hidden');
+      });
+      
+      // Auto-hide after 30 seconds of inactivity
+      let hideTimer: number;
+      const resetHideTimer = () => {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          if (!this.dashboard.classList.contains('hidden')) {
+            this.dashboard.classList.add('hidden');
+            this.showButton.classList.remove('hidden');
+          }
+        }, 30000);
+      };
+      
+      this.dashboard.addEventListener('mouseenter', resetHideTimer);
+      this.dashboard.addEventListener('mouseleave', resetHideTimer);
+      
+      resetHideTimer();
+    }
+
+    // 🎯 PUBLIC API FOR EXTERNAL ACCESS
+    public getAnalyticsData() {
+      return {
+        eventCount: this.eventCount,
+        workshopViews: this.workshopViews,
+        dateSelections: this.dateSelections,
+        formSubmissions: this.formSubmissions,
+        errorCount: this.errorCount,
+        recentEvents: [...this.recentEvents]
+      };
+    }
+
+    public reset(): void {
+      this.eventCount = 0;
+      this.workshopViews = 0;
+      this.dateSelections = 0;
+      this.formSubmissions = 0;
+      this.errorCount = 0;
+      this.recentEvents = [];
+      this.updateUI();
+    }
+  }
+
+  // 🎯 INITIALIZE ANALYTICS SERVICE
+  document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure BookingWidget is initialized first
+    setTimeout(() => {
+      console.log('🚀 Initializing Event-Driven Analytics Service...');
+      const analyticsService = new EventDrivenAnalyticsService();
+      
+      // Make it globally available for debugging
+      (window as any).analyticsService = analyticsService;
+      
+      console.log('✅ Event-Driven Analytics Service ready!');
+      console.log('💡 Tip: Open browser console and type "analyticsService.getAnalyticsData()" to see analytics data');
+    }, 1000);
+  });
+</script>
+
+<style>
+  /* Custom scrollbar for event log */
+  #event-log::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  #event-log::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+  }
+  
+  #event-log::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.5);
+    border-radius: 2px;
+  }
+  
+  #event-log::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.7);
+  }
+</style> 

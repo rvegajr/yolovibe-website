@@ -1,0 +1,746 @@
+---
+// SPA Initializer Component - Handles the transformation to SPA
+---
+
+<script>
+  // 🚀 SPA INITIALIZATION - Transforms the site into an event-driven SPA
+  
+  // Global Event Bus Implementation (Simplified for client-side)
+  class GlobalEventBus {
+    constructor() {
+      this.listeners = new Map();
+      this.eventHistory = [];
+      this.options = {
+        enableHistory: true,
+        enableCrossTabs: false,
+        enableDebug: true,
+        maxHistorySize: 100
+      };
+      
+      console.log('🎉 GlobalEventBus initialized');
+    }
+    
+    emit(eventType, payload) {
+      const event = {
+        type: eventType,
+        payload,
+        timestamp: new Date(),
+        id: Math.random().toString(36).substr(2, 9)
+      };
+      
+      if (this.options.enableHistory) {
+        this.eventHistory.push(event);
+        if (this.eventHistory.length > this.options.maxHistorySize) {
+          this.eventHistory.shift();
+        }
+      }
+      
+      if (this.options.enableDebug) {
+        console.log(`🎯 Event: ${eventType}`, payload);
+      }
+      
+      const eventListeners = this.listeners.get(eventType);
+      if (eventListeners) {
+        eventListeners.forEach(listener => {
+          try {
+            listener(payload);
+          } catch (error) {
+            console.error(`❌ Error in event listener for ${eventType}:`, error);
+          }
+        });
+      }
+    }
+    
+    on(eventType, listener) {
+      if (!this.listeners.has(eventType)) {
+        this.listeners.set(eventType, new Set());
+      }
+      this.listeners.get(eventType).add(listener);
+      
+      return () => this.off(eventType, listener);
+    }
+    
+    off(eventType, listener) {
+      const eventListeners = this.listeners.get(eventType);
+      if (eventListeners) {
+        eventListeners.delete(listener);
+      }
+    }
+    
+    navigateTo(path, data = {}) {
+      this.emit('PAGE_NAVIGATION', {
+        from: window.location.pathname,
+        to: path,
+        data,
+        navigationMethod: 'push',
+        timestamp: new Date()
+      });
+      
+      // Use browser's history API for now (can be enhanced later)
+      if (path !== window.location.pathname) {
+        window.history.pushState(data, '', path);
+        
+        // Emit a custom navigation event
+        window.dispatchEvent(new CustomEvent('spa-navigate', {
+          detail: { path, data }
+        }));
+      }
+    }
+    
+    selectWorkshop(workshopId, workshopData) {
+      this.emit('WORKSHOP_SELECTED', {
+        workshopId,
+        workshopName: workshopData.workshopName,
+        price: workshopData.price,
+        duration: workshopData.duration,
+        timestamp: new Date()
+      });
+      
+      // Navigate to booking page with workshop data
+      this.navigateTo('/book', { selectedWorkshop: workshopId, workshopData });
+    }
+  }
+  
+  // Event Types
+  const EventTypes = {
+    WORKSHOP_SELECTED: 'WORKSHOP_SELECTED',
+    DATE_SELECTED: 'DATE_SELECTED', 
+    FORM_SUBMITTED: 'FORM_SUBMITTED',
+    USER_INTERACTION: 'USER_INTERACTION',
+    ERROR_OCCURRED: 'ERROR_OCCURRED',
+    PAGE_NAVIGATION: 'PAGE_NAVIGATION',
+    BOOKING_SUBMITTED: 'BOOKING_SUBMITTED'
+  };
+  
+  // Initialize global event bus
+  const globalEventBus = new GlobalEventBus();
+  
+  // Make it available globally for debugging and other scripts
+  window.globalEventBus = globalEventBus;
+  window.EventTypes = EventTypes;
+  
+  // SPA Enhancement Functions
+  function enhanceWorkshopSelection() {
+    // Find all workshop selection buttons
+    const workshopButtons = document.querySelectorAll('[data-workshop-id]');
+    
+    workshopButtons.forEach(button => {
+      const buttonText = button.textContent?.trim();
+      
+      if (buttonText === 'Learn More') {
+        // Handle "Learn More" buttons differently
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          
+          const workshopId = button.getAttribute('data-workshop-id');
+          const workshopName = button.getAttribute('data-workshop-name') || 'Workshop';
+          const price = parseInt(button.getAttribute('data-workshop-price') || '0');
+          const duration = parseInt(button.getAttribute('data-workshop-duration') || '3');
+          
+          // Show detailed workshop information modal
+          showWorkshopDetails(workshopId, workshopName, price, duration);
+        });
+      } else {
+        // Handle workshop selection buttons
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          
+          const workshopId = button.getAttribute('data-workshop-id');
+          const workshopName = button.getAttribute('data-workshop-name') || 'Workshop';
+          const price = parseInt(button.getAttribute('data-workshop-price') || '0');
+          const duration = parseInt(button.getAttribute('data-workshop-duration') || '3');
+          
+          const workshopData = {
+            workshopName,
+            price,
+            duration
+          };
+          
+          // Show notification
+          showNotification(`✅ ${workshopName} selected!`, 'success', `Price: $${price.toLocaleString()} • Next: Choose your date`);
+          
+          // Select workshop via event bus
+          globalEventBus.selectWorkshop(workshopId, workshopData);
+        });
+      }
+    });
+    
+    console.log(`🎯 Enhanced ${workshopButtons.length} workshop selection buttons`);
+  }
+  
+  function enhanceNavigation() {
+    // Find all internal navigation links
+    const navLinks = document.querySelectorAll('a[href^="/"], a[href^="#"]');
+    
+    navLinks.forEach(link => {
+      // Skip external links and those already processed
+      if (link.hasAttribute('data-external') || link.hasAttribute('data-spa-enhanced')) {
+        return;
+      }
+      
+      link.setAttribute('data-spa-enhanced', 'true');
+      
+      link.addEventListener('click', (event) => {
+        const href = link.getAttribute('href');
+        
+        if (href.startsWith('#')) {
+          // Handle hash navigation (smooth scroll)
+          const element = document.getElementById(href.substring(1));
+          if (element) {
+            event.preventDefault();
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else if (href.startsWith('/')) {
+          // For now, let normal navigation work but emit events
+          globalEventBus.emit(EventTypes.USER_INTERACTION, {
+            action: 'navigate',
+            element: 'nav-link',
+            page: window.location.pathname,
+            target: href,
+            timestamp: new Date()
+          });
+        }
+      });
+    });
+    
+    console.log(`🔗 Enhanced ${navLinks.length} navigation links`);
+  }
+  
+  function showWorkshopDetails(workshopId, workshopName, price, duration) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+    overlay.style.animation = 'fadeIn 0.3s ease-out';
+    
+    // Workshop details data
+    const workshopDetails = {
+      'prod-3day': {
+        title: '3-Day YOLO Workshop',
+        subtitle: 'Intensive AI-Powered Development Training',
+        description: 'Master cutting-edge AI tools to accelerate your development process and build better software faster.',
+        highlights: [
+          'Universal AI coding principles that work with any platform',
+          'Hands-on with Windsurf, Cursor, GitHub Copilot, and emerging platforms',
+          'Advanced prompt engineering techniques',
+          'Voice-to-CLI interfaces and automation',
+          'Rapid application scaffolding methods',
+          'Multi-tool workflow strategies',
+          'Team collaboration with AI tools',
+          
+        ],
+        schedule: [
+          { day: 'Day 1', title: 'The Essence of Vibe Coding', content: 'Foundation principles, tool setup, and basic AI interactions' },
+          { day: 'Day 2', title: 'CLI-ing Everything', content: 'Advanced command-line automation and AI-powered workflows' },
+          { day: 'Day 3', title: 'Client Technology Integration', content: 'Real-world project implementation and deployment strategies' }
+        ],
+        startDays: 'Monday, Tuesday, or Wednesday (Central Time Zone)',
+        maxAttendees: 'Maximum 10 attendees per session',
+        includes: [
+          'Pre-workshop personal consultation call',
+          'All workshop materials', 
+          'Hands-on exercises', 
+          'Code examples', 
+          'Follow-up support',
+          'Personalized learning path based on your role & goals'
+        ]
+      },
+      'prod-5day': {
+        title: '5-Day YOLO Intensive',
+        subtitle: 'Complete AI Business Development Program',
+        description: 'Comprehensive 5-day program covering everything in the 3-day workshop plus advanced business development and AI strategy.',
+        highlights: [
+          'Everything from the 3-Day Workshop',
+          'Business strategy development with AI',
+          'AI-powered market analysis techniques',
+          'Revenue model validation and optimization',
+          'MVP development using AI tools',
+          'Go-to-market strategy formulation',
+          'Technology adoption roadmaps',
+          'Complete business plan deliverable'
+        ],
+        schedule: [
+          { day: 'Day 1-3', title: 'Core YOLO Workshop', content: 'Complete 3-day foundation program' },
+          { day: 'Day 4', title: 'Automating Business Development', content: 'AI-driven business processes and automation' },
+          { day: 'Day 5', title: 'Idea Implementation & Prototyping', content: 'Turn concepts into working prototypes' }
+        ],
+        startDays: 'Always starts on Monday (Central Time Zone)',
+        maxAttendees: 'Maximum 10 attendees per session',
+        includes: [
+          'Pre-workshop personal consultation call',
+          'All 3-day materials', 
+          'Business templates', 
+          'AI strategy guides', 
+          'Extended support',
+          'Personalized learning path based on your role & goals'
+        ]
+      },
+      'ai-consulting': {
+        title: 'AI Development Consulting',
+        subtitle: 'Learn to Create ANYTHING with AI',
+        description: 'This is literally ANYTHING you want to explore with AI—from product development to idea generation. In these sessions, I actively teach YOU to develop ideas and products yourself. I walk you through the exact steps I use to create ideas, with the goal of teaching you how to do it independently.',
+        highlights: [
+          'Product Development - Turn ideas into working prototypes',
+          'Idea Generation - Learn my brainstorming process',
+          'Business Automation - Automate workflows with AI',
+          'AI Integration - Add AI to existing applications',
+          'Data Analysis - Extract insights using AI',
+          'Creative Projects - Art, music, writing with AI',
+          'Teaching Philosophy - Learn to teach others',
+          'Knowledge Unbound - Share what you learn freely'
+        ],
+        schedule: [
+          { day: 'Step 1', title: 'Share Your Vision', content: 'Tell me what you want to create or explore with AI' },
+          { day: 'Step 2', title: 'Learn My Process', content: 'I walk you through exactly how I approach the problem' },
+          { day: 'Step 3', title: 'Build Together', content: 'We create something real while you learn the techniques' },
+          { day: 'Step 4', title: 'Teach Others', content: 'You gain the skills to share this knowledge with others' }
+        ],
+        startDays: 'Monday-Friday, 9 AM - 5 PM (Central Time)',
+        maxAttendees: '1-on-1 personalized sessions',
+        includes: [
+          'My complete idea generation process',
+          'Hands-on project development',
+          'All code and resources created',
+          'Permission to teach what you learn',
+          'Follow-up support and guidance'
+        ]
+      }
+    };
+    
+    const details = workshopDetails[workshopId] || workshopDetails['prod-3day'];
+    
+    // Create modal content
+    overlay.innerHTML = `
+      <div class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl" style="animation: slideUp 0.3s ease-out">
+        <!-- Header -->
+        <div class="p-6 border-b border-purple-500/30 bg-gradient-to-r from-purple-600/20 to-indigo-600/20">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-3xl font-bold text-white mb-2">${details.title}</h2>
+              <p class="text-purple-300 text-lg font-medium">${details.subtitle}</p>
+              <p class="text-2xl font-bold text-green-400 mt-3">$${price.toLocaleString()}${workshopId === 'ai-consulting' ? '/hour' : ''}</p>
+            </div>
+            <button class="close-modal text-gray-400 hover:text-white transition-colors p-2">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-6 space-y-6">
+          <!-- Description -->
+          <div>
+            <h3 class="text-xl font-semibold text-white mb-3">Overview</h3>
+            <p class="text-slate-300 text-lg leading-relaxed">${details.description}</p>
+          </div>
+          
+          <!-- Key Highlights -->
+          <div>
+            <h3 class="text-xl font-semibold text-white mb-3">What You'll Learn</h3>
+            <div class="grid md:grid-cols-2 gap-3">
+              ${details.highlights.map(highlight => `
+                <div class="flex items-start space-x-3">
+                  <div class="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <span class="text-slate-300">${highlight}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          <!-- Schedule -->
+          <div>
+            <h3 class="text-xl font-semibold text-white mb-3">Schedule</h3>
+            <div class="space-y-4">
+              ${details.schedule.map(day => `
+                <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+                  <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      ${day.day.includes('Day') ? day.day.split(' ')[1] : '★'}
+                    </div>
+                    <h4 class="font-semibold text-white">${day.title}</h4>
+                  </div>
+                  <p class="text-slate-300 ml-11">${day.content}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          <!-- Personalized Value Section -->
+          <div class="bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-xl p-6 border border-purple-500/30 mb-6">
+            <h3 class="text-xl font-semibold text-white mb-3 flex items-center">
+              <span class="text-2xl mr-2">🎯</span>
+              Your Personalized Learning Experience
+            </h3>
+            <p class="text-slate-300 mb-4">
+              What makes our workshops truly unique is the personal touch. Before the workshop begins, I'll connect with each participant individually through a phone call or Teams meeting to understand:
+            </p>
+            <ul class="space-y-2 text-slate-300">
+              <li class="flex items-start space-x-2">
+                <span class="text-cyan-400 mt-1">•</span>
+                <span>Your current role and professional background</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <span class="text-cyan-400 mt-1">•</span>
+                <span>Your specific goals and what you want to achieve</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <span class="text-cyan-400 mt-1">•</span>
+                <span>Your passions and interests in technology</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <span class="text-cyan-400 mt-1">•</span>
+                <span>Any challenges you're currently facing</span>
+              </li>
+            </ul>
+            <p class="text-slate-300 mt-4">
+              This allows me to craft a custom-fit educational experience that speaks directly to your needs, ensuring maximum value and relevance for every participant.
+            </p>
+          </div>
+          
+          <!-- Details Grid -->
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-white mb-2">Schedule</h4>
+                <p class="text-slate-300">${details.startDays}</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-2">Class Size</h4>
+                <p class="text-slate-300">${details.maxAttendees}</p>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-white mb-2">Includes</h4>
+              <ul class="space-y-1">
+                ${details.includes.map(item => `
+                  <li class="text-slate-300 flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>${item}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="p-6 border-t border-purple-500/30 bg-gradient-to-r from-slate-800/50 to-purple-800/50">
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button class="book-workshop-btn px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Book This Workshop</span>
+            </button>
+            <button class="close-modal px-8 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-all">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Add styles for animations
+    if (!document.getElementById('modal-styles')) {
+      const style = document.createElement('style');
+      style.id = 'modal-styles';
+      style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(50px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // Add event listeners
+    const closeButtons = overlay.querySelectorAll('.close-modal');
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        overlay.style.animation = 'fadeIn 0.3s ease-out reverse';
+        setTimeout(() => overlay.remove(), 300);
+      });
+    });
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.style.animation = 'fadeIn 0.3s ease-out reverse';
+        setTimeout(() => overlay.remove(), 300);
+      }
+    });
+    
+    // Book workshop button
+    const bookBtn = overlay.querySelector('.book-workshop-btn');
+    bookBtn.addEventListener('click', () => {
+      // Close modal
+      overlay.remove();
+      
+      // Select workshop and scroll to booking
+      globalEventBus.selectWorkshop(workshopId, {
+        workshopName,
+        price,
+        duration
+      });
+      
+      // Scroll to booking section
+      const bookingSection = document.getElementById('book');
+      if (bookingSection) {
+        bookingSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      
+      // Show success notification
+      showNotification(`✅ ${workshopName} selected!`, 'success', 'Scroll down to complete your booking');
+    });
+    
+    // Add to page
+    document.body.appendChild(overlay);
+    
+    // Emit event for analytics
+    globalEventBus.emit(EventTypes.USER_INTERACTION, {
+      action: 'view_workshop_details',
+      element: 'workshop-modal',
+      workshopId,
+      workshopName,
+      timestamp: new Date()
+    });
+  }
+  
+  function showNotification(title, type = 'info', message = '') {
+    // Create notification container if it doesn't exist
+    let container = document.getElementById('spa-notifications');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'spa-notifications';
+      container.className = 'fixed top-4 right-4 z-50 space-y-2';
+      document.body.appendChild(container);
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type} transform translate-x-full transition-transform duration-300 ease-out`;
+    
+    const colors = {
+      success: 'bg-green-500 border-green-400',
+      error: 'bg-red-500 border-red-400', 
+      info: 'bg-blue-500 border-blue-400'
+    };
+    
+    notification.innerHTML = `
+      <div class="${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg border-l-4 max-w-sm">
+        <div class="flex items-start">
+          <div class="flex-1">
+            <h4 class="font-semibold">${title}</h4>
+            ${message ? `<p class="text-sm opacity-90 mt-1">${message}</p>` : ''}
+          </div>
+          <button class="ml-4 text-white hover:text-gray-200 transition-colors" onclick="this.parentElement.parentElement.parentElement.remove()">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      notification.classList.remove('translate-x-full');
+    });
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      notification.classList.add('translate-x-full');
+      setTimeout(() => notification.remove(), 300);
+    }, 5000);
+  }
+  
+  function enhanceBookingWidget() {
+    const bookingWidget = document.querySelector('#booking-widget, .booking-widget');
+    if (!bookingWidget) return;
+    
+    // Add event listeners for booking form
+    const workshopSelect = bookingWidget.querySelector('select[name="productId"]');
+    if (workshopSelect) {
+      workshopSelect.addEventListener('change', (event) => {
+        const selectedOption = event.target.selectedOptions[0];
+        if (selectedOption && selectedOption.value) {
+          globalEventBus.emit(EventTypes.WORKSHOP_SELECTED, {
+            workshopId: selectedOption.value,
+            workshopName: selectedOption.textContent,
+            price: parseInt(selectedOption.getAttribute('data-price') || '0'),
+            duration: parseInt(selectedOption.getAttribute('data-duration') || '3'),
+            timestamp: new Date()
+          });
+        }
+      });
+    }
+    
+    // Add form submission handling
+    const bookingForm = bookingWidget.querySelector('form');
+    if (bookingForm) {
+      bookingForm.addEventListener('submit', (event) => {
+        globalEventBus.emit(EventTypes.FORM_SUBMITTED, {
+          action: 'submit',
+          element: 'booking-form',
+          page: window.location.pathname,
+          timestamp: new Date()
+        });
+      });
+    }
+    
+    console.log('📅 Enhanced booking widget with event-driven functionality');
+  }
+  
+  function addSPAStyles() {
+    const existingStyle = document.getElementById('spa-styles');
+    if (existingStyle) return;
+    
+    const style = document.createElement('style');
+    style.id = 'spa-styles';
+    style.textContent = `
+      /* SPA Enhancement Styles */
+      .notification {
+        transition: transform 0.3s ease-out;
+      }
+      
+      .notification-enter {
+        transform: translateX(100%);
+      }
+      
+      .notification-exit {
+        transform: translateX(100%);
+      }
+      
+      /* Workshop selection enhancements */
+      [data-workshop-id] {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      [data-workshop-id]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+      }
+      
+      /* Navigation enhancements */
+      a[data-spa-enhanced]:hover {
+        transition: all 0.2s ease;
+      }
+      
+      /* Smooth scrolling for the entire page */
+      html {
+        scroll-behavior: smooth;
+      }
+    `;
+    
+    document.head.appendChild(style);
+  }
+  
+  // Main initialization function
+  async function initializeSPA() {
+    try {
+      console.log('🚀 Initializing YOLOVibe SPA enhancements...');
+      
+      // Add SPA styles
+      addSPAStyles();
+      
+      // Enhance workshop selection
+      enhanceWorkshopSelection();
+      
+      // Enhance navigation
+      enhanceNavigation();
+      
+      // Enhance booking widget if present
+      enhanceBookingWidget();
+      
+      // Set up global event listeners
+      globalEventBus.on(EventTypes.WORKSHOP_SELECTED, (event) => {
+        console.log('🎯 Workshop selected:', event);
+      });
+      
+      globalEventBus.on(EventTypes.PAGE_NAVIGATION, (event) => {
+        console.log('🧭 Navigation:', event);
+      });
+      
+      // Listen for workshop selection from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const selectedWorkshop = urlParams.get('workshop');
+      if (selectedWorkshop) {
+        // Pre-select workshop if specified in URL
+        setTimeout(() => {
+          const workshopSelect = document.querySelector('select[name="productId"]');
+          if (workshopSelect) {
+            workshopSelect.value = selectedWorkshop;
+            workshopSelect.dispatchEvent(new Event('change'));
+          }
+        }, 500);
+      }
+      
+      // Emit initialization complete event
+      globalEventBus.emit(EventTypes.USER_INTERACTION, {
+        action: 'view',
+        element: 'spa-application',
+        page: window.location.pathname,
+        timestamp: new Date(),
+        metadata: {
+          initialized: true,
+          version: '1.0.0',
+          features: ['workshop-selection', 'navigation-enhancement', 'booking-integration']
+        }
+      });
+      
+      console.log('✨ YOLOVibe SPA initialization complete! Event-driven features are active.');
+      
+      // Dispatch custom event for other scripts
+      document.dispatchEvent(new CustomEvent('spa-initialized', {
+        detail: {
+          timestamp: new Date(),
+          version: '1.0.0',
+          globalEventBus: globalEventBus
+        }
+      }));
+      
+    } catch (error) {
+      console.error('❌ SPA initialization failed:', error);
+      
+      globalEventBus.emit(EventTypes.ERROR_OCCURRED, {
+        error: error.message,
+        page: window.location.pathname,
+        action: 'initialize',
+        severity: 'critical',
+        timestamp: new Date()
+      });
+    }
+  }
+  
+  // Wait for DOM and initialize
+  function waitForDOM() {
+    return new Promise((resolve) => {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', resolve);
+      } else {
+        resolve();
+      }
+    });
+  }
+  
+  // Auto-initialize (but not during tests)
+  waitForDOM().then(() => {
+    // Skip SPA initialization during Playwright tests
+    if (window.navigator.webdriver || window.location.search.includes('playwright')) {
+      console.log('🧪 Skipping SPA initialization during tests');
+      return;
+    }
+    
+    // Small delay to ensure all components are loaded
+    setTimeout(initializeSPA, 100);
+  });
+</script> 

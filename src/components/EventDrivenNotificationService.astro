@@ -1,0 +1,339 @@
+---
+// Event-Driven Notification Service
+// This service demonstrates cross-component event collaboration
+---
+
+<!-- 🎯 EVENT-DRIVEN NOTIFICATION SERVICE -->
+<!-- Floating notification system that responds to all booking events -->
+
+<div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"></div>
+
+<script>
+  // 🎯 EVENT-DRIVEN INFRASTRUCTURE
+  // Using global event bus from SPAInitializer for compatibility
+  
+  // Event Types (simplified for compatibility)
+  const EventTypes = {
+    WORKSHOP_SELECTED: 'WORKSHOP_SELECTED',
+    DATE_SELECTED: 'DATE_SELECTED',
+    FORM_SUBMITTED: 'FORM_SUBMITTED',
+    USER_INTERACTION: 'USER_INTERACTION',
+    ERROR_OCCURRED: 'ERROR_OCCURRED',
+    BOOKING_SUBMITTED: 'BOOKING_SUBMITTED'
+  };
+
+  /**
+   * 🎯 EVENT-DRIVEN NOTIFICATION SERVICE
+   * 
+   * This service demonstrates advanced event-driven patterns:
+   * - Subscribes to multiple event types
+   * - Provides real-time user feedback
+   * - Can trigger other events (like analytics)
+   * - Shows how services can be completely decoupled
+   */
+  class EventDrivenNotificationService {
+    private globalEventBus: any;
+    private componentId = 'notification-service';
+    private container: HTMLElement;
+    private notificationCount = 0;
+
+    constructor() {
+      // Use global event bus from SPAInitializer
+      this.globalEventBus = (window as any).globalEventBus || {
+        emit: (type: string, payload: any) => console.log('Event:', type, payload),
+        on: (type: string, handler: Function) => {},
+        off: (type: string, handler?: Function) => {}
+      };
+      this.container = document.getElementById('notification-container')!;
+      this.init();
+    }
+
+    private async init(): Promise<void> {
+      console.log('🎯 Initializing Event-Driven Notification Service');
+      
+      // 🎯 SETUP EVENT SUBSCRIPTIONS
+      this.setupEventSubscriptions();
+      
+      // Show welcome notification
+      this.showNotification('🚀 Notification System Ready', 'success', 3000);
+      
+      console.log('✅ Event-Driven Notification Service ready!');
+    }
+
+    // 🎯 SUBSCRIBE TO ALL RELEVANT EVENTS
+    private setupEventSubscriptions(): void {
+      console.log('🔔 Setting up notification event subscriptions...');
+      
+      // 1. Workshop Selection Notifications
+      this.globalEventBus.on(EventTypes.WORKSHOP_SELECTED, async (event: any) => {
+        this.showNotification(
+          `✅ ${event.workshopName} selected!`,
+          'success',
+          4000,
+          `Price: $${event.price} • Next: Choose your date`
+        );
+        
+        // 🎯 EMIT NOTIFICATION EVENT FOR ANALYTICS
+        await this.emitNotificationEvent('workshop_selected', event.workshopId);
+      });
+
+      // 2. Date Selection Notifications
+      this.globalEventBus.on(EventTypes.DATE_SELECTED, async (event: any) => {
+        const dateStr = event.date.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        this.showNotification(
+          `📅 Date Selected: ${dateStr}`,
+          'info',
+          4000,
+          `${event.workshopType} workshop • ${event.duration} days`
+        );
+        
+        await this.emitNotificationEvent('date_selected', event.workshopId);
+      });
+
+      // 3. Booking Success Notifications
+      this.globalEventBus.on(EventTypes.BOOKING_SUBMITTED, async (event: any) => {
+        this.showNotification(
+          `🎉 Booking Confirmed!`,
+          'success',
+          8000,
+          `Booking ID: ${event.bookingId.slice(-8)} • Total: $${event.totalAmount}`
+        );
+        
+        // Show follow-up notification
+        setTimeout(() => {
+          this.showNotification(
+            '📧 Confirmation email sent!',
+            'info',
+            5000,
+            `Sent to: ${event.pointOfContact.email}`
+          );
+        }, 2000);
+        
+        await this.emitNotificationEvent('booking_completed', event.bookingId);
+      });
+
+      // 4. Error Notifications
+      this.globalEventBus.on(EventTypes.ERROR_OCCURRED, async (event: any) => {
+        let message = 'Something went wrong';
+        let details = event.error;
+        
+        // Customize error messages based on severity
+        switch (event.severity) {
+          case 'low':
+            message = '⚠️ Minor Issue';
+            break;
+          case 'medium':
+            message = '⚠️ Warning';
+            break;
+          case 'high':
+            message = '❌ Error Occurred';
+            break;
+          case 'critical':
+            message = '🚨 Critical Error';
+            break;
+        }
+        
+        this.showNotification(message, 'error', 6000, details);
+        await this.emitNotificationEvent('error_occurred', event.error);
+      });
+
+      // 5. User Interaction Feedback (for important actions)
+      this.globalEventBus.on(EventTypes.USER_INTERACTION, async (event: any) => {
+        // Only show notifications for key interactions
+        if (event.action === 'submit' && event.element === 'booking-form') {
+          this.showNotification(
+            '⏳ Processing your booking...',
+            'info',
+            3000,
+            'Please wait while we confirm your workshop'
+          );
+        }
+        
+        // Show cache restoration notification
+        if (event.metadata?.initialized && event.metadata?.hasCachedData) {
+          setTimeout(() => {
+            this.showNotification(
+              '💾 Previous session restored',
+              'info',
+              4000,
+              'Your form data has been automatically restored'
+            );
+          }, 1000);
+        }
+      });
+
+      // 6. Global Event Notifications (cross-instance)
+      this.globalEventBus.on('CONVERSION_TRACKED', async (event: any) => {
+        if (event.type === 'booking_completion') {
+          setTimeout(() => {
+            this.showNotification(
+              '📊 Analytics Updated',
+              'success',
+              3000,
+              `Revenue tracked: $${event.revenue}`
+            );
+          }, 3000);
+        }
+      });
+
+      console.log('✅ Notification event subscriptions configured');
+    }
+
+    // 🎯 SHOW NOTIFICATION WITH RICH STYLING
+    private showNotification(
+      message: string, 
+      type: 'success' | 'error' | 'info' | 'warning' = 'info',
+      duration: number = 5000,
+      details?: string
+    ): void {
+      this.notificationCount++;
+      
+      const notification = document.createElement('div');
+      notification.className = this.getNotificationClasses(type);
+      notification.style.transform = 'translateX(100%)';
+      notification.style.opacity = '0';
+      
+      const icon = this.getNotificationIcon(type);
+      
+      notification.innerHTML = `
+        <div class="flex items-start">
+          <div class="flex-shrink-0 text-lg">${icon}</div>
+          <div class="ml-3 flex-1">
+            <div class="font-medium text-sm">${message}</div>
+            ${details ? `<div class="text-xs opacity-80 mt-1">${details}</div>` : ''}
+          </div>
+          <button class="ml-3 text-gray-400 hover:text-white transition-colors" onclick="this.parentElement.parentElement.remove()">
+            ✕
+          </button>
+        </div>
+      `;
+      
+      this.container.appendChild(notification);
+      
+      // Animate in
+      requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+      });
+      
+      // Auto-remove after duration
+      setTimeout(() => {
+        this.removeNotification(notification);
+      }, duration);
+      
+      // Limit to max 5 notifications
+      if (this.container.children.length > 5) {
+        this.removeNotification(this.container.children[0] as HTMLElement);
+      }
+    }
+
+    private getNotificationClasses(type: string): string {
+      const baseClasses = 'p-4 rounded-lg shadow-lg backdrop-blur-sm border transition-all duration-300 ease-out mb-2';
+      
+      const typeClasses = {
+        success: 'bg-green-600/20 border-green-500/30 text-green-300',
+        error: 'bg-red-600/20 border-red-500/30 text-red-300',
+        info: 'bg-blue-600/20 border-blue-500/30 text-blue-300',
+        warning: 'bg-yellow-600/20 border-yellow-500/30 text-yellow-300'
+      };
+      
+      return `${baseClasses} ${typeClasses[type] || typeClasses.info}`;
+    }
+
+    private getNotificationIcon(type: string): string {
+      const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️'
+      };
+      
+      return icons[type] || icons.info;
+    }
+
+    private removeNotification(notification: HTMLElement): void {
+      notification.style.transform = 'translateX(100%)';
+      notification.style.opacity = '0';
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }
+
+    // 🎯 EMIT NOTIFICATION-SPECIFIC EVENTS
+    private async emitNotificationEvent(action: string, relatedId: string): Promise<void> {
+      await this.globalEventBus.emit(EventTypes.USER_INTERACTION, {
+        action: 'view',
+        element: 'notification',
+        page: 'booking',
+        timestamp: new Date(),
+        source: this.componentId,
+        metadata: {
+          notificationAction: action,
+          relatedId,
+          notificationCount: this.notificationCount
+        }
+      });
+    }
+
+    // 🎯 PUBLIC API FOR EXTERNAL ACCESS
+    public showCustomNotification(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info', duration: number = 5000): void {
+      this.showNotification(message, type, duration);
+    }
+
+    public clearAllNotifications(): void {
+      while (this.container.firstChild) {
+        this.container.removeChild(this.container.firstChild);
+      }
+    }
+
+    public getNotificationCount(): number {
+      return this.notificationCount;
+    }
+  }
+
+  // 🎯 INITIALIZE NOTIFICATION SERVICE
+  document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure other services are initialized first
+    setTimeout(() => {
+      console.log('🚀 Initializing Event-Driven Notification Service...');
+      const notificationService = new EventDrivenNotificationService();
+      
+      // Make it globally available for debugging and external use
+      (window as any).notificationService = notificationService;
+      
+      console.log('✅ Event-Driven Notification Service ready!');
+      console.log('💡 Tip: Type "notificationService.showCustomNotification(\'Test message\', \'success\')" in console');
+    }, 500);
+  });
+</script>
+
+<style>
+  /* Ensure notifications appear above everything */
+  #notification-container {
+    z-index: 9999;
+  }
+  
+  /* Custom animation for notifications */
+  #notification-container > div {
+    animation: slideInFromRight 0.3s ease-out;
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+</style> 

@@ -3,7 +3,7 @@ import { Icon } from "astro-icon/components";
 import Link from "@/components/ui/link.astro";
 ---
 
-<section id="offerings" class="py-16">
+<section id="offerings" data-testid="workshop-offerings" class="py-16">
   <div class="mb-8">
     <h2 class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500 dark:from-pink-400 dark:via-purple-300 dark:to-indigo-400">Our Offerings</h2>
     <p class="text-center text-lg text-slate-900 dark:text-white mt-4 max-w-3xl mx-auto enhanced-text">Choose from intensive workshops or personalized AI development consulting</p>
@@ -44,7 +44,7 @@ import Link from "@/components/ui/link.astro";
           </li>
         </ul>
         <div class="mt-auto pt-4 text-center">
-          <Link href="/product-a" style="outline">Learn More</Link>
+          <Link href="/product-a" style="outline" data-workshop-id="prod-3day" data-workshop-name="3-Day YOLO Workshop" data-workshop-price="3000" data-workshop-duration="3">Learn More</Link>
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@ import Link from "@/components/ui/link.astro";
           </li>
         </ul>
         <div class="mt-auto pt-4 text-center">
-          <Link href="/product-b" style="outline">Learn More</Link>
+          <Link href="/product-b" style="outline" data-workshop-id="prod-5day" data-workshop-name="5-Day YOLO Intensive" data-workshop-price="4500" data-workshop-duration="5">Learn More</Link>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@ import Link from "@/components/ui/link.astro";
           </li>
         </ul>
         <div class="mt-auto pt-4 text-center">
-          <Link href="/book" style="primary" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">Book Session</Link>
+          <Link href="#" style="outline" data-workshop-id="ai-consulting" data-workshop-name="AI Development Consulting" data-workshop-price="200" data-workshop-duration="2">Learn More</Link>
         </div>
       </div>
     </div>

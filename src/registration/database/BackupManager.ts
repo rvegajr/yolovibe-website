@@ -452,10 +452,12 @@ export class BackupManager {
             const metadataPath = join(this.backupDir, `${backup.id}.json`);
             
             if (existsSync(sqlPath)) {
-              require('fs').unlinkSync(sqlPath);
+              const fs = await import('fs');
+              fs.unlinkSync(sqlPath);
             }
             if (existsSync(metadataPath)) {
-              require('fs').unlinkSync(metadataPath);
+              const fs = await import('fs');
+              fs.unlinkSync(metadataPath);
             }
             
             console.log(`🗑️ Deleted old backup: ${backup.id}`);
@@ -498,8 +500,8 @@ export class BackupManager {
   /**
    * Calculate checksum for backup verification
    */
-  private calculateChecksum(data: string): string {
-    const crypto = require('crypto');
+  private async calculateChecksum(data: string): Promise<string> {
+    const crypto = await import('crypto');
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 

@@ -7,6 +7,8 @@ import PricingCard from "../components/pricing.astro";
 const workshopPricing = {
   name: "3-Day AI Coding Mastery",
   price: "$3,000",
+  workshopId: "prod-3day",
+  duration: 3,
   popular: true,
   features: [
     "Universal AI coding principles",
@@ -16,7 +18,7 @@ const workshopPricing = {
     "Rapid application scaffolding",
     "Multi-tool workflow strategies",
     "Team collaboration techniques",
-    "Certificate of completion"
+    
   ],
   button: {
     text: "Book Workshop",
@@ -40,6 +42,35 @@ const workshopPricing = {
       </h2>
       <p class="text-lg mt-4 text-slate-600">
         This intensive 3-day workshop teaches you how to effectively use AI coding assistants like Windsurf, Cursor, GitHub Copilot, and other leading platforms to accelerate your coding process and build better software faster.
+      </p>
+    </div>
+
+    <!-- Personalized Learning Section -->
+    <div class="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-2xl p-8 mx-auto max-w-4xl mt-12">
+      <h3 class="font-semibold text-2xl text-gray-800 mb-4">🎯 Your Personalized Learning Experience</h3>
+      <p class="text-slate-600 mb-4">
+        With a maximum of 10 participants per session, you'll receive the individual attention you deserve. Before the workshop begins, I personally connect with each participant through a phone call or Teams meeting to understand:
+      </p>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-600">
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 mt-1">•</span>
+          <span>Your current role and technical background</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 mt-1">•</span>
+          <span>Specific goals you want to achieve</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 mt-1">•</span>
+          <span>Your passions and interests in technology</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-purple-600 mt-1">•</span>
+          <span>Current challenges you're facing</span>
+        </li>
+      </ul>
+      <p class="text-slate-600 mt-4 font-medium">
+        This allows me to craft a custom-fit educational experience that speaks directly to your needs, ensuring maximum value for every participant.
       </p>
     </div>
 

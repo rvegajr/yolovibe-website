@@ -310,15 +310,14 @@ async function runCompleteEmailWorkflowTest(): Promise<void> {
     
     if (followUpEmails.length === 1) {
       const email = followUpEmails[0];
-      if (email.content.includes('completion certificate') && 
-          email.content.includes('Alumni Slack') &&
+      if (email.content.includes('Alumni Slack') &&
           email.content.includes('20% off') &&
           email.content.includes('feedback survey')) {
         console.log('   ✅ Post-workshop follow-up sent correctly');
         testsPassed++;
       } else {
         console.log('   ❌ Post-workshop follow-up content incorrect');
-        console.log(`   Content check: certificate=${email.content.includes('completion certificate')}, Alumni=${email.content.includes('Alumni Slack')}, discount=${email.content.includes('20% off')}, survey=${email.content.includes('feedback survey')}`);
+        console.log(`   Content check: Alumni=${email.content.includes('Alumni Slack')}, discount=${email.content.includes('20% off')}, survey=${email.content.includes('feedback survey')}`);
       }
     } else {
       console.log(`   ❌ Expected 1 follow-up email, got ${followUpEmails.length}`);

@@ -219,7 +219,7 @@ We have some exciting surprises planned for all attendees. You won't want to mis
    • Industry expert presentations
    • Networking with like-minded professionals
    • Practical skills you can use immediately
-   • Certificate of completion
+   
    • Exclusive YOLOVibe swag
 
 Can't wait to see you there!
@@ -261,10 +261,9 @@ Thank you for being part of our amazing YOLOVibe workshop! We hope you had an in
    • Extended reading list
    • Access to private alumni community
 
-2. CERTIFICATE & VERIFICATION:
-   • Your completion certificate is attached
-   • LinkedIn skill verification available
-   • Add YOLOVibe to your professional profile
+2. PROFESSIONAL DEVELOPMENT:
+• LinkedIn skill verification available
+• Add YOLOVibe to your professional profile
 
 3. CONTINUED LEARNING:
    • 30-day free access to our online platform

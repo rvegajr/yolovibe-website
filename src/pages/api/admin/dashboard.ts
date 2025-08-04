@@ -6,12 +6,21 @@
  */
 
 import type { APIRoute } from 'astro';
-import { dashboardService } from '../../../registration/implementations/DashboardService.js';
+import { DashboardService } from '../../../registration/implementations/DashboardService.js';
+import { ProductionMonitor } from '../../../registration/implementations/ProductionMonitor.js';
+import { ProductionDataValidator } from '../../../registration/implementations/ProductionDataValidator.js';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request }) => {
   try {
+    // Initialize database connection if needed
+    const { getDatabaseConnection, initializeDatabase } = await import('../../../registration/database/connection.js');
+    const dbConnection = getDatabaseConnection();
+    if (!dbConnection.isInitialized()) {
+      await initializeDatabase();
+    }
+    
     // In production, verify admin authentication here
     // const auth = await verifyAdminAuth(request);
     // if (!auth.isValid) {
@@ -22,9 +31,39 @@ export const GET: APIRoute = async ({ request }) => {
     // }
 
     // Get comprehensive dashboard data
+    const dashboardService = new DashboardService();
     const dashboardData = await dashboardService.getDashboardData();
+    
+    // Add production monitoring data
+    const monitor = ProductionMonitor.getInstance();
+    const systemHealth = await monitor.performHealthCheck();
+    
+    const validator = ProductionDataValidator.getInstance();
+    const dataValidation = await validator.validateProductionData();
+    
+    // Enhanced dashboard data with production monitoring
+    const enhancedData = {
+      ...dashboardData,
+      productionHealth: {
+        overall: systemHealth.overall,
+        dataSource: dataValidation.dataSource,
+        isUsingRealData: dataValidation.dataSource === 'REAL_DATABASE',
+        lastCheck: systemHealth.timestamp,
+        uptime: systemHealth.uptime,
+        services: systemHealth.checks.map(check => ({
+          name: check.service,
+          status: check.status,
+          responseTime: check.responseTime,
+          error: check.error
+        })),
+        alerts: [
+          ...dataValidation.errors.map(error => ({ type: 'error', message: error })),
+          ...dataValidation.warnings.map(warning => ({ type: 'warning', message: warning }))
+        ]
+      }
+    };
 
-    return new Response(JSON.stringify(dashboardData), {
+    return new Response(JSON.stringify(enhancedData), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +87,8 @@ export const GET: APIRoute = async ({ request }) => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     // Handle dashboard refresh requests
-    const dashboardData = await dashboardService.refreshDashboard();
+    const dashboardService = new SimpleDashboardService();
+    const dashboardData = await dashboardService.getDashboardData();
 
     return new Response(JSON.stringify(dashboardData), {
       status: 200,

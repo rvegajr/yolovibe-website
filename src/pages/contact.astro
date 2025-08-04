@@ -1,44 +1,97 @@
 ---
 import Contactform from "@/components/contactform.astro";
 import Container from "@/components/container.astro";
-import Sectionhead from "@/components/sectionhead.astro";
-import Layout from "@/layouts/Layout.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
 import { Icon } from "astro-icon/components";
 ---
 
-<Layout title="Contact">
-  <Container>
-    <Sectionhead>
-      <Fragment slot="title">Contact</Fragment>
-      <Fragment slot="desc">We are a here to help.</Fragment>
-    </Sectionhead>
-
-    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
-      <div>
-        <h2 class="font-medium text-2xl text-gray-800">Contact Astroship</h2>
-        <p class="text-lg leading-relaxed text-slate-500 mt-3">
-          Have something to say? We are here to help. Fill up the form or send
-          email or call phone.
+<MainLayout title="Contact - YOLOVibeCode">
+  <div class="min-h-screen bg-gradient-to-b from-gray-900 via-slate-900 to-black text-white pt-20">
+    <Container>
+      <div class="text-center mb-16">
+        <h1 class="text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 mb-6">
+          Contact Us
+        </h1>
+        <p class="text-xl text-slate-300 max-w-2xl mx-auto">
+          We are here to help you accelerate your AI-powered development journey. 
+          Get in touch and let's make some magic happen!
         </p>
-        <div class="mt-5">
-          <div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
-            <span>1734 Sanfransico, CA 93063</span>
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" /><a
-              href="mailto:hello@astroshipstarter.com"
-              >hello@astroshipstarter.com</a
-            >
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:phone" /><a
-              href="tel:+1 (987) 4587 899">+1 (987) 4587 899</a
-            >
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 mx-auto max-w-6xl">
+        <div class="space-y-8">
+          <div class="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 p-8 rounded-2xl border border-purple-500/30 shadow-xl">
+            <h2 class="font-bold text-3xl text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
+              Let's Chat About Your Needs
+            </h2>
+            <p class="text-lg leading-relaxed text-slate-300 mb-6">
+              Whether you're looking for intensive workshops or personalized consulting, 
+              we're here to help you choose the perfect program for your AI development goals.
+            </p>
+            
+            <div class="space-y-4">
+              <div class="flex items-center space-x-3 text-slate-300">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                  <Icon class="text-white w-5 h-5" name="bx:bx-envelope" />
+                </div>
+                <div>
+                  <div class="text-white font-semibold">Email</div>
+                  <a href="mailto:contact@yolovibecodebootcamp.com" 
+                     class="text-purple-400 hover:text-purple-300 transition-colors">
+                    contact@yolovibecodebootcamp.com
+                  </a>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-3 text-slate-300">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full flex items-center justify-center">
+                  <Icon class="text-white w-5 h-5" name="bx:bx-phone" />
+                </div>
+                <div>
+                  <div class="text-white font-semibold">Phone</div>
+                  <a href="tel:+1-555-YOLO-CODE" 
+                     class="text-green-400 hover:text-green-300 transition-colors">
+                    +1 (555) YOLO-CODE
+                  </a>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-3 text-slate-300">
+                <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center">
+                  <Icon class="text-white w-5 h-5" name="bx:bx-time" />
+                </div>
+                <div>
+                  <div class="text-white font-semibold">Response Time</div>
+                  <div class="text-slate-400">Usually within 24 hours</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 p-6 rounded-xl border border-indigo-500/30">
+            <h3 class="text-xl font-bold text-white mb-4">Quick Actions</h3>
+            <div class="space-y-3">
+              <a href="#book" class="flex items-center p-3 bg-purple-600/20 hover:bg-purple-600/30 rounded-lg transition-colors">
+                <Icon class="w-5 h-5 text-purple-400 mr-3" name="bx:bx-calendar" />
+                <span class="text-white">Book a Workshop</span>
+              </a>
+              <a href="/knowledge-unbound" class="flex items-center p-3 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg transition-colors">
+                <Icon class="w-5 h-5 text-blue-400 mr-3" name="bx:bx-bulb" />
+                <span class="text-white">Browse Knowledge Base</span>
+              </a>
+              <a href="/unprivacy" class="flex items-center p-3 bg-cyan-600/20 hover:bg-cyan-600/30 rounded-lg transition-colors">
+                <Icon class="w-5 h-5 text-cyan-400 mr-3" name="bx:bx-shield" />
+                <span class="text-white">Our Radical Openness</span>
+              </a>
+            </div>
           </div>
         </div>
+        
+        <div class="bg-gradient-to-br from-slate-900/50 to-gray-900/50 p-8 rounded-2xl border border-slate-500/30 shadow-xl">
+          <Contactform />
+        </div>
       </div>
-      <div>
-        <Contactform />
-      </div>
-    </div>
-  </Container>
-</Layout>
+    </Container>
+  </div>
+</MainLayout>

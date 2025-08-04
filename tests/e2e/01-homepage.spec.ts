@@ -49,18 +49,19 @@ test.describe('Homepage - Anonymous User Experience', () => {
     await homePage.goto();
     
     // Test navigation to different pages
-    await homePage.goToPricing();
-    expect(homePage.page.url()).toContain('/pricing');
+    await homePage.goToKnowledgeUnbound();
+    expect(homePage.page.url()).toContain('/knowledge-unbound');
     
     await homePage.goto(); // Back to home
     
-    await homePage.goToAbout();
-    expect(homePage.page.url()).toContain('/about');
+    await homePage.goToWorkshops();
+    // Workshops dropdown goes to product page
+    expect(homePage.page.url()).toContain('/product-a');
     
     await homePage.goto(); // Back to home
     
-    await homePage.goToContact();
-    expect(homePage.page.url()).toContain('/contact');
+    await homePage.goToUnprivacy();
+    expect(homePage.page.url()).toContain('/unprivacy');
     
     console.log('✅ All navigation links working');
   });
@@ -73,8 +74,8 @@ test.describe('Homepage - Anonymous User Experience', () => {
     // Click main CTA button
     await homePage.clickBookNow();
     
-    // Verify we're on the booking page
-    expect(homePage.page.url()).toContain('/book');
+    // Verify we're on the booking section
+    expect(homePage.page.url()).toContain('#book');
     
     console.log('✅ CTA navigation successful');
   });
@@ -84,7 +85,7 @@ test.describe('Homepage - Anonymous User Experience', () => {
     
     await homePage.goto();
     
-    // Verify features section
+    // Verify features section (if it exists)
     await homePage.verifyFeatures();
     
     console.log('✅ Features section verified');

@@ -9,9 +9,9 @@
 // =====================================================
 
 export enum ProductType {
-  THREE_DAY = '3-day',
-  FIVE_DAY = '5-day',
-  HOURLY_CONSULTING = 'hourly-consulting'
+  THREE_DAY = 'THREE_DAY',
+  FIVE_DAY = 'FIVE_DAY',
+  HOURLY_CONSULTING = 'HOURLY_CONSULTING'
 }
 
 export interface Product {
@@ -150,7 +150,7 @@ export interface Attendee extends AttendeeInfo {
   registrationDate: Date;
   lastLoginDate?: Date;
   workshopProgress?: WorkshopProgress;
-  certificateIssued?: boolean;
+
   notes?: string;
 }
 

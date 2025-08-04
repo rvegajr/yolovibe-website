@@ -1,0 +1,363 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Container from '../components/container.astro';
+
+const title = 'Event System Test - YOLOVibe';
+const description = 'Testing the event-driven architecture implementation';
+---
+
+<MainLayout title={title}>
+  <div class="min-h-screen bg-gradient-to-b from-gray-900 via-slate-900 to-black text-white pt-20">
+    <Container>
+      <div class="py-8">
+        <h1 class="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
+          🧪 Event System Test Dashboard
+        </h1>
+        
+        <!-- Event Status -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Event Bus Status -->
+          <div class="bg-gradient-to-br from-slate-800/50 to-gray-800/50 rounded-2xl border border-slate-600/30 p-6">
+            <h2 class="text-xl font-bold text-white mb-4">🚌 Event Bus Status</h2>
+            <div id="event-bus-status" class="space-y-2">
+              <div class="text-sm">
+                <span class="text-slate-400">GlobalEventBus:</span>
+                <span id="global-bus-status" class="ml-2 text-yellow-400">Checking...</span>
+              </div>
+              <div class="text-sm">
+                <span class="text-slate-400">Event Types Loaded:</span>
+                <span id="event-types-status" class="ml-2 text-yellow-400">Checking...</span>
+              </div>
+              <div class="text-sm">
+                <span class="text-slate-400">Active Listeners:</span>
+                <span id="listener-count" class="ml-2 text-yellow-400">0</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Architecture Status -->
+          <div class="bg-gradient-to-br from-slate-800/50 to-gray-800/50 rounded-2xl border border-slate-600/30 p-6">
+            <h2 class="text-xl font-bold text-white mb-4">🏗️ Architecture Components</h2>
+            <div id="architecture-status" class="space-y-2">
+              <div class="text-sm">
+                <span class="text-slate-400">Architectural Bridge:</span>
+                <span id="bridge-status" class="ml-2 text-yellow-400">Not Loaded</span>
+              </div>
+              <div class="text-sm">
+                <span class="text-slate-400">Unified Data Layer:</span>
+                <span id="data-layer-status" class="ml-2 text-yellow-400">Not Loaded</span>
+              </div>
+              <div class="text-sm">
+                <span class="text-slate-400">Event Integration:</span>
+                <span id="integration-status" class="ml-2 text-yellow-400">Not Tested</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Event Testing Controls -->
+        <div class="bg-gradient-to-br from-slate-800/50 to-gray-800/50 rounded-2xl border border-slate-600/30 p-6 mb-8">
+          <h2 class="text-xl font-bold text-white mb-4">🎯 Event Testing Controls</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button id="test-workshop-event" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-3 rounded-lg transition-all transform hover:scale-105">
+              📅 Emit Workshop Event
+            </button>
+            <button id="test-booking-event" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-3 rounded-lg transition-all transform hover:scale-105">
+              🎫 Emit Booking Event
+            </button>
+            <button id="test-error-event" class="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-4 py-3 rounded-lg transition-all transform hover:scale-105">
+              ⚠️ Emit Error Event
+            </button>
+          </div>
+          
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button id="test-bridge-operation" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-4 py-3 rounded-lg transition-all transform hover:scale-105">
+              🌉 Test Architectural Bridge
+            </button>
+            <button id="test-data-layer" class="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-3 rounded-lg transition-all transform hover:scale-105">
+              💾 Test Data Layer Events
+            </button>
+          </div>
+        </div>
+        
+        <!-- Event Log -->
+        <div class="bg-gradient-to-br from-slate-800/50 to-gray-800/50 rounded-2xl border border-slate-600/30 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">📝 Event Log</h2>
+            <button id="clear-log" class="text-sm text-slate-400 hover:text-white transition-colors">
+              Clear Log
+            </button>
+          </div>
+          
+          <div id="event-log" class="space-y-2 max-h-96 overflow-y-auto font-mono text-sm">
+            <div class="text-slate-500">Waiting for events...</div>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </div>
+</MainLayout>
+
+<script>
+  // Event System Test Suite
+  class EventSystemTester {
+    private eventLog: HTMLElement;
+    private eventCount: number = 0;
+    
+    constructor() {
+      this.eventLog = document.getElementById('event-log')!;
+      this.init();
+    }
+    
+    async init() {
+      // Check GlobalEventBus availability
+      this.checkEventBusStatus();
+      
+      // Set up event listeners
+      this.setupEventListeners();
+      
+      // Set up test controls
+      this.setupTestControls();
+      
+      // Log initialization
+      this.logEvent('info', 'Event System Tester initialized');
+    }
+    
+    checkEventBusStatus() {
+      const globalBus = (window as any).globalEventBus;
+      const globalBusStatus = document.getElementById('global-bus-status')!;
+      const eventTypesStatus = document.getElementById('event-types-status')!;
+      
+      if (globalBus) {
+        globalBusStatus.textContent = '✅ Active';
+        globalBusStatus.className = 'ml-2 text-green-400';
+        
+        // Check if we can access event types
+        if ((window as any).EventTypes) {
+          eventTypesStatus.textContent = '✅ Loaded';
+          eventTypesStatus.className = 'ml-2 text-green-400';
+        } else {
+          eventTypesStatus.textContent = '⚠️ Not Found';
+          eventTypesStatus.className = 'ml-2 text-yellow-400';
+        }
+      } else {
+        globalBusStatus.textContent = '❌ Not Found';
+        globalBusStatus.className = 'ml-2 text-red-400';
+      }
+      
+      // Check architecture components
+      this.checkArchitectureComponents();
+    }
+    
+    checkArchitectureComponents() {
+      // These would be loaded if the full hybrid architecture is active
+      const bridgeStatus = document.getElementById('bridge-status')!;
+      const dataLayerStatus = document.getElementById('data-layer-status')!;
+      
+      // For now, we'll just check if the modules exist
+      if ((window as any).ArchitecturalBridge) {
+        bridgeStatus.textContent = '✅ Loaded';
+        bridgeStatus.className = 'ml-2 text-green-400';
+      }
+      
+      if ((window as any).UnifiedDataLayer) {
+        dataLayerStatus.textContent = '✅ Loaded';
+        dataLayerStatus.className = 'ml-2 text-green-400';
+      }
+    }
+    
+    setupEventListeners() {
+      const globalBus = (window as any).globalEventBus;
+      if (!globalBus) return;
+      
+      let listenerCount = 0;
+      
+      // Listen for all major event types
+      const eventTypes = [
+        'WORKSHOP_SELECTED',
+        'BOOKING_SUBMITTED',
+        'ERROR_OCCURRED',
+        'USER_INTERACTION',
+        'FORM_SUBMITTED',
+        'DATE_SELECTED',
+        'DASHBOARD_UPDATED'
+      ];
+      
+      eventTypes.forEach(eventType => {
+        globalBus.on(eventType, (data: any) => {
+          this.logEvent('event', `📨 ${eventType}`, data);
+        });
+        listenerCount++;
+      });
+      
+      document.getElementById('listener-count')!.textContent = listenerCount.toString();
+      document.getElementById('listener-count')!.className = 'ml-2 text-green-400';
+    }
+    
+    setupTestControls() {
+      // Workshop Event Test
+      document.getElementById('test-workshop-event')!.addEventListener('click', () => {
+        this.emitTestEvent('WORKSHOP_SELECTED', {
+          workshopId: 'prod-3day',
+          workshopName: '3-Day YOLO Workshop',
+          price: 3000,
+          testEvent: true,
+          timestamp: new Date().toISOString()
+        });
+      });
+      
+      // Booking Event Test
+      document.getElementById('test-booking-event')!.addEventListener('click', () => {
+        this.emitTestEvent('BOOKING_SUBMITTED', {
+          productId: 'prod-5day',
+          customerName: 'Test User',
+          email: 'test@example.com',
+          selectedDate: new Date().toISOString(),
+          testEvent: true
+        });
+      });
+      
+      // Error Event Test
+      document.getElementById('test-error-event')!.addEventListener('click', () => {
+        this.emitTestEvent('ERROR_OCCURRED', {
+          error: 'Test error message',
+          context: 'Event System Test',
+          severity: 'warning',
+          testEvent: true,
+          timestamp: new Date().toISOString()
+        });
+      });
+      
+      // Bridge Test
+      document.getElementById('test-bridge-operation')!.addEventListener('click', () => {
+        this.testArchitecturalBridge();
+      });
+      
+      // Data Layer Test
+      document.getElementById('test-data-layer')!.addEventListener('click', () => {
+        this.testUnifiedDataLayer();
+      });
+      
+      // Clear Log
+      document.getElementById('clear-log')!.addEventListener('click', () => {
+        this.eventLog.innerHTML = '<div class="text-slate-500">Log cleared. Waiting for events...</div>';
+        this.eventCount = 0;
+      });
+    }
+    
+    emitTestEvent(eventType: string, payload: any) {
+      const globalBus = (window as any).globalEventBus;
+      if (!globalBus) {
+        this.logEvent('error', '❌ GlobalEventBus not available');
+        return;
+      }
+      
+      try {
+        globalBus.emit(eventType, payload);
+        this.logEvent('success', `✅ Emitted ${eventType}`, payload);
+      } catch (error) {
+        this.logEvent('error', `❌ Failed to emit ${eventType}`, error);
+      }
+    }
+    
+    async testArchitecturalBridge() {
+      this.logEvent('info', '🌉 Testing Architectural Bridge...');
+      
+      // Simulate a bridge operation
+      const testOperation = {
+        operation: 'testBridgeConnection',
+        metadata: {
+          source: 'EventSystemTest',
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      // Emit bridge-specific events
+      this.emitTestEvent('OPERATION_STARTED', testOperation);
+      
+      setTimeout(() => {
+        this.emitTestEvent('OPERATION_COMPLETED', {
+          ...testOperation,
+          result: 'Bridge test successful',
+          duration: 100
+        });
+        
+        document.getElementById('integration-status')!.textContent = '✅ Working';
+        document.getElementById('integration-status')!.className = 'ml-2 text-green-400';
+      }, 100);
+    }
+    
+    async testUnifiedDataLayer() {
+      this.logEvent('info', '💾 Testing Unified Data Layer...');
+      
+      // Simulate data layer events
+      const dataEvent = {
+        entityType: 'TestEntity',
+        operation: 'create',
+        data: {
+          id: 'test-123',
+          name: 'Test Data',
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      this.emitTestEvent('DATA_CREATED', dataEvent);
+      
+      setTimeout(() => {
+        this.emitTestEvent('DATA_ACCESSED', {
+          ...dataEvent,
+          operation: 'read'
+        });
+      }, 50);
+    }
+    
+    logEvent(type: 'info' | 'success' | 'error' | 'event', message: string, data?: any) {
+      this.eventCount++;
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const typeColors = {
+        info: 'text-blue-400',
+        success: 'text-green-400',
+        error: 'text-red-400',
+        event: 'text-purple-400'
+      };
+      
+      const logEntry = document.createElement('div');
+      logEntry.className = 'border-b border-slate-700 pb-2 mb-2';
+      
+      let html = `
+        <div class="flex items-start justify-between">
+          <span class="${typeColors[type]}">[${timestamp}] ${message}</span>
+          <span class="text-slate-500 text-xs">#${this.eventCount}</span>
+        </div>
+      `;
+      
+      if (data) {
+        html += `
+          <pre class="text-xs text-slate-400 mt-1 overflow-x-auto">${JSON.stringify(data, null, 2)}</pre>
+        `;
+      }
+      
+      logEntry.innerHTML = html;
+      
+      // Remove initial message if present
+      const initialMessage = this.eventLog.querySelector('.text-slate-500');
+      if (initialMessage && this.eventCount === 1) {
+        initialMessage.remove();
+      }
+      
+      this.eventLog.insertBefore(logEntry, this.eventLog.firstChild);
+      
+      // Keep log size manageable
+      if (this.eventLog.children.length > 50) {
+        this.eventLog.removeChild(this.eventLog.lastChild!);
+      }
+    }
+  }
+  
+  // Initialize tester when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    new EventSystemTester();
+  });
+</script>

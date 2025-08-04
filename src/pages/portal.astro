@@ -1,0 +1,336 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import Container from "@/components/container.astro";
+---
+
+<MainLayout title="Workshop Portal | YOLOVibeCodeBootCamp" description="Access your workshop materials, track progress, and connect with fellow attendees">
+  <Container>
+    <div class="min-h-screen py-8">
+      <!-- Portal Header -->
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Workshop Portal</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-1">Welcome back! Track your progress and access materials.</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div id="user-info" class="text-sm text-gray-500 dark:text-gray-400">
+            Loading...
+          </div>
+          <button 
+            id="logout-button"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-12">
+        <svg class="animate-spin h-8 w-8 text-purple-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-600 dark:text-gray-400">Loading your workshop data...</p>
+      </div>
+
+      <!-- Portal Content -->
+      <div id="portal-content" class="hidden">
+        <!-- Workshop Progress -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Progress</h2>
+          <div id="progress-container">
+            <!-- Progress will be loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- Workshop Materials -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Materials will be loaded dynamically -->
+          <div id="materials-container">
+            <!-- Materials cards will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-gradient-to-r from-purple-500/10 to-blue-500/10 dark:from-purple-500/20 dark:to-blue-500/20 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <button id="join-community-btn" class="flex items-center justify-center p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+              </svg>
+              Join Community
+            </button>
+            <button id="download-materials-btn" class="flex items-center justify-center p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Download All
+            </button>
+            <button id="contact-support-btn" class="flex items-center justify-center p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd" />
+              </svg>
+              Get Help
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Access Denied State -->
+      <div id="access-denied" class="hidden text-center py-12">
+        <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20 mb-4">
+          <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Access Denied</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">You don't have access to any workshops or your session has expired.</p>
+        <a href="/login" class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+          Sign In Again
+        </a>
+      </div>
+    </div>
+  </Container>
+</MainLayout>
+
+<script>
+  import { GlobalEventBus } from '../events/EventBus.js';
+  import { AuthEventTypes } from '../events/AuthEventTypes.js';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const loadingState = document.getElementById('loading-state') as HTMLElement;
+    const portalContent = document.getElementById('portal-content') as HTMLElement;
+    const accessDenied = document.getElementById('access-denied') as HTMLElement;
+    const userInfo = document.getElementById('user-info') as HTMLElement;
+    const logoutButton = document.getElementById('logout-button') as HTMLButtonElement;
+    const progressContainer = document.getElementById('progress-container') as HTMLElement;
+    const materialsContainer = document.getElementById('materials-container') as HTMLElement;
+
+    // Initialize event bus
+    const eventBus = GlobalEventBus.getInstance();
+
+    // Check authentication on page load
+    const sessionToken = localStorage.getItem('sessionToken');
+    const userId = localStorage.getItem('userId');
+
+    if (!sessionToken || !userId) {
+      showAccessDenied();
+      return;
+    }
+
+    // Listen for portal access events
+    eventBus.on(AuthEventTypes.PORTAL_ACCESS_GRANTED, (event) => {
+      console.log('✅ Portal access granted:', event.email);
+      loadPortalData(event.userId, event.workshopId);
+      showPortalContent();
+      userInfo.textContent = `Logged in as ${event.email}`;
+    });
+
+    eventBus.on(AuthEventTypes.PORTAL_ACCESS_DENIED, (event) => {
+      console.log('❌ Portal access denied:', event.reason);
+      showAccessDenied();
+    });
+
+    eventBus.on(AuthEventTypes.WORKSHOP_MATERIAL_ACCESSED, (event) => {
+      console.log('📚 Material accessed:', event.materialId);
+      updateProgress(event.userId, event.workshopId);
+    });
+
+    eventBus.on(AuthEventTypes.PROGRESS_UPDATED, (event) => {
+      console.log('📊 Progress updated:', event.progressPercentage);
+      updateProgressDisplay(event.progressPercentage, event.completedItems);
+    });
+
+    // Validate session and load portal
+    async function initializePortal() {
+      try {
+        const response = await fetch('/api/auth/validate', {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.authenticated) {
+          // Emit portal access granted event
+          await eventBus.emit(AuthEventTypes.PORTAL_ACCESS_GRANTED, {
+            userId: userId,
+            email: result.email || 'user@example.com',
+            workshopId: result.workshopId,
+            accessLevel: 'attendee',
+            sessionToken: sessionToken,
+            timestamp: new Date(),
+            source: 'portal_page'
+          });
+        } else {
+          await eventBus.emit(AuthEventTypes.PORTAL_ACCESS_DENIED, {
+            reason: 'session_expired',
+            attemptedResource: 'portal',
+            timestamp: new Date(),
+            source: 'portal_page'
+          });
+        }
+      } catch (error) {
+        console.error('Portal initialization error:', error);
+        await eventBus.emit(AuthEventTypes.PORTAL_ACCESS_DENIED, {
+          reason: 'session_expired',
+          attemptedResource: 'portal',
+          timestamp: new Date(),
+          source: 'portal_page'
+        });
+      }
+    }
+
+    async function loadPortalData(userId: string, workshopId?: string) {
+      try {
+        // Load user's workshop materials
+        const materialsResponse = await fetch(`/api/portal/materials?userId=${userId}&workshopId=${workshopId || ''}`);
+        const materials = await materialsResponse.json();
+
+        // Load progress data
+        const progressResponse = await fetch(`/api/portal/progress?userId=${userId}&workshopId=${workshopId || ''}`);
+        const progress = await progressResponse.json();
+
+        renderMaterials(materials.data || []);
+        renderProgress(progress.data || {});
+      } catch (error) {
+        console.error('Error loading portal data:', error);
+      }
+    }
+
+    function renderMaterials(materials: any[]) {
+      materialsContainer.innerHTML = '';
+      
+      materials.forEach(material => {
+        const materialCard = document.createElement('div');
+        materialCard.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer';
+        materialCard.innerHTML = `
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center mr-3">
+              ${getMaterialIcon(material.type)}
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-white">${material.title}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">${material.type}</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">${material.description || 'Workshop material'}</p>
+          <button class="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors" 
+                  onclick="accessMaterial('${material.id}', '${material.type}')">
+            ${material.type === 'video' ? 'Watch' : material.type === 'pdf' ? 'View' : 'Access'}
+          </button>
+        `;
+        materialsContainer.appendChild(materialCard);
+      });
+    }
+
+    function renderProgress(progressData: any) {
+      const percentage = progressData.progressPercentage || 0;
+      const completedItems = progressData.completedItems || [];
+      
+      progressContainer.innerHTML = `
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Progress</span>
+            <span class="text-sm font-medium text-purple-600 dark:text-purple-400">${percentage}%</span>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-300" style="width: ${percentage}%"></div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          ${completedItems.length} items completed
+        </div>
+      `;
+    }
+
+    function getMaterialIcon(type: string): string {
+      const icons = {
+        'video': '<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM15.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM4 9a1 1 0 000 2v3a1 1 0 001 1h9a1 1 0 001-1v-3a1 1 0 000-2H4z" /></svg>',
+        'pdf': '<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>',
+        'exercise': '<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" /></svg>',
+        'quiz': '<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>'
+      };
+      return icons[type] || icons['pdf'];
+    }
+
+    // Global function for material access
+    (window as any).accessMaterial = async function(materialId: string, materialType: string) {
+      try {
+        // Emit material accessed event
+        await eventBus.emit(AuthEventTypes.WORKSHOP_MATERIAL_ACCESSED, {
+          userId: userId,
+          workshopId: 'current-workshop', // This would come from user data
+          materialId: materialId,
+          materialType: materialType as any,
+          accessedAt: new Date(),
+          timestamp: new Date(),
+          source: 'portal_page'
+        });
+
+        // Open material (this would be enhanced with actual material URLs)
+        window.open(`/api/portal/material/${materialId}`, '_blank');
+      } catch (error) {
+        console.error('Error accessing material:', error);
+      }
+    };
+
+    async function updateProgress(userId: string, workshopId: string) {
+      try {
+        const response = await fetch(`/api/portal/progress?userId=${userId}&workshopId=${workshopId}`);
+        const progress = await response.json();
+        
+        if (progress.success) {
+          await eventBus.emit(AuthEventTypes.PROGRESS_UPDATED, {
+            userId: userId,
+            workshopId: workshopId,
+            completedItems: progress.data.completedItems || [],
+            progressPercentage: progress.data.progressPercentage || 0,
+            lastActivityAt: new Date(),
+            timestamp: new Date(),
+            source: 'portal_page'
+          });
+        }
+      } catch (error) {
+        console.error('Error updating progress:', error);
+      }
+    }
+
+    function updateProgressDisplay(percentage: number, completedItems: string[]) {
+      renderProgress({ progressPercentage: percentage, completedItems });
+    }
+
+    function showPortalContent() {
+      loadingState.classList.add('hidden');
+      portalContent.classList.remove('hidden');
+      accessDenied.classList.add('hidden');
+    }
+
+    function showAccessDenied() {
+      loadingState.classList.add('hidden');
+      portalContent.classList.add('hidden');
+      accessDenied.classList.remove('hidden');
+    }
+
+    // Logout functionality
+    logoutButton.addEventListener('click', async function() {
+      await eventBus.emit(AuthEventTypes.LOGOUT_INITIATED, {
+        userId: userId,
+        sessionToken: sessionToken,
+        reason: 'user_initiated',
+        timestamp: new Date(),
+        source: 'portal_page'
+      });
+
+      localStorage.removeItem('sessionToken');
+      localStorage.removeItem('userId');
+      window.location.href = '/login';
+    });
+
+    // Initialize the portal
+    initializePortal();
+  });
+</script> 
