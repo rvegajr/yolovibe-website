@@ -139,3 +139,19 @@ dist
 dist/
 .astro/
 .vercel
+
+# Local development databases
+local.db
+*.db
+
+# Google Cloud credentials
+googlecloud.json
+yolovibe-calendar-key.json
+*-key.json
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Temporary files
+branch-protection.json
