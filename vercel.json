@@ -5,7 +5,10 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "functions": {
-    "**/*.js": {
+    "src/pages/api/**/*.ts": {
+      "runtime": "nodejs18.x"
+    },
+    "src/pages/api/**/*.js": {
       "runtime": "nodejs18.x"
     }
   },
