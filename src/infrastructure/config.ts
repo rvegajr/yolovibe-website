@@ -8,11 +8,7 @@ import { readFileSync } from 'fs';
 
 // Define AppConfig interface here to avoid circular imports
 export interface AppConfig {
-  auth0: {
-    domain: string;
-    clientId: string;
-    clientSecret: string;
-  };
+  // Auth0 removed - using custom authentication
   sendgrid: {
     apiKey: string;
     fromEmail: string;
@@ -65,24 +61,7 @@ class ConfigurationError extends Error {
 
 class ConfigLoader {
   private envVars: EnvVar[] = [
-    {
-      name: 'AUTH0_DOMAIN',
-      value: process.env.AUTH0_DOMAIN,
-      required: true,
-      description: 'Auth0 tenant domain (e.g., your-tenant.auth0.com)',
-    },
-    {
-      name: 'AUTH0_CLIENT_ID',
-      value: process.env.AUTH0_CLIENT_ID,
-      required: true,
-      description: 'Auth0 application client ID',
-    },
-    {
-      name: 'AUTH0_CLIENT_SECRET',
-      value: process.env.AUTH0_CLIENT_SECRET,
-      required: true,
-      description: 'Auth0 application client secret',
-    },
+    // Auth0 removed - using custom authentication
     {
       name: 'SENDGRID_API_KEY',
       value: process.env.SENDGRID_API_KEY,
@@ -187,11 +166,7 @@ class ConfigLoader {
     const skipGoogleCheck = (this.get('SKIP_GOOGLE_CALENDAR_CHECK') || 'false') === 'true';
 
     const config = {
-      auth0: {
-        domain: this.getRequired('AUTH0_DOMAIN'),
-        clientId: this.getRequired('AUTH0_CLIENT_ID'),
-        clientSecret: this.getRequired('AUTH0_CLIENT_SECRET'),
-      },
+      // Auth0 removed - using custom authentication
       sendgrid: {
         apiKey: this.getRequired('SENDGRID_API_KEY'),
         fromEmail: this.getRequired('SENDGRID_FROM_EMAIL'),
@@ -246,11 +221,7 @@ class ConfigLoader {
   private validateFormats(): void {
     const errors: string[] = [];
 
-    // Validate Auth0 domain format
-    const auth0Domain = this.get('AUTH0_DOMAIN');
-    if (auth0Domain && !auth0Domain.includes('.auth0.com') && !auth0Domain.includes('.')) {
-      errors.push('AUTH0_DOMAIN must be a valid domain (e.g., your-tenant.auth0.com)');
-    }
+    // Auth0 validation removed - using custom authentication
 
     // Validate port number
     const port = this.get('PORT');
