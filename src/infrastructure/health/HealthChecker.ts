@@ -33,7 +33,7 @@ export class HealthChecker {
 
   async checkAllServices(): Promise<HealthCheckResult[]> {
     const checks = [
-      this.checkAuth0(),
+      // Auth0 removed - using custom authentication
       this.checkSendGrid(),
       this.checkSquare(),
       this.checkGoogleCalendar(),
@@ -42,48 +42,7 @@ export class HealthChecker {
     return Promise.all(checks);
   }
 
-  private async checkAuth0(): Promise<HealthCheckResult> {
-    const startTime = Date.now();
-
-    try {
-      // Use Auth0's tenant info endpoint which is more likely to be accessible
-      // This URL pattern works for both standard and custom domains
-      const response = await fetch(
-        `https://${this.config.auth0.domain}/api/v2/tenants/settings`,
-        { 
-          signal: AbortSignal.timeout(5000),
-          headers: {
-            'Accept': 'application/json'
-          }
-        }
-      );
-
-      // For the health check, we don't actually need to authenticate
-      // We just want to confirm the domain exists and is accessible
-      // A 401 means the domain is valid but we're not authenticated
-      // A 404 means the domain is invalid
-      if (response.status === 404) {
-        throw new Error(`Auth0 domain not found (HTTP 404)`);
-      }
-      
-      const responseTime = Date.now() - startTime;
-
-      return {
-        service: 'Auth0',
-        status: 'healthy',
-        message: 'Auth0 domain accessible',
-        responseTime,
-        details: { domain: this.config.auth0.domain },
-      };
-    } catch (error) {
-      return {
-        service: 'Auth0',
-        status: 'unhealthy',
-        message: `Auth0 connection failed: ${error instanceof Error ? error.message : String(error)}`,
-        responseTime: Date.now() - startTime,
-      };
-    }
-  }
+  // Auth0 health check removed - using custom authentication
 
   private async checkSendGrid(): Promise<HealthCheckResult> {
     const startTime = Date.now();

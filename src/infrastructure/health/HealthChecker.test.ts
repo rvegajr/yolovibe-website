@@ -21,8 +21,7 @@ describe('HealthChecker', () => {
     vi.clearAllMocks();
 
     mockConfig = {
-      auth0: {
-        domain: 'test.auth0.com',
+        // Auth0 removed - using custom authentication
         clientId: 'test_client_id',
         clientSecret: 'test_client_secret',
       },
@@ -72,7 +71,7 @@ describe('HealthChecker', () => {
       const results = await healthChecker.checkAllServices();
 
       // Assert
-      expect(results).toHaveLength(4); // Auth0, SendGrid, Square, Google Calendar
+      expect(results).toHaveLength(3); // SendGrid, Square, Google Calendar (Auth0 removed)
       expect(results.every(r => r.service)).toBe(true);
       expect(results.every(r => r.status)).toBe(true);
     });

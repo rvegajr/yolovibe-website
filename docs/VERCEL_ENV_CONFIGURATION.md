@@ -6,10 +6,8 @@ This document provides instructions for configuring environment variables in Ver
 
 Our application requires the following environment variables:
 
-### Auth0 Configuration
-- `AUTH0_DOMAIN` - Auth0 tenant domain
-- `AUTH0_CLIENT_ID` - Auth0 application client ID
-- `AUTH0_CLIENT_SECRET` - Auth0 application client secret
+### Authentication Configuration
+- Using custom database authentication (Auth0 removed)
 
 ### SendGrid Configuration
 - `SENDGRID_API_KEY` - API key for SendGrid email service
@@ -56,9 +54,7 @@ SQUARE_ACCESS_TOKEN=[live token]
 SQUARE_LOCATION_ID=[production location ID]
 SENDGRID_API_KEY=[live key]
 SENDGRID_FROM_EMAIL=contact@yolovibe.com
-AUTH0_DOMAIN=yolovibe.auth0.com
-AUTH0_CLIENT_ID=[production client ID]
-AUTH0_CLIENT_SECRET=[production client secret]
+# Auth0 removed - using custom authentication
 GOOGLE_CALENDAR_ID=[production calendar ID]
 GOOGLE_SERVICE_ACCOUNT_KEY_PATH=[path to production service account key]
 ```

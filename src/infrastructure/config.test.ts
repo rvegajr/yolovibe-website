@@ -18,9 +18,9 @@ describe('Configuration Module', () => {
     // Arrange
     process.env.NODE_ENV = 'test';
     process.env.PORT = '3000';
-    process.env.AUTH0_DOMAIN = 'test.auth0.com';
-    process.env.AUTH0_CLIENT_ID = 'test_client_id';
-    process.env.AUTH0_CLIENT_SECRET = 'test_client_secret';
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'test@example.com';
     process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
@@ -50,9 +50,9 @@ describe('Configuration Module', () => {
     // Arrange
     process.env.NODE_ENV = 'test';
     process.env.PORT = '3000';
-    process.env.AUTH0_DOMAIN = 'test.auth0.com';
-    process.env.AUTH0_CLIENT_ID = 'test_client_id';
-    process.env.AUTH0_CLIENT_SECRET = 'test_client_secret';
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'invalid-email'; // Invalid email
     process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
@@ -68,9 +68,9 @@ describe('Configuration Module', () => {
     // Arrange
     process.env.NODE_ENV = 'development';
     process.env.PORT = '3000';
-    process.env.AUTH0_DOMAIN = 'test.auth0.com';
-    process.env.AUTH0_CLIENT_ID = 'test_client_id';
-    process.env.AUTH0_CLIENT_SECRET = 'test_client_secret';
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
+    // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'test@example.com';
     process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
