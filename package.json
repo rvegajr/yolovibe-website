@@ -35,6 +35,12 @@
     "test:coupons": "npx tsx scripts/test-coupons.ts",
     "usage:alerts": "npx tsx scripts/usage-monitor.ts alerts",
     "usage:projection": "npx tsx scripts/usage-monitor.ts projection",
+    "test:integrations": "tsx scripts/test-all-integrations.ts",
+    "test:integrations:dev": "./scripts/test-integrations-dev.sh",
+    "test:integrations:prod": "./scripts/test-integrations-prod.sh",
+    "test:email": "tsx scripts/test-email-environments.ts",
+    "test:email:dev": "ENV_FILE=.env.dev tsx scripts/test-email-environments.ts",
+    "test:email:prod": "ENV_FILE=.env.prod tsx scripts/test-email-environments.ts",
     "usage:monitor": "npx tsx scripts/usage-monitor.ts",
     "turso:setup": "echo 'Run: curl -sSfL https://get.tur.so/install.sh | bash && turso auth login && turso db create yolovibe-prod'",
     "turso:usage": "turso db show yolovibe-prod --usage"
@@ -69,7 +75,6 @@
     "astro-seo": "^0.8.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.0",
-    "googleapis": "^144.0.0",
     "square": "^43.0.1",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3",
@@ -77,6 +82,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
-    "playwright": "^1.49.1"
+    "googleapis": "^155.0.0",
+    "open": "^10.2.0",
+    "playwright": "^1.49.1",
+    "server-destroy": "^1.0.1"
   }
 }

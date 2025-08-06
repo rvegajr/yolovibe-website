@@ -224,7 +224,7 @@ export class HealthDashboard {
   }
 
   private initializeHealthHistory(): void {
-    const services = ['Auth0', 'SendGrid', 'Square', 'Google Calendar'];
+    const services = ['SendGrid', 'Square', 'Google Calendar']; // Auth0 removed - using custom authentication
     services.forEach(service => {
       this.healthHistory.set(service, []);
     });
