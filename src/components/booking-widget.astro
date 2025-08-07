@@ -550,7 +550,7 @@ import { Icon } from "astro-icon/components";
           } as WorkshopSelectedEvent);
         }
         
-        this.updateAvailableDates();
+        await this.updateAvailableDates();
         this.updateAttendeeFields();
         setTimeout(() => this.saveToCache(), 300);
       });
@@ -795,7 +795,7 @@ import { Icon } from "astro-icon/components";
       });
     }
 
-    private updateAvailableDates(): void {
+    private async updateAvailableDates(): Promise<void> {
       const selectedOption = this.workshopSelect.selectedOptions[0];
       
       if (!selectedOption || !selectedOption.dataset.workshop) {
