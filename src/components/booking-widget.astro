@@ -627,7 +627,7 @@ import { Icon } from "astro-icon/components";
         } as UserInteractionEvent);
         
         this.currentDate.setMonth(this.currentDate.getMonth() - 1);
-        this.renderCalendar();
+        await this.renderCalendar();
       });
 
       document.getElementById('next-month')?.addEventListener('click', async () => {
@@ -640,7 +640,7 @@ import { Icon } from "astro-icon/components";
         } as UserInteractionEvent);
         
         this.currentDate.setMonth(this.currentDate.getMonth() + 1);
-        this.renderCalendar();
+        await this.renderCalendar();
       });
 
       // Setup contact field validation
@@ -699,10 +699,47 @@ import { Icon } from "astro-icon/components";
           metadata: { operation: 'loading_workshops' }
         } as UserInteractionEvent);
         
-        const response = await fetch('/api/workshops/available');
+        // Enhanced error handling with retry logic
+        let response: Response;
+        let retryCount = 0;
+        const maxRetries = 3;
+        
+        while (retryCount < maxRetries) {
+          try {
+            response = await fetch('/api/workshops/available', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+              }
+            });
+            
+            if (response.ok) {
+              break;
+            }
+            
+            retryCount++;
+            if (retryCount < maxRetries) {
+              console.log(`🔄 Retrying workshop load (attempt ${retryCount}/${maxRetries})`);
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+            }
+          } catch (fetchError) {
+            retryCount++;
+            if (retryCount >= maxRetries) {
+              throw fetchError;
+            }
+            console.log(`🔄 Retrying workshop load after fetch error (attempt ${retryCount}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          }
+        }
+        
+        if (!response || !response.ok) {
+          throw new Error(`HTTP ${response?.status}: ${response?.statusText || 'Network error'}`);
+        }
+        
         const result: ApiResponse<Workshop[]> = await response.json();
 
-        if (result.success && result.data) {
+        if (result.success && result.data && Array.isArray(result.data)) {
           this.workshops = result.data;
           this.populateWorkshopDropdown();
           
@@ -718,10 +755,14 @@ import { Icon } from "astro-icon/components";
               workshops: this.workshops.map(w => ({ id: w.id, name: w.name }))
             }
           } as UserInteractionEvent);
+          
+          console.log(`✅ Loaded ${this.workshops.length} workshops successfully`);
         } else {
-          throw new Error(result.error || 'Failed to load workshops');
+          throw new Error(result.error || 'Invalid response format from workshops API');
         }
       } catch (error) {
+        console.error('❌ Workshop loading error:', error);
+        
         // 🎯 EMIT ERROR EVENT
         await this.emitEvent(EventTypes.ERROR_OCCURRED, {
           error: error instanceof Error ? error.message : 'Unknown error loading workshops',
@@ -732,7 +773,11 @@ import { Icon } from "astro-icon/components";
           source: this.componentId
         } as ErrorOccurredEvent);
         
-        this.showMessage('error', 'Failed to load available workshops. Please refresh the page.');
+        // Enhanced error message with retry option
+        this.showMessage('error', `Failed to load available workshops. ${error instanceof Error ? error.message : 'Please check your connection and refresh the page.'}`);
+        
+        // Add retry button
+        this.addRetryButton();
       }
     }
 
@@ -782,10 +827,10 @@ import { Icon } from "astro-icon/components";
         }
       }
 
-      this.renderCalendar();
+      await this.renderCalendar();
     }
 
-    private renderCalendar(): void {
+    private async renderCalendar(): Promise<void> {
       if (!this.currentWorkshop) {
         return;
       }
@@ -814,6 +859,9 @@ import { Icon } from "astro-icon/components";
 
       const allowedDays = this.getAllowedDayNumbers(this.currentWorkshop.availableStartDays);
       
+      // 🎯 ENHANCED: Get real-time availability data
+      const availabilityData = await this.getAvailabilityForMonth(year, month);
+      
       for (let i = 1; i <= daysInMonth; i++) {
         const dayCell = document.createElement('div');
         const currentDate = new Date(year, month, i);
@@ -838,17 +886,27 @@ import { Icon } from "astro-icon/components";
         const isPartOfSelectedWorkshop = this.selectedDate && this.isDateInWorkshopRange(currentDate, this.selectedDate, workshopDuration);
         const isSelectedStartDate = this.selectedDate && this.selectedDate.toDateString() === currentDate.toDateString();
         
+        // 🎯 ENHANCED: Check real-time availability
+        const dateKey = currentDate.toISOString().split('T')[0];
+        const isAvailable = availabilityData[dateKey] !== false; // Available unless explicitly blocked
+        
         if (isSelectedStartDate) {
           dayCell.className += ' bg-cyan-500 text-black font-bold border-cyan-400 ring-2 ring-cyan-300';
         } else if (isPartOfSelectedWorkshop) {
           dayCell.className += ' bg-cyan-500/30 text-white font-semibold border-cyan-400 border-2';
-        } else if (isValidDay) {
+        } else if (isValidDay && isAvailable) {
           dayCell.className += ' text-white bg-indigo-600 hover:bg-cyan-500 border-indigo-400 hover:border-cyan-400 cursor-pointer font-semibold';
+          // Add availability indicator
+          dayCell.setAttribute('data-available', 'true');
+        } else if (isValidDay && !isAvailable) {
+          dayCell.className += ' text-gray-400 bg-gray-700/50 border-gray-600 cursor-not-allowed opacity-50';
+          dayCell.setAttribute('data-available', 'false');
+          dayCell.title = 'This date is not available';
         } else {
           dayCell.className += ' text-gray-500 bg-gray-800/30 cursor-not-allowed border-gray-700/30';
         }
 
-        if (isValidDay) {
+        if (isValidDay && isAvailable) {
           dayCell.addEventListener('mouseenter', () => {
             this.showWorkshopDuration(i, workshopDuration);
           });
@@ -872,6 +930,9 @@ import { Icon } from "astro-icon/components";
         emptyCell.className = 'p-2';
         this.calendarDays.appendChild(emptyCell);
       }
+
+      // 🎯 ENHANCED: Update calendar helper text with availability info
+      this.updateCalendarHelperText(availabilityData);
     }
 
     private showWorkshopDuration(startDay: number, duration: number): void {
@@ -909,6 +970,40 @@ import { Icon } from "astro-icon/components";
           'shadow-lg', 'shadow-cyan-400/50', 'shadow-purple-400/50'
         );
       });
+    }
+
+    private async getAvailabilityForMonth(year: number, month: number): Promise<{ [date: string]: boolean }> {
+      try {
+        // Get the first and last day of the month
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        const response = await fetch(`/api/calendar/availability?startDate=${firstDay.toISOString().split('T')[0]}&endDate=${lastDay.toISOString().split('T')[0]}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          return data.availability || {};
+        }
+      } catch (error) {
+        console.warn('⚠️ Could not fetch availability data:', error);
+      }
+      
+      // Return default availability (all dates available) if API fails
+      return {};
+    }
+
+    private updateCalendarHelperText(availabilityData: { [date: string]: boolean }): void {
+      const helperDiv = document.getElementById('calendar-helper');
+      if (!helperDiv) return;
+
+      const availableDates = Object.keys(availabilityData).filter(date => availabilityData[date] !== false);
+      const blockedDates = Object.keys(availabilityData).filter(date => availabilityData[date] === false);
+
+      if (blockedDates.length > 0) {
+        helperDiv.innerHTML = `📅 <span class="text-cyan-300">Available dates highlighted</span> • <span class="text-gray-400">${blockedDates.length} blocked dates</span>`;
+      } else {
+        helperDiv.innerHTML = `📅 <span class="text-cyan-300">All dates available for this month</span>`;
+      }
     }
 
     private async selectDate(date: Date): Promise<void> {
@@ -960,7 +1055,7 @@ import { Icon } from "astro-icon/components";
         selectedDateDisplay.classList.remove('hidden');
       }
 
-      this.renderCalendar();
+      await this.renderCalendar();
       this.hideMessage();
       this.saveToCache();
     }
@@ -1122,6 +1217,23 @@ import { Icon } from "astro-icon/components";
 
       if (type === 'success') {
         setTimeout(() => this.hideMessage(), 10000);
+      }
+    }
+
+    private addRetryButton(): void {
+      if (this.messageContainer) {
+        const retryButton = document.createElement('button');
+        retryButton.textContent = '🔄 Retry Loading Workshops';
+        retryButton.className = 'mt-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg text-sm font-medium transition-colors';
+        retryButton.addEventListener('click', () => {
+          this.messageContainer?.classList.add('hidden');
+          this.loadWorkshops();
+        });
+        
+        // Clear existing content and add message + retry button
+        this.messageContainer.innerHTML = '';
+        this.messageContainer.appendChild(document.createTextNode('Failed to load available workshops. '));
+        this.messageContainer.appendChild(retryButton);
       }
     }
 
