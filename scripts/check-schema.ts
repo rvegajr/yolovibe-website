@@ -8,8 +8,8 @@ async function checkSchema() {
   console.log('🔍 Checking database schema...');
   
   const client = createClient({
-    url: process.env.***REMOVED***!,
-    authToken: process.env.***REMOVED***!,
+    url: process.env.DATABASE_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN!,
   });
 
   try {

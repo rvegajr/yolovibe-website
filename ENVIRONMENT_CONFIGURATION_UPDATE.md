@@ -20,7 +20,7 @@ The following environment variables have been configured in Vercel production:
 #### Square (Payment Processing)
 **Production Credentials:**
 - `SQUARE_ENVIRONMENT`: production
-- `***REMOVED***`: EAAAlxVDkvHejNK4r_6fc6bDKsIJVmaVq4yc7kn0jQA3nzHHqTfi-LqMt2sIOGmH
+- `SQUARE_ACCESS_TOKEN`: EAAAlxVDkvHejNK4r_6fc6bDKsIJVmaVq4yc7kn0jQA3nzHHqTfi-LqMt2sIOGmH
 - App ID: sq0idp-3U0vTj6m-_HunufYIh6KHQ
 
 **Sandbox Credentials (for development/testing):**

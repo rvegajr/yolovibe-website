@@ -39,8 +39,8 @@ The current configuration uses **in-memory SQLite** for production, which means:
 3. **Set Environment Variables**
    ```bash
    # In Vercel dashboard or .env
-   ***REMOVED***="libsql://your-database-url.turso.tech"
-   ***REMOVED***="your-auth-token"
+   DATABASE_URL="libsql://your-database-url.turso.tech"
+   TURSO_AUTH_TOKEN="your-auth-token"
    ```
 
 4. **Migration Script**
@@ -66,7 +66,7 @@ The current configuration uses **in-memory SQLite** for production, which means:
 
 3. **Set Environment Variables**
    ```bash
-   ***REMOVED***="postgresql://username:password@hostname:port/database"
+   DATABASE_URL="postgresql://username:password@hostname:port/database"
    ```
 
 4. **Update Connection Code** (implement PostgreSQL adapter)
@@ -92,7 +92,7 @@ The current configuration uses **in-memory SQLite** for production, which means:
 
 3. **Set Environment Variables**
    ```bash
-   ***REMOVED***="mysql://username:password@hostname:port/database"
+   DATABASE_URL="mysql://username:password@hostname:port/database"
    ```
 
 ## 🚀 **IMMEDIATE ACTION REQUIRED**
@@ -112,10 +112,10 @@ turso db show yolovibe-prod --url
 turso db tokens create yolovibe-prod
 
 # 4. Set in Vercel
-vercel env add ***REMOVED***
+vercel env add DATABASE_URL
 # Enter: libsql://your-database-url.turso.tech
 
-vercel env add ***REMOVED***  
+vercel env add TURSO_AUTH_TOKEN  
 # Enter: your-auth-token
 
 # 5. Deploy database schema
@@ -131,7 +131,7 @@ vercel --prod
 
 - [ ] Choose persistent database provider (Turso recommended)
 - [ ] Create production database instance
-- [ ] Set `***REMOVED***` environment variable
+- [ ] Set `DATABASE_URL` environment variable
 - [ ] Run database schema migration
 - [ ] Test connection with staging deployment
 - [ ] Backup existing local data (if any)
@@ -153,7 +153,7 @@ If you already have data in production that you need to preserve:
    turso db shell yolovibe-prod < backup.sql
    
    # For PostgreSQL
-   psql $***REMOVED*** < backup.sql
+   psql $DATABASE_URL < backup.sql
    ```
 
 3. **Verify Data Migration**
@@ -169,10 +169,10 @@ If you already have data in production that you need to preserve:
 
 ```bash
 # Production Database (REQUIRED)
-***REMOVED***="libsql://your-db.turso.tech" # or PostgreSQL/MySQL URL
+DATABASE_URL="libsql://your-db.turso.tech" # or PostgreSQL/MySQL URL
 
 # Database Authentication (for Turso)
-***REMOVED***="your-auth-token"
+TURSO_AUTH_TOKEN="your-auth-token"
 
 # Backup Configuration (Optional but recommended)
 DATABASE_BACKUP_URL="s3://your-backup-bucket/db-backups/"
@@ -189,10 +189,10 @@ SENDGRID_API_KEY="..."
 
 ```bash
 # .env.local (development)
-***REMOVED***="./data/yolovibe.db"  # Local SQLite file
+DATABASE_URL="./data/yolovibe.db"  # Local SQLite file
 
 # .env.production (Vercel)
-***REMOVED***="libsql://prod.turso.tech"  # Cloud database
+DATABASE_URL="libsql://prod.turso.tech"  # Cloud database
 ```
 
 ## 🔄 **BACKUP STRATEGY**
@@ -224,10 +224,10 @@ SENDGRID_API_KEY="..."
 
 ```bash
 # ❌ DANGER: This will delete all data
-vercel --prod  # Without ***REMOVED*** set
+vercel --prod  # Without DATABASE_URL set
 
 # ✅ SAFE: This preserves data
-vercel env add ***REMOVED***
+vercel env add DATABASE_URL
 vercel --prod  # With persistent database configured
 ```
 

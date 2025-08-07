@@ -8,8 +8,8 @@ async function checkProducts() {
   console.log('🔍 Checking available products in database...');
   
   const client = createClient({
-    url: process.env.***REMOVED***!,
-    authToken: process.env.***REMOVED***!,
+    url: process.env.DATABASE_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN!,
   });
 
   try {

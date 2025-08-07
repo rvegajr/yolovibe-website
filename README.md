@@ -33,7 +33,7 @@ turso db create yolovibe-prod
 turso db tokens create yolovibe-prod
 
 # 3. Set environment variables in Vercel
-vercel env add ***REMOVED***
+vercel env add DATABASE_URL
 # Enter: libsql://your-database-url.turso.tech
 
 # 4. Deploy schema
@@ -61,7 +61,7 @@ cd YOLOVibeWebsite
 Create `.env` file with required variables:
 ```bash
 # Database (uses in-memory SQLite on Vercel)
-***REMOVED***="./data/yolovibe.db"
+DATABASE_URL="./data/yolovibe.db"
 
 # Google Calendar Integration
 GOOGLE_CALENDAR_CLIENT_ID="your-google-client-id"
@@ -74,8 +74,8 @@ SENDGRID_API_KEY="your-sendgrid-api-key"
 SENDGRID_FROM_EMAIL="noreply@yourdomain.com"
 
 # Square Payment Processing
-***REMOVED***="your-square-app-id"
-***REMOVED***="your-square-access-token"
+SQUARE_APPLICATION_ID="your-square-app-id"
+SQUARE_ACCESS_TOKEN="your-square-access-token"
 SQUARE_ENVIRONMENT="sandbox" # or "production"
 
 # Authentication
@@ -105,7 +105,7 @@ vercel --prod
 ### **3. Post-Deployment Setup**
 ```bash
 # Set environment variables in Vercel dashboard
-vercel env add ***REMOVED***
+vercel env add DATABASE_URL
 vercel env add GOOGLE_CALENDAR_CLIENT_ID
 # ... (add all other environment variables)
 

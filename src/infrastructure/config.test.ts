@@ -23,7 +23,7 @@ describe('Configuration Module', () => {
     // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'test@example.com';
-    process.env.***REMOVED*** = 'test_square_token';
+    process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
     process.env.SQUARE_LOCATION_ID = 'test_location_id';
     process.env.SQUARE_ENVIRONMENT = 'sandbox';
     process.env.GOOGLE_CALENDAR_ID = 'test@calendar.google.com';
@@ -55,7 +55,7 @@ describe('Configuration Module', () => {
     // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'invalid-email'; // Invalid email
-    process.env.***REMOVED*** = 'test_square_token';
+    process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
     process.env.SQUARE_LOCATION_ID = 'test_location_id';
     process.env.SQUARE_ENVIRONMENT = 'sandbox';
     process.env.GOOGLE_CALENDAR_ID = 'test@calendar.google.com';
@@ -73,7 +73,7 @@ describe('Configuration Module', () => {
     // Auth0 removed - using custom authentication
     process.env.SENDGRID_API_KEY = 'SG.test_key';
     process.env.SENDGRID_FROM_EMAIL = 'test@example.com';
-    process.env.***REMOVED*** = 'test_square_token';
+    process.env.SQUARE_ACCESS_TOKEN = 'test_square_token';
     process.env.SQUARE_LOCATION_ID = 'test_location_id';
     process.env.SQUARE_ENVIRONMENT = 'sandbox';
     process.env.GOOGLE_CALENDAR_ID = 'test@calendar.google.com';

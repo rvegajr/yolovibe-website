@@ -76,10 +76,10 @@ vercel --prod
 ### 2. **Configure Environment Variables:**
 Set these in Vercel Dashboard:
 ```env
-***REMOVED***=libsql://[your-turso-db-url]
-***REMOVED***=[your-turso-token]
+DATABASE_URL=libsql://[your-turso-db-url]
+TURSO_AUTH_TOKEN=[your-turso-token]
 SENDGRID_API_KEY=[your-sendgrid-key]
-***REMOVED***=[your-square-production-token]
+SQUARE_ACCESS_TOKEN=[your-square-production-token]
 SQUARE_ENVIRONMENT=production
 WEBSITE_URL=https://your-domain.com
 SUPPORT_EMAIL=support@your-domain.com

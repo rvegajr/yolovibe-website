@@ -37,8 +37,8 @@ jobs:
         run: |
           vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          ***REMOVED***: ${{ secrets.***REMOVED*** }}
-          ***REMOVED***: ${{ secrets.***REMOVED*** }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
           NODE_ENV: development
       
       - name: Deploy Preview

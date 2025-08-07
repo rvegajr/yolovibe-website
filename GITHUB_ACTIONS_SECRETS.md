@@ -33,12 +33,12 @@
 
 ### 🗄️ **Database Secrets** (REQUIRED FOR PRODUCTION)
 
-4. **`***REMOVED***`**
+4. **`DATABASE_URL`**
    - **Purpose**: Production database connection string
    - **Current Value**: `libsql://yolovibe-prod-rvegajr.aws-us-east-2.turso.io`
-   - **Note**: Use `***REMOVED***_FIXED` if the other has issues
+   - **Note**: Use `DATABASE_URL_FIXED` if the other has issues
 
-5. **`***REMOVED***`**
+5. **`TURSO_AUTH_TOKEN`**
    - **Purpose**: Authentication for Turso database
    - **Security**: Keep this extremely secure - it provides database access
 
@@ -55,12 +55,12 @@
 
 ### 💳 **Payment Processing Secrets** (REQUIRED FOR PAYMENTS)
 
-8. **`***REMOVED***`**
+8. **`SQUARE_ACCESS_TOKEN`**
    - **Purpose**: Square API authentication
    - **Environment**: Use production token for live payments
    - **Security**: Extremely sensitive - provides payment access
 
-9. **`***REMOVED***`**
+9. **`SQUARE_APPLICATION_ID`**
    - **Purpose**: Square application identifier
    - **How to get it**: Square Dashboard → Applications
 
@@ -102,7 +102,7 @@
 gh secret set VERCEL_TOKEN --repo rvegajr/yolovibe-website
 
 # Add database URL
-gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website
+gh secret set DATABASE_URL --repo rvegajr/yolovibe-website
 
 # Add all secrets from .env file (be careful!)
 gh secret set SENDGRID_API_KEY < <(grep SENDGRID_API_KEY .env | cut -d'=' -f2-)
@@ -115,8 +115,8 @@ If you want to start with just the essentials:
 1. **`VERCEL_TOKEN`** - Must have
 2. **`VERCEL_ORG_ID`** - Must have
 3. **`VERCEL_PROJECT_ID`** - Must have
-4. **`***REMOVED***`** - Must have for data persistence
-5. **`***REMOVED***`** - Must have for database access
+4. **`DATABASE_URL`** - Must have for data persistence
+5. **`TURSO_AUTH_TOKEN`** - Must have for database access
 
 ## 🔒 Security Best Practices
 
@@ -133,8 +133,8 @@ If you want to start with just the essentials:
 - [ ] Add VERCEL_TOKEN to GitHub secrets
 - [ ] Add VERCEL_ORG_ID to GitHub secrets
 - [ ] Add VERCEL_PROJECT_ID to GitHub secrets
-- [ ] Add ***REMOVED*** to GitHub secrets
-- [ ] Add ***REMOVED*** to GitHub secrets
+- [ ] Add DATABASE_URL to GitHub secrets
+- [ ] Add TURSO_AUTH_TOKEN to GitHub secrets
 - [ ] Add other secrets as needed for your features
 
 ## 🚀 Example GitHub Action for Vercel Deployment

@@ -9,24 +9,24 @@ All environments now have complete Google Calendar credentials:
 - ✅ SENDGRID_API_KEY
 - ✅ SENDGRID_FROM_EMAIL  
 - ✅ SENDGRID_FROM_NAME
-- ✅ ***REMOVED*** (production)
+- ✅ SQUARE_ACCESS_TOKEN (production)
 - ✅ SQUARE_ENVIRONMENT (production)
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
+- ✅ GOOGLE_CLIENT_ID
+- ✅ GOOGLE_CLIENT_SECRET
+- ✅ GOOGLE_REFRESH_TOKEN
 - ✅ GOOGLE_CALENDAR_ID
 
 #### Preview Environment ✅
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
+- ✅ GOOGLE_CLIENT_ID
+- ✅ GOOGLE_CLIENT_SECRET
+- ✅ GOOGLE_REFRESH_TOKEN
 - ✅ GOOGLE_CALENDAR_ID
 - ❌ Missing SendGrid & Square variables
 
 #### Development Environment ✅
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
-- ✅ ***REMOVED***
+- ✅ GOOGLE_CLIENT_ID
+- ✅ GOOGLE_CLIENT_SECRET
+- ✅ GOOGLE_REFRESH_TOKEN
 - ✅ GOOGLE_CALENDAR_ID
 - ❌ Missing SendGrid & Square variables
 
@@ -56,7 +56,7 @@ All environments now have complete Google Calendar credentials:
 - SENDGRID_API_KEY
 - SENDGRID_FROM_EMAIL  
 - SENDGRID_FROM_NAME
-- ***REMOVED*** (sandbox)
+- SQUARE_ACCESS_TOKEN (sandbox)
 - SQUARE_ENVIRONMENT (sandbox)
 
 ## 📋 Next Steps
@@ -76,7 +76,7 @@ All environments now have complete Google Calendar credentials:
    vercel env add SENDGRID_FROM_NAME development
    
    # Add Square sandbox to development
-   vercel env add ***REMOVED*** development
+   vercel env add SQUARE_ACCESS_TOKEN development
    vercel env add SQUARE_ENVIRONMENT development
    
    # Repeat for preview environment

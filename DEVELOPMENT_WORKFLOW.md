@@ -67,7 +67,7 @@ cp .env.example .env
 
 # Edit with your local values
 # For local dev, you can use:
-***REMOVED***=./local.db
+DATABASE_URL=./local.db
 NODE_ENV=development
 ```
 

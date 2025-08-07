@@ -67,8 +67,8 @@ turso db tokens create yolovibe-prod
 ### **Local Development (.env.local)**
 ```bash
 # Database Configuration
-***REMOVED***="libsql://yolovibe-prod-[username].turso.tech"
-***REMOVED***="eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
+DATABASE_URL="libsql://yolovibe-prod-[username].turso.tech"
+TURSO_AUTH_TOKEN="eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9..."
 
 # Backup Configuration
 BACKUP_ENABLED="true"
@@ -91,10 +91,10 @@ SENDGRID_API_KEY="..."
 ### **Production (Vercel)**
 ```bash
 # Set environment variables in Vercel
-vercel env add ***REMOVED***
+vercel env add DATABASE_URL
 # Enter: libsql://yolovibe-prod-[username].turso.tech
 
-vercel env add ***REMOVED***
+vercel env add TURSO_AUTH_TOKEN
 # Enter: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
 
 vercel env add BACKUP_ENABLED
@@ -301,8 +301,8 @@ df -h
 #### **Environment Variables Not Set**
 ```bash
 # Verify local variables
-echo $***REMOVED***
-echo $***REMOVED***
+echo $DATABASE_URL
+echo $TURSO_AUTH_TOKEN
 
 # Verify Vercel variables
 vercel env ls

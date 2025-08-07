@@ -157,8 +157,8 @@ GOOGLE_CALENDAR_ID=your-calendar-id@group.calendar.google.com
 USE_APPLICATION_DEFAULT_CREDENTIALS=true
 
 # Optional (if not using ADC)
-***REMOVED***=your-client-id
-***REMOVED***=your-client-secret
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_SERVICE_ACCOUNT_KEY_PATH=./path-to-service-account.json
 ```
 

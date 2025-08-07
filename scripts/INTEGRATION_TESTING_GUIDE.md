@@ -67,7 +67,7 @@ npm run test:integrations:prod
 
 1. **Google Calendar Setup** (Optional)
    - Set up OAuth credentials in Google Cloud Console
-   - Add `***REMOVED***`, `***REMOVED***`, and `***REMOVED***` to environment
+   - Add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REFRESH_TOKEN` to environment
 
 2. **Square Location ID**
    - Configure `SQUARE_LOCATION_ID` for both sandbox and production
@@ -89,7 +89,7 @@ npm run test:integrations:prod
 - Check Square dashboard for correct environment
 
 ### Database Issues
-- Ensure `***REMOVED***` and `***REMOVED***` are set
+- Ensure `DATABASE_URL` and `TURSO_AUTH_TOKEN` are set
 - Check Turso dashboard for database status
 - Verify database schema is deployed
 

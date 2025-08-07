@@ -11,20 +11,20 @@ echo ""
 if [ -f ".env" ]; then
     echo "✅ Found existing .env file"
     echo "📝 Current Square configuration:"
-    grep -E "SQUARE_|***REMOVED***|NODE_ENV" .env 2>/dev/null || echo "   No Square variables found"
+    grep -E "SQUARE_|DATABASE_URL|NODE_ENV" .env 2>/dev/null || echo "   No Square variables found"
 else
     echo "📝 Creating new .env file..."
     cat > .env << 'EOF'
 # YOLOVibe Local Development Environment
-***REMOVED***="file:local.db"
+DATABASE_URL="file:local.db"
 NODE_ENV="development"
 APP_URL="http://localhost:4321"
 JWT_SECRET="local-development-secret-key-change-in-production"
 ADMIN_EMAIL="admin@localhost"
 
 # Square Sandbox Configuration (REPLACE WITH YOUR VALUES)
-***REMOVED***="sandbox-sq0idb-REPLACE-WITH-YOUR-APP-ID"
-***REMOVED***="sandbox-sq0atb-REPLACE-WITH-YOUR-ACCESS-TOKEN"
+SQUARE_APPLICATION_ID="sandbox-sq0idb-REPLACE-WITH-YOUR-APP-ID"
+SQUARE_ACCESS_TOKEN="sandbox-sq0atb-REPLACE-WITH-YOUR-ACCESS-TOKEN"
 SQUARE_ENVIRONMENT="sandbox"
 
 # Optional: Email service (for testing)

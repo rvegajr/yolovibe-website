@@ -113,12 +113,12 @@ class IntegrationTester {
     const startTime = Date.now();
 
     try {
-      const accessToken = process.env.***REMOVED***;
+      const accessToken = process.env.SQUARE_ACCESS_TOKEN;
       const environment = process.env.SQUARE_ENVIRONMENT || 'sandbox';
       const locationId = process.env.SQUARE_LOCATION_ID;
 
       if (!accessToken) {
-        throw new Error('***REMOVED*** not configured');
+        throw new Error('SQUARE_ACCESS_TOKEN not configured');
       }
 
       // Determine the correct API endpoint based on environment
@@ -191,9 +191,9 @@ class IntegrationTester {
 
     try {
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
-      const clientId = process.env.***REMOVED***;
-      const clientSecret = process.env.***REMOVED***;
-      const refreshToken = process.env.***REMOVED***;
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+      const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 
       if (!calendarId) {
         throw new Error('GOOGLE_CALENDAR_ID not configured');
@@ -293,8 +293,8 @@ class IntegrationTester {
     const startTime = Date.now();
 
     try {
-      const databaseUrl = process.env.***REMOVED***;
-      const authToken = process.env.***REMOVED***;
+      const databaseUrl = process.env.DATABASE_URL;
+      const authToken = process.env.TURSO_AUTH_TOKEN;
 
       if (!databaseUrl) {
         // Check for local database

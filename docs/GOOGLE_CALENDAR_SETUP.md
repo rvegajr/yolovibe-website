@@ -116,8 +116,8 @@ gcloud iam service-accounts keys create googlecloud.json \
 Add the following to your `.env` file:
 
 ```
-***REMOVED***=your-client-id
-***REMOVED***=your-client-secret
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_CALENDAR_ID=your-calendar-id
 GOOGLE_SERVICE_ACCOUNT_KEY_PATH=./googlecloud.json
 ```

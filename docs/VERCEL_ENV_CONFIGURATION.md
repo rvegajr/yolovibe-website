@@ -14,7 +14,7 @@ Our application requires the following environment variables:
 - `SENDGRID_FROM_EMAIL` - Email address used as sender
 
 ### Square Configuration
-- `***REMOVED***` - Access token for Square API
+- `SQUARE_ACCESS_TOKEN` - Access token for Square API
 - `SQUARE_LOCATION_ID` - Square location ID
 - `SQUARE_ENVIRONMENT` - Either 'sandbox' or 'production'
 
@@ -50,7 +50,7 @@ Production values should include:
 ```
 NODE_ENV=production
 SQUARE_ENVIRONMENT=production
-***REMOVED***=[live token]
+SQUARE_ACCESS_TOKEN=[live token]
 SQUARE_LOCATION_ID=[production location ID]
 SENDGRID_API_KEY=[live key]
 SENDGRID_FROM_EMAIL=contact@yolovibe.com
@@ -74,7 +74,7 @@ Staging values should include:
 ```
 NODE_ENV=staging
 SQUARE_ENVIRONMENT=sandbox
-***REMOVED***=[sandbox token]
+SQUARE_ACCESS_TOKEN=[sandbox token]
 SQUARE_LOCATION_ID=[sandbox location ID]
 SENDGRID_API_KEY=[test key]
 SENDGRID_FROM_EMAIL=test@yolovibe.com

@@ -95,8 +95,8 @@ export class DatabaseConnection {
     console.log('🚀 Serverless database initialization - using LibSQL/Turso!');
 
     // 🎯 PERFECT SERVERLESS DATABASE CONFIGURATION!
-    const dbUrl = process.env.***REMOVED*** || 'file:local.db';
-    const authToken = process.env.***REMOVED***;
+    const dbUrl = process.env.DATABASE_URL || 'file:local.db';
+    const authToken = process.env.TURSO_AUTH_TOKEN;
 
     console.log('☁️ Connecting to LibSQL database:', dbUrl.startsWith('file:') ? 'local file' : 'remote');
     this.db = createClient({
@@ -116,12 +116,12 @@ export class DatabaseConnection {
     console.log('🎯 Development environment - using LibSQL for consistency!');
     
     // Use file-based LibSQL for development
-    const dbUrl = process.env.***REMOVED*** || 'file:local.db';
+    const dbUrl = process.env.DATABASE_URL || 'file:local.db';
     
     console.log('☁️ Connecting to LibSQL database');
     this.db = createClient({
       url: dbUrl,
-      authToken: process.env.***REMOVED*** // Optional for local file
+      authToken: process.env.TURSO_AUTH_TOKEN // Optional for local file
     });
     
     this.isTurso = true;
@@ -136,9 +136,9 @@ export class DatabaseConnection {
       throw new Error('Turso client not available. Install with: npm install @libsql/client');
     }
 
-    const authToken = process.env.***REMOVED***;
+    const authToken = process.env.TURSO_AUTH_TOKEN;
     if (!authToken) {
-      throw new Error('***REMOVED*** environment variable is required for Turso connection');
+      throw new Error('TURSO_AUTH_TOKEN environment variable is required for Turso connection');
     }
 
     try {
@@ -201,7 +201,7 @@ export class DatabaseConnection {
    */
   async createBackup(): Promise<void> {
     try {
-      if (this.isTurso && process.env.***REMOVED***) {
+      if (this.isTurso && process.env.DATABASE_URL) {
         console.log('💾 Creating Turso database backup...');
         
         // For Turso, we'll use the dump functionality
@@ -704,16 +704,16 @@ export function getDatabaseConnection(): DatabaseConnection {
   if (!dbInstance) {
     let dbPath: string;
     
-    if (process.env.***REMOVED***) {
+    if (process.env.DATABASE_URL) {
       // Use external database URL (Turso, PostgreSQL, MySQL)
-      dbPath = process.env.***REMOVED***;
+      dbPath = process.env.DATABASE_URL;
     } else if (process.env.DB_PATH) {
       // Use explicit path from environment (for testing)
       dbPath = process.env.DB_PATH;
     } else if (process.env.NODE_ENV === 'production') {
       // Production fallback (not recommended)
       dbPath = '/tmp/yolovibe.db';
-      console.warn('⚠️ Using temporary database in production. Configure ***REMOVED*** for persistence.');
+      console.warn('⚠️ Using temporary database in production. Configure DATABASE_URL for persistence.');
     } else {
       // Local development
       dbPath = join(process.cwd(), 'data', 'yolovibe.db');

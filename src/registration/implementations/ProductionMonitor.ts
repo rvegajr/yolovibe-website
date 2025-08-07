@@ -158,7 +158,7 @@ export class ProductionMonitor {
     
     try {
       // Check Square configuration
-      if (!process.env.***REMOVED***) {
+      if (!process.env.SQUARE_APPLICATION_ID) {
         return {
           service: 'Payment Service',
           status: 'DEGRADED',

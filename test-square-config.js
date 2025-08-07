@@ -29,12 +29,12 @@ async function testSquareConfig() {
   
   // Check environment variables
   console.log('📋 Environment Variables:');
-  console.log(`   ***REMOVED***: ${process.env.***REMOVED*** ? '✅ SET' : '❌ NOT SET'}`);
-  console.log(`   ***REMOVED***: ${process.env.***REMOVED*** ? '✅ SET' : '❌ NOT SET'}`);
+  console.log(`   SQUARE_APPLICATION_ID: ${process.env.SQUARE_APPLICATION_ID ? '✅ SET' : '❌ NOT SET'}`);
+  console.log(`   SQUARE_ACCESS_TOKEN: ${process.env.SQUARE_ACCESS_TOKEN ? '✅ SET' : '❌ NOT SET'}`);
   console.log(`   SQUARE_ENVIRONMENT: ${process.env.SQUARE_ENVIRONMENT || 'NOT SET'}`);
   console.log(`   SQUARE_LOCATION_ID: ${process.env.SQUARE_LOCATION_ID || 'NOT SET'}`);
   
-  if (!process.env.***REMOVED*** || !process.env.***REMOVED***) {
+  if (!process.env.SQUARE_APPLICATION_ID || !process.env.SQUARE_ACCESS_TOKEN) {
     console.log('\n❌ Missing required Square credentials!');
     console.log('📝 Please update your .env file with your Square Application ID');
     return;
@@ -45,8 +45,8 @@ async function testSquareConfig() {
     // Create config object from environment variables
     const config = {
       square: {
-        applicationId: process.env.***REMOVED***,
-        accessToken: process.env.***REMOVED***,
+        applicationId: process.env.SQUARE_APPLICATION_ID,
+        accessToken: process.env.SQUARE_ACCESS_TOKEN,
         environment: process.env.SQUARE_ENVIRONMENT || 'sandbox',
         locationId: process.env.SQUARE_LOCATION_ID
       }

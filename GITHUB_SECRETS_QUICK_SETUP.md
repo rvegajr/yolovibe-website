@@ -31,8 +31,8 @@ gh secret set VERCEL_ORG_ID --repo rvegajr/yolovibe-website --body "team_CXtiPAI
 gh secret set VERCEL_PROJECT_ID --repo rvegajr/yolovibe-website --body "prj_AI6KFCZetcXi58MMsGnuH4KDaCag"
 
 # Database secrets (REQUIRED)
-gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website --body "libsql://yolovibe-prod-rvegajr.aws-us-east-2.turso.io"
-gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website
+gh secret set DATABASE_URL --repo rvegajr/yolovibe-website --body "libsql://yolovibe-prod-rvegajr.aws-us-east-2.turso.io"
+gh secret set TURSO_AUTH_TOKEN --repo rvegajr/yolovibe-website
 
 # Environment setting
 gh secret set NODE_ENV --repo rvegajr/yolovibe-website --body "production"
@@ -40,8 +40,8 @@ gh secret set NODE_ENV --repo rvegajr/yolovibe-website --body "production"
 # Optional but recommended
 gh secret set SENDGRID_API_KEY --repo rvegajr/yolovibe-website
 gh secret set SENDGRID_FROM_EMAIL --repo rvegajr/yolovibe-website
-gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website
-gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website
+gh secret set SQUARE_ACCESS_TOKEN --repo rvegajr/yolovibe-website
+gh secret set SQUARE_APPLICATION_ID --repo rvegajr/yolovibe-website
 ```
 
 ### 3. **Or Add via GitHub Web UI**
@@ -54,8 +54,8 @@ gh secret set ***REMOVED*** --repo rvegajr/yolovibe-website
 | VERCEL_TOKEN | (your token from step 1) |
 | VERCEL_ORG_ID | team_CXtiPAIj022FycrTCz0TAltC |
 | VERCEL_PROJECT_ID | prj_AI6KFCZetcXi58MMsGnuH4KDaCag |
-| ***REMOVED*** | libsql://yolovibe-prod-rvegajr.aws-us-east-2.turso.io |
-| ***REMOVED*** | (your token from .env) |
+| DATABASE_URL | libsql://yolovibe-prod-rvegajr.aws-us-east-2.turso.io |
+| TURSO_AUTH_TOKEN | (your token from .env) |
 | NODE_ENV | production |
 
 ## 📝 Basic GitHub Action Workflow
@@ -89,8 +89,8 @@ jobs:
       - name: Build Project
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          ***REMOVED***: ${{ secrets.***REMOVED*** }}
-          ***REMOVED***: ${{ secrets.***REMOVED*** }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
           NODE_ENV: ${{ secrets.NODE_ENV }}
       
       - name: Deploy to Production
@@ -103,8 +103,8 @@ jobs:
 - [ ] Add VERCEL_TOKEN to GitHub secrets
 - [ ] Add VERCEL_ORG_ID (team_CXtiPAIj022FycrTCz0TAltC)
 - [ ] Add VERCEL_PROJECT_ID (prj_AI6KFCZetcXi58MMsGnuH4KDaCag)
-- [ ] Add ***REMOVED***
-- [ ] Add ***REMOVED***
+- [ ] Add DATABASE_URL
+- [ ] Add TURSO_AUTH_TOKEN
 - [ ] Create workflow file in `.github/workflows/deploy.yml`
 - [ ] Test deployment by pushing to main branch
 

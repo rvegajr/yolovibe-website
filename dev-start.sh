@@ -34,7 +34,7 @@ if [ ! -f ".env" ]; then
     else
         echo "❌ No .env.example found - creating basic .env..."
         cat > .env << EOF
-***REMOVED***=./local.db
+DATABASE_URL=./local.db
 NODE_ENV=development
 EOF
         echo "✅ Created basic .env file"

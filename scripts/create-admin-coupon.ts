@@ -28,8 +28,8 @@ async function createAdminCoupon(): Promise<void> {
   try {
     // Connect to production database
     const db = createClient({
-      url: process.env.***REMOVED***!,
-      authToken: process.env.***REMOVED***!,
+      url: process.env.DATABASE_URL!,
+      authToken: process.env.TURSO_AUTH_TOKEN!,
     });
 
     // Generate coupon code

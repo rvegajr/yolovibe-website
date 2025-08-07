@@ -80,7 +80,7 @@ git pull origin develop
 ```env
 NODE_ENV=production
 SQUARE_ENVIRONMENT=production
-***REMOVED***=EAAAl... (live token)
+SQUARE_ACCESS_TOKEN=EAAAl... (live token)
 SENDGRID_API_KEY=SG.live... (live key)
 AUTH0_DOMAIN=yolovibe.auth0.com
 ```
@@ -89,7 +89,7 @@ AUTH0_DOMAIN=yolovibe.auth0.com
 ```env
 NODE_ENV=staging
 SQUARE_ENVIRONMENT=sandbox
-***REMOVED***=EAAAl... (sandbox token)
+SQUARE_ACCESS_TOKEN=EAAAl... (sandbox token)
 SENDGRID_API_KEY=SG.test... (test key)
 AUTH0_DOMAIN=yolovibe-dev.auth0.com
 ```

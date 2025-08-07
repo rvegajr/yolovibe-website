@@ -175,14 +175,14 @@ export class ProductionDataValidator {
     // In production, these are required. In development, they're optional.
     const productionRequiredEnvVars = [
       'SENDGRID_API_KEY',
-      '***REMOVED***'
+      'SQUARE_APPLICATION_ID'
     ];
     
-    // ***REMOVED*** is always optional (we have a default)
+    // DATABASE_URL is always optional (we have a default)
     const optionalEnvVars = [
-      '***REMOVED***', // Has default: 'file:local.db'
-      '***REMOVED***',
-      '***REMOVED***'
+      'DATABASE_URL', // Has default: 'file:local.db'
+      'TURSO_AUTH_TOKEN',
+      'SQUARE_ACCESS_TOKEN'
     ];
     
     if (isProduction) {

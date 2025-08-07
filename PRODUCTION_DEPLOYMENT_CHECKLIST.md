@@ -3,10 +3,10 @@
 ## ✅ Pre-Deployment Checklist
 
 ### 📋 Environment Variables (CRITICAL)
-- [ ] `***REMOVED***` - Turso database connection string
-- [ ] `***REMOVED***` - Turso authentication token
+- [ ] `DATABASE_URL` - Turso database connection string
+- [ ] `TURSO_AUTH_TOKEN` - Turso authentication token
 - [ ] `SENDGRID_API_KEY` - Email service API key
-- [ ] `***REMOVED***` - Payment processing token
+- [ ] `SQUARE_ACCESS_TOKEN` - Payment processing token
 - [ ] `SQUARE_ENVIRONMENT` - Set to "production"
 - [ ] `GOOGLE_CALENDAR_CREDENTIALS` - Calendar integration
 - [ ] `WEBSITE_URL` - Your production domain
@@ -47,10 +47,10 @@ Go to Vercel Dashboard → Your Project → Settings → Environment Variables
 
 **Required Variables:**
 ```env
-***REMOVED***=libsql://[your-turso-db-url]
-***REMOVED***=[your-turso-token]
+DATABASE_URL=libsql://[your-turso-db-url]
+TURSO_AUTH_TOKEN=[your-turso-token]
 SENDGRID_API_KEY=[your-sendgrid-key]
-***REMOVED***=[your-square-production-token]
+SQUARE_ACCESS_TOKEN=[your-square-production-token]
 SQUARE_ENVIRONMENT=production
 WEBSITE_URL=https://your-domain.com
 SUPPORT_EMAIL=support@your-domain.com
@@ -154,8 +154,8 @@ npm run usage:alerts
 turso db shell yolovibe-prod
 
 # Verify environment variables
-echo $***REMOVED***
-echo $***REMOVED***
+echo $DATABASE_URL
+echo $TURSO_AUTH_TOKEN
 ```
 
 #### Email Not Sending

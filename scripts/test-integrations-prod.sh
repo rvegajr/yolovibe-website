@@ -16,7 +16,7 @@ fi
 cat > .env.prod << EOF
 NODE_ENV=production
 SQUARE_ENVIRONMENT=production
-***REMOVED***=\${SQUARE_PRODUCTION_TOKEN}
+SQUARE_ACCESS_TOKEN=\${SQUARE_PRODUCTION_TOKEN}
 SENDGRID_API_KEY=\${SENDGRID_API_KEY}
 SENDGRID_FROM_EMAIL=contact@yolovibecodebootcamp.com
 SENDGRID_FROM_NAME=YOLOVibeCode
@@ -24,7 +24,7 @@ EOF
 
 # Add other environment variables if they exist in current .env
 if [ -f .env ]; then
-    grep -E "^(GOOGLE_|***REMOVED***|TURSO_|SQUARE_LOCATION_ID)" .env >> .env.prod 2>/dev/null || true
+    grep -E "^(GOOGLE_|DATABASE_URL|TURSO_|SQUARE_LOCATION_ID)" .env >> .env.prod 2>/dev/null || true
 fi
 
 # Run the test with production environment

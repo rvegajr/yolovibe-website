@@ -118,7 +118,7 @@ async function getRefreshToken() {
           if (tokens.refresh_token) {
             console.log('🔑 REFRESH TOKEN (add this to your .env file):');
             console.log('');
-            console.log(`***REMOVED***=${tokens.refresh_token}`);
+            console.log(`GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`);
             console.log('');
             console.log('📝 Instructions:');
             console.log('1. Copy the line above');
@@ -128,7 +128,7 @@ async function getRefreshToken() {
             
             // Also save to a file for convenience
             const tokenFile = path.join(__dirname, 'google-refresh-token.txt');
-            fs.writeFileSync(tokenFile, `***REMOVED***=${tokens.refresh_token}\n`);
+            fs.writeFileSync(tokenFile, `GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}\n`);
             console.log(`💾 Token also saved to: ${tokenFile}`);
           } else {
             console.log('⚠️  Warning: No refresh token received.');

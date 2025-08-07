@@ -64,9 +64,9 @@ The dashboard shows:
 2. **Verify Environment Variables**
    ```bash
    # Required for production:
-   ***REMOVED***=your_database_url
+   DATABASE_URL=your_database_url
    SENDGRID_API_KEY=your_sendgrid_key
-   ***REMOVED***=your_square_id
+   SQUARE_APPLICATION_ID=your_square_id
    
    # Production indicators:
    NODE_ENV=production
@@ -189,7 +189,7 @@ sqlite3 your-database.db < src/registration/database/reminder-schema.sql
 ```
 
 ### "Using fallback data"
-- Check ***REMOVED*** environment variable
+- Check DATABASE_URL environment variable
 - Verify database connection
 - Ensure tables have real data (not empty)
 
@@ -199,7 +199,7 @@ sqlite3 your-database.db < src/registration/database/reminder-schema.sql
 - Test email sending manually
 
 ### "Payment service degraded"
-- Check ***REMOVED*** environment variable
+- Check SQUARE_APPLICATION_ID environment variable
 - Verify Square account configuration
 
 ---

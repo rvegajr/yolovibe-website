@@ -46,16 +46,16 @@ async function getTokens() {
     if (tokens.refresh_token) {
       console.log('🔑 REFRESH TOKEN (add this to your .env file):');
       console.log('');
-      console.log(`***REMOVED***=${tokens.refresh_token}`);
+      console.log(`GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`);
       console.log('');
       
       // Save to file
       const tokenFile = path.join(__dirname, 'google-refresh-token.txt');
-      fs.writeFileSync(tokenFile, `***REMOVED***=${tokens.refresh_token}\n`);
+      fs.writeFileSync(tokenFile, `GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}\n`);
       console.log(`💾 Token saved to: ${tokenFile}`);
       console.log('');
       console.log('📝 Next steps:');
-      console.log('1. Add the ***REMOVED*** line to your .env file');
+      console.log('1. Add the GOOGLE_REFRESH_TOKEN line to your .env file');
       console.log('2. Run: npm run test:integrations');
       console.log('   to verify Google Calendar is now working');
     } else {

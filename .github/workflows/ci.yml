@@ -62,7 +62,7 @@ jobs:
           echo "AUTH0_CLIENT_SECRET=mock_client_secret" >> .env
           echo "SENDGRID_API_KEY=SG.mock_key" >> .env
           echo "SENDGRID_FROM_EMAIL=test@example.com" >> .env
-          echo "***REMOVED***=mock_square_token" >> .env
+          echo "SQUARE_ACCESS_TOKEN=mock_square_token" >> .env
           echo "SQUARE_LOCATION_ID=mock_location_id" >> .env
           echo "GOOGLE_CALENDAR_ID=mock@calendar.google.com" >> .env
 
