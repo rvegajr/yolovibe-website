@@ -1,3 +1,19 @@
 {
-  "framework": "astro"
+  "version": 2,
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps",
+  "functions": {
+    "src/pages/api/**/*.ts": {
+      "runtime": "nodejs22.x"
+    },
+    "src/pages/api/**/*.js": {
+      "runtime": "nodejs22.x"
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/404.html", "status": 404 }
+  ]
 }

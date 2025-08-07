@@ -5,6 +5,11 @@
   "engines": {
     "node": "20.x"
   },
+  "overrides": {
+    "rollup": {
+      "@rollup/rollup-linux-x64-gnu": "4.9.5"
+    }
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
