@@ -80,12 +80,31 @@ import { Icon } from "astro-icon/components";
                   
                   <!-- Custom Calendar -->
                   <div id="custom-calendar" class="bg-black/30 border border-indigo-500/30 rounded-lg p-4 hidden">
+                    <!-- Month/Year Navigation -->
                     <div class="flex justify-between items-center mb-4">
-                      <button type="button" id="prev-month" class="text-cyan-400 hover:text-cyan-300 p-1">
+                      <button type="button" id="prev-month" class="text-cyan-400 hover:text-cyan-300 p-1 transition-colors">
                         ← Previous
                       </button>
-                      <h3 id="calendar-month-year" class="text-white font-semibold"></h3>
-                      <button type="button" id="next-month" class="text-cyan-400 hover:text-cyan-300 p-1">
+                      <div class="flex items-center space-x-2">
+                        <select id="month-selector" class="bg-black/50 border border-indigo-500/30 text-white text-sm rounded px-2 py-1 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20">
+                          <option value="0">January</option>
+                          <option value="1">February</option>
+                          <option value="2">March</option>
+                          <option value="3">April</option>
+                          <option value="4">May</option>
+                          <option value="5">June</option>
+                          <option value="6">July</option>
+                          <option value="7">August</option>
+                          <option value="8">September</option>
+                          <option value="9">October</option>
+                          <option value="10">November</option>
+                          <option value="11">December</option>
+                        </select>
+                        <select id="year-selector" class="bg-black/50 border border-indigo-500/30 text-white text-sm rounded px-2 py-1 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20">
+                          <!-- Years will be populated by JavaScript -->
+                        </select>
+                      </div>
+                      <button type="button" id="next-month" class="text-cyan-400 hover:text-cyan-300 p-1 transition-colors">
                         Next →
                       </button>
                     </div>
@@ -640,6 +659,45 @@ import { Icon } from "astro-icon/components";
         } as UserInteractionEvent);
         
         this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+        this.updateMonthYearSelectors();
+        await this.renderCalendar();
+      });
+
+      // 🎯 MONTH/YEAR SELECTOR EVENT HANDLERS
+      const monthSelector = document.getElementById('month-selector') as HTMLSelectElement;
+      const yearSelector = document.getElementById('year-selector') as HTMLSelectElement;
+
+      monthSelector?.addEventListener('change', async () => {
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'change',
+          element: 'calendar-month-selector',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId,
+          metadata: { 
+            newMonth: parseInt(monthSelector.value),
+            currentYear: this.currentDate.getFullYear()
+          }
+        } as UserInteractionEvent);
+        
+        this.currentDate.setMonth(parseInt(monthSelector.value));
+        await this.renderCalendar();
+      });
+
+      yearSelector?.addEventListener('change', async () => {
+        await this.emitEvent(EventTypes.USER_INTERACTION, {
+          action: 'change',
+          element: 'calendar-year-selector',
+          page: 'booking',
+          timestamp: new Date(),
+          source: this.componentId,
+          metadata: { 
+            newYear: parseInt(yearSelector.value),
+            currentMonth: this.currentDate.getMonth()
+          }
+        } as UserInteractionEvent);
+        
+        this.currentDate.setFullYear(parseInt(yearSelector.value));
         await this.renderCalendar();
       });
 
@@ -827,7 +885,44 @@ import { Icon } from "astro-icon/components";
         }
       }
 
+      // 🎯 ENHANCED: Initialize month/year selectors
+      this.initializeMonthYearSelectors();
       await this.renderCalendar();
+    }
+
+    // 🎯 NEW: Initialize month/year selectors
+    private initializeMonthYearSelectors(): void {
+      const monthSelector = document.getElementById('month-selector') as HTMLSelectElement;
+      const yearSelector = document.getElementById('year-selector') as HTMLSelectElement;
+      
+      if (!monthSelector || !yearSelector) return;
+
+      // Set current month
+      monthSelector.value = this.currentDate.getMonth().toString();
+
+      // Populate years (current year + 2 years ahead)
+      yearSelector.innerHTML = '';
+      const currentYear = new Date().getFullYear();
+      for (let year = currentYear; year <= currentYear + 2; year++) {
+        const option = document.createElement('option');
+        option.value = year.toString();
+        option.textContent = year.toString();
+        yearSelector.appendChild(option);
+      }
+
+      // Set current year
+      yearSelector.value = this.currentDate.getFullYear().toString();
+    }
+
+    // 🎯 NEW: Update month/year selectors to match current date
+    private updateMonthYearSelectors(): void {
+      const monthSelector = document.getElementById('month-selector') as HTMLSelectElement;
+      const yearSelector = document.getElementById('year-selector') as HTMLSelectElement;
+      
+      if (!monthSelector || !yearSelector) return;
+
+      monthSelector.value = this.currentDate.getMonth().toString();
+      yearSelector.value = this.currentDate.getFullYear().toString();
     }
 
     private async renderCalendar(): Promise<void> {
@@ -844,10 +939,8 @@ import { Icon } from "astro-icon/components";
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const monthYearDisplay = document.getElementById('calendar-month-year');
-      if (monthYearDisplay) {
-        monthYearDisplay.textContent = `${this.currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
-      }
+      // 🎯 ENHANCED: Update month/year selectors to match current date
+      this.updateMonthYearSelectors();
 
       this.calendarDays.innerHTML = '';
 
