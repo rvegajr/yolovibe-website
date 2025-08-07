@@ -6,17 +6,19 @@
  */
 
 import { createClient } from '@libsql/client';
-import { config } from '../src/infrastructure/config.js';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 interface Coupon {
   code: string;
-  discount_type: 'percentage' | 'fixed';
-  discount_value: number;
-  max_uses: number;
-  current_uses: number;
+  description: string;
+  discount_percentage: number;
+  usage_limit: number;
+  times_used: number;
   expires_at: string;
   is_active: boolean;
-  description: string;
 }
 
 async function createAdminCoupon(): Promise<void> {
@@ -24,13 +26,10 @@ async function createAdminCoupon(): Promise<void> {
   console.log('='.repeat(50));
 
   try {
-    // Load configuration
-    const appConfig = config.load();
-    
     // Connect to production database
     const db = createClient({
-      url: appConfig.turso.databaseUrl,
-      authToken: appConfig.turso.authToken,
+      url: process.env.***REMOVED***!,
+      authToken: process.env.***REMOVED***!,
     });
 
     // Generate coupon code
@@ -40,19 +39,18 @@ async function createAdminCoupon(): Promise<void> {
 
     const coupon: Coupon = {
       code: couponCode,
-      discount_type: 'percentage',
-      discount_value: 100, // 100% off
-      max_uses: 5,
-      current_uses: 0,
+      description: 'Admin 100% discount coupon - 5 uses available',
+      discount_percentage: 100, // 100% off
+      usage_limit: 5,
+      times_used: 0,
       expires_at: expiryDate.toISOString(),
-      is_active: true,
-      description: 'Admin 100% discount coupon - 5 uses available'
+      is_active: true
     };
 
     console.log(`📝 Coupon Details:`);
     console.log(`   Code: ${coupon.code}`);
-    console.log(`   Discount: ${coupon.discount_value}% off`);
-    console.log(`   Max Uses: ${coupon.max_uses}`);
+    console.log(`   Discount: ${coupon.discount_percentage}% off`);
+    console.log(`   Max Uses: ${coupon.usage_limit}`);
     console.log(`   Expires: ${new Date(coupon.expires_at).toLocaleDateString()}`);
 
     // Check if coupon already exists
@@ -67,23 +65,21 @@ async function createAdminCoupon(): Promise<void> {
       // Update existing coupon
       await db.execute({
         sql: `UPDATE coupons SET 
-              discount_type = ?, 
-              discount_value = ?, 
-              max_uses = ?, 
-              current_uses = ?, 
+              description = ?, 
+              discount_percentage = ?, 
+              usage_limit = ?, 
+              times_used = ?, 
               expires_at = ?, 
               is_active = ?, 
-              description = ?,
               updated_at = CURRENT_TIMESTAMP
               WHERE code = ?`,
         args: [
-          coupon.discount_type,
-          coupon.discount_value,
-          coupon.max_uses,
-          coupon.current_uses,
+          coupon.description,
+          coupon.discount_percentage,
+          coupon.usage_limit,
+          coupon.times_used,
           coupon.expires_at,
           coupon.is_active ? 1 : 0,
-          coupon.description,
           coupon.code
         ]
       });
@@ -93,18 +89,17 @@ async function createAdminCoupon(): Promise<void> {
       // Insert new coupon
       await db.execute({
         sql: `INSERT INTO coupons (
-                code, discount_type, discount_value, max_uses, current_uses,
-                expires_at, is_active, description, created_at, updated_at
-              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+                code, description, discount_percentage, usage_limit, times_used,
+                expires_at, is_active, created_at, updated_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         args: [
           coupon.code,
-          coupon.discount_type,
-          coupon.discount_value,
-          coupon.max_uses,
-          coupon.current_uses,
+          coupon.description,
+          coupon.discount_percentage,
+          coupon.usage_limit,
+          coupon.times_used,
           coupon.expires_at,
-          coupon.is_active ? 1 : 0,
-          coupon.description
+          coupon.is_active ? 1 : 0
         ]
       });
 
@@ -122,8 +117,8 @@ async function createAdminCoupon(): Promise<void> {
       console.log('\n🎉 Coupon Successfully Created/Updated!');
       console.log('='.repeat(50));
       console.log(`🎫 Coupon Code: ${savedCoupon.code}`);
-      console.log(`💰 Discount: ${savedCoupon.discount_value}% off`);
-      console.log(`📊 Uses Available: ${savedCoupon.max_uses - Number(savedCoupon.current_uses)}`);
+      console.log(`💰 Discount: ${savedCoupon.discount_percentage}% off`);
+      console.log(`📊 Uses Available: ${Number(savedCoupon.usage_limit) - Number(savedCoupon.times_used)}`);
       console.log(`📅 Expires: ${new Date(savedCoupon.expires_at as string).toLocaleDateString()}`);
       console.log(`✅ Status: ${savedCoupon.is_active ? 'Active' : 'Inactive'}`);
       
