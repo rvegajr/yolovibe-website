@@ -8,7 +8,7 @@ export default defineConfig({
   testDir: './tests/e2e',
   
   /* Only run production-specific tests */
-  testMatch: /0[6-9]-.*\.spec\.ts/,
+  testMatch: /0[6-9]-.*\.spec\.ts|10-.*\.spec\.ts/,
   
   /* Run tests in files in parallel */
   fullyParallel: true,
