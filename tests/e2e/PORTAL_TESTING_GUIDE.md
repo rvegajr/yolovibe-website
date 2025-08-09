@@ -7,10 +7,10 @@ The login form had a JavaScript error that's now been fixed. The issue was `Glob
 
 ### **Admin Credentials:**
 - **Email:** `admin@yolovibe.com`
-- **Password:** `admin123`
+- **Password:** `AdminPassword123!`
 
 ### **User Credentials:**
-- **Email:** `instructor@yolovibe.com`
+- **Email:** `instructor@yolovibecodebootcamp.com`
 - **Password:** `instructor123`
 
 ## 🧪 Running the Tests

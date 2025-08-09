@@ -31,10 +31,12 @@ export class EmailService {
     // Replace template variables with actual data
     const processedTemplate = this.processTemplate(template, templateData);
     
+    const env = process.env.NODE_ENV || 'development';
+    const envPrefix = env !== 'production' ? `[${env.toUpperCase()}] ` : '';
     const msg: MailDataRequired = {
       to,
       from: this.fromEmail,
-      subject: processedTemplate.subject,
+      subject: `${envPrefix}${processedTemplate.subject}`,
       text: processedTemplate.text,
       html: processedTemplate.html,
     };

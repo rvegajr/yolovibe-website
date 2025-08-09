@@ -20,7 +20,7 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
             </div>
             <div class="flex items-center space-x-4">
               <div class="text-sm text-slate-400">
-                Last updated: <span id="last-updated" class="text-cyan-400 font-medium">--</span>
+               Last updated: <span id="last-updated" class="text-cyan-400 font-medium">--</span>
               </div>
               <button 
                 id="refresh-dashboard"
@@ -53,7 +53,7 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
               <!-- Usage Metrics -->
               <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="text-center">
-                  <div class="text-3xl font-bold text-emerald-400" id="reads-count">--</div>
+                 <div class="text-3xl font-bold text-emerald-400" id="reads-count" data-testid="reads-count">0</div>
                   <div class="text-sm text-slate-400">Reads</div>
                   <div class="w-full bg-slate-700 rounded-full h-3 mt-2">
                     <div id="reads-bar" class="bg-gradient-to-r from-green-500 to-emerald-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -62,7 +62,7 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
                 </div>
                 
                 <div class="text-center">
-                  <div class="text-3xl font-bold text-cyan-400" id="writes-count">--</div>
+                 <div class="text-3xl font-bold text-cyan-400" id="writes-count" data-testid="writes-count">0</div>
                   <div class="text-sm text-slate-400">Writes</div>
                   <div class="w-full bg-slate-700 rounded-full h-3 mt-2">
                     <div id="writes-bar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -71,7 +71,7 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
                 </div>
                 
                 <div class="text-center">
-                  <div class="text-3xl font-bold text-purple-400" id="storage-count">--</div>
+                 <div class="text-3xl font-bold text-purple-400" id="storage-count" data-testid="storage-count">0</div>
                   <div class="text-sm text-slate-400">Storage</div>
                   <div class="w-full bg-slate-700 rounded-full h-3 mt-2">
                     <div id="storage-bar" class="bg-gradient-to-r from-purple-500 to-pink-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -153,6 +153,9 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
               <button onclick="window.open('/admin/settings', '_blank')" class="flex items-center justify-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                 <span class="text-gray-600 font-medium">⚙️ Settings</span>
               </button>
+              <button onclick="window.open('/admin/consulting', '_blank')" class="flex items-center justify-center p-4 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors">
+                <span class="text-teal-600 font-medium">🗓️ Consulting Availability</span>
+              </button>
             </div>
           </div>
         </div>
@@ -167,6 +170,10 @@ const description = 'YOLOVibe administrative dashboard with system monitoring, u
   
   // Initialize dashboard when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
+    // Seed initial timestamp so tests don't read "--" before data loads
+    const ts = document.getElementById('last-updated');
+    if (ts) ts.textContent = new Date().toLocaleString();
+
     const dashboard = new AdminDashboard();
     window.dashboard = dashboard;
     

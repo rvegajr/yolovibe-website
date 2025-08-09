@@ -16,6 +16,7 @@ program
   .description('Validate all external service integrations')
   .version('1.0.0')
   .option('-v, --verbose', 'Show detailed output')
+  .option('-e, --env <name>', 'Environment to validate (dev|test|prod)')
   .option('-s, --skip-email', 'Skip email validation')
   .option('-c, --ci', 'Run in CI mode (no interactive prompts)')
   .parse(process.argv);
@@ -24,6 +25,15 @@ const options = program.opts();
 
 async function main() {
   try {
+    // Load env file based on --env
+    const envName = (options.env as string) || process.env.NODE_ENV || 'development';
+    if (envName === 'prod' || envName === 'production') {
+      dotenv.config({ path: '.env.prod' });
+      process.env.NODE_ENV = 'production';
+    } else {
+      dotenv.config({ path: '.env' });
+      process.env.NODE_ENV = envName === 'test' ? 'test' : 'development';
+    }
     console.log(chalk.blue('🔍 Validating external service integrations...'));
     
     // Load configuration

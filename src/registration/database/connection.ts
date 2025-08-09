@@ -630,7 +630,11 @@ export class DatabaseConnection {
         }
       }
       
-      return result;
+      const normalized = {
+        ...result,
+        changes: this.isTurso ? (result?.rowsAffected ?? 0) : (result?.changes ?? 0)
+      };
+      return normalized;
     } catch (error) {
       console.error('Database execution error:', error);
       throw error;

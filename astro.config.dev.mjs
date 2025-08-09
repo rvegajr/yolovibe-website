@@ -3,25 +3,24 @@ import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
-import vercel from "@astrojs/vercel/serverless";
 
-// 🚀 PURE SERVERLESS JOY - Minimal configuration for maximum happiness!
+// 🚀 DEVELOPMENT-ONLY CONFIGURATION
+// This configuration bypasses production concerns for local debugging
 export default defineConfig({
-  site: "https://yolovibe-website.vercel.app",
+  site: "http://localhost:6688",
   output: "hybrid", // Enable hybrid rendering for API routes
   server: {
-    port: 6666,
+    port: 6688,
     host: true
   },
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true
-    },
-    functionPerRoute: false
-  }),
+  // NO VERCEL ADAPTER - This is the key fix for local development
   integrations: [tailwind(), mdx(), sitemap(), icon()],
   vite: {
-    // ✨ Clean, serverless-native build configuration
+    // Disable TypeScript checking for development
+    esbuild: {
+      target: 'esnext'
+    },
+    // Optimize for development speed
     build: {
       rollupOptions: {
         external: [
@@ -32,5 +31,5 @@ export default defineConfig({
         ]
       }
     }
-  },
-});
+  }
+}); 

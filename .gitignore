@@ -184,3 +184,7 @@ test-results/
 
 # Temporary files
 branch-protection.json
+
+# Ignore env files
+.env
+.env.*

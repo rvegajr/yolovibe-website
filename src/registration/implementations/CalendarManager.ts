@@ -58,9 +58,11 @@ export class CalendarManager implements ICalendarManager {
   async createWorkshopEvent(workshop: Workshop): Promise<string> {
     const eventId = `cal_event_${this.nextId++}`;
     
+    const env = (process.env.NODE_ENV || 'development').toUpperCase();
+    const envPrefix = env !== 'PRODUCTION' ? `[${env}] ` : '';
     const event: CalendarEvent = {
       id: eventId,
-      title: `${workshop.productId} Workshop`,
+      title: `${envPrefix}${workshop.productId} Workshop`,
       description: `Workshop from ${workshop.startDate} to ${workshop.endDate}`,
       startDateTime: new Date(workshop.startDate),
       endDateTime: new Date(workshop.endDate),
@@ -94,9 +96,11 @@ export class CalendarManager implements ICalendarManager {
   async createEvent(request: CalendarEventRequest): Promise<string> {
     const eventId = `cal_event_${this.nextId++}`;
     
+    const env = (process.env.NODE_ENV || 'development').toUpperCase();
+    const envPrefix = env !== 'PRODUCTION' ? `[${env}] ` : '';
     const event: CalendarEvent = {
       id: eventId,
-      title: request.title,
+      title: `${envPrefix}${request.title}`,
       description: request.description,
       startDateTime: request.startDateTime,
       endDateTime: request.endDateTime,

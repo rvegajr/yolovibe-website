@@ -1,0 +1,152 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Container from '../../components/container.astro';
+const title = 'Consulting Availability - Admin';
+---
+
+<MainLayout title={title}>
+  <div class="min-h-screen bg-gradient-to-b from-gray-900 via-slate-900 to-black text-white pt-20">
+    <Container>
+      <div class="py-8 space-y-8">
+        <div>
+          <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Consulting Availability</h1>
+          <p class="text-slate-300 mt-1">Configure weekly working windows and block out dates for AI Business Development (hourly)</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Weekly Windows -->
+          <div class="bg-slate-800/50 rounded-2xl border border-slate-600/30 p-6">
+            <h2 class="text-xl font-semibold mb-4">Weekly Windows</h2>
+            <div id="windows-editor" class="space-y-3"></div>
+            <div class="mt-4 flex gap-3">
+              <button id="add-window" class="px-3 py-2 rounded bg-teal-600 hover:bg-teal-500">Add Window</button>
+              <button id="save-windows" class="px-3 py-2 rounded bg-indigo-600 hover:bg-indigo-500">Save</button>
+              <span id="windows-status" class="text-sm text-slate-300"></span>
+            </div>
+          </div>
+
+          <!-- Blockouts -->
+          <div class="bg-slate-800/50 rounded-2xl border border-slate-600/30 p-6">
+            <h2 class="text-xl font-semibold mb-4">Blockouts</h2>
+            <div class="flex gap-2 mb-3">
+              <input id="block-start" type="date" class="bg-black/30 border border-slate-600/50 rounded px-2 py-1" />
+              <input id="block-end" type="date" class="bg-black/30 border border-slate-600/50 rounded px-2 py-1" />
+              <input id="block-reason" type="text" placeholder="Reason" class="flex-1 bg-black/30 border border-slate-600/50 rounded px-2 py-1" />
+              <button id="add-blockout" class="px-3 py-2 rounded bg-rose-600 hover:bg-rose-500">Block</button>
+            </div>
+            <div id="blockouts-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
+            <span id="block-status" class="text-sm text-slate-300"></span>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="bg-slate-800/50 rounded-2xl border border-slate-600/30 p-6">
+          <h2 class="text-xl font-semibold mb-4">Preview Availability</h2>
+          <div class="flex items-center gap-2 mb-3">
+            <input id="preview-date" type="date" class="bg-black/30 border border-slate-600/50 rounded px-2 py-1" />
+            <select id="preview-duration" class="bg-black/30 border border-slate-600/50 rounded px-2 py-1">
+              <option value="2">2 hours</option>
+              <option value="3">3 hours</option>
+              <option value="4">4 hours</option>
+              <option value="5">5 hours</option>
+              <option value="6">6 hours</option>
+              <option value="7">7 hours</option>
+              <option value="8">8 hours</option>
+            </select>
+            <button id="run-preview" class="px-3 py-2 rounded bg-cyan-600 hover:bg-cyan-500">Show Slots</button>
+          </div>
+          <div id="preview-slots" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </Container>
+  </div>
+
+  <script>
+    const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    async function loadWindows(){
+      const res = await fetch('/api/admin/consulting/windows');
+      const json = await res.json();
+      const rows = json?.data || [];
+      const container = document.getElementById('windows-editor');
+      container.innerHTML = '';
+      if(rows.length===0){
+        addRow(container, { weekday:1, start_time:'09:00', end_time:'17:00', is_active:true});
+      } else {
+        for(const r of rows) addRow(container, r);
+      }
+    }
+
+    function addRow(container, w){
+      const row = document.createElement('div');
+      row.className='grid grid-cols-5 gap-2 items-center';
+      row.innerHTML = `
+        <select class="weekday bg-black/30 border border-slate-600/50 rounded px-2 py-1">${weekdays.map((d,i)=>`<option value="${i}" ${i==w.weekday?'selected':''}>${d}</option>`).join('')}</select>
+        <input type="time" class="start bg-black/30 border border-slate-600/50 rounded px-2 py-1" value="${w.start_time}">
+        <input type="time" class="end bg-black/30 border border-slate-600/50 rounded px-2 py-1" value="${w.end_time}">
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="active" ${w.is_active? 'checked':''}/> Active</label>
+        <button class="remove px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">Remove</button>
+      `;
+      row.querySelector('.remove').addEventListener('click',()=>row.remove());
+      container.appendChild(row);
+    }
+
+    document.getElementById('add-window').addEventListener('click',()=> addRow(document.getElementById('windows-editor'), { weekday:1, start_time:'09:00', end_time:'17:00', is_active:true }));
+    document.getElementById('save-windows').addEventListener('click', async ()=>{
+      const cont = document.getElementById('windows-editor');
+      const payload = Array.from(cont.children).map(row=>({
+        weekday: parseInt(row.querySelector('.weekday').value),
+        start_time: row.querySelector('.start').value,
+        end_time: row.querySelector('.end').value,
+        is_active: row.querySelector('.active').checked,
+        priority: 0
+      }));
+      const res = await fetch('/api/admin/consulting/windows', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      document.getElementById('windows-status').textContent = res.ok ? 'Saved.' : 'Save failed';
+    });
+
+    async function loadBlockouts(){
+      const res = await fetch('/api/admin/consulting/blockouts');
+      const json = await res.json();
+      const list = document.getElementById('blockouts-list');
+      list.innerHTML='';
+      for(const b of (json?.data||[])){
+        const item = document.createElement('div');
+        item.className='flex justify-between items-center bg-black/20 border border-slate-600/30 rounded px-3 py-2';
+        item.textContent = `${b.start_date} → ${b.end_date} — ${b.reason||''}`;
+        list.appendChild(item);
+      }
+    }
+
+    document.getElementById('add-blockout').addEventListener('click', async ()=>{
+      const start = (document.getElementById('block-start')).value;
+      const end = (document.getElementById('block-end')).value;
+      const reason = (document.getElementById('block-reason')).value;
+      if(!start||!end){ document.getElementById('block-status').textContent='Select start/end.'; return; }
+      const res = await fetch('/api/admin/consulting/blockouts', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ start_date:start, end_date:end, reason })});
+      document.getElementById('block-status').textContent = res.ok ? 'Blocked.' : 'Failed to block';
+      if(res.ok) loadBlockouts();
+    });
+
+    document.getElementById('run-preview').addEventListener('click', async ()=>{
+      const d = (document.getElementById('preview-date')).value;
+      const h = (document.getElementById('preview-duration')).value;
+      const res = await fetch(`/api/calendar/consulting-availability?date=${encodeURIComponent(d)}&durationHours=${encodeURIComponent(h)}`);
+      const json = await res.json();
+      const cont = document.getElementById('preview-slots');
+      cont.innerHTML='';
+      for(const s of (json?.data?.slots||[])){
+        const tag = document.createElement('span');
+        tag.className='px-2 py-1 rounded bg-cyan-700/50 border border-cyan-500/40';
+        tag.textContent = s;
+        cont.appendChild(tag);
+      }
+      if(!json?.data?.slots?.length) cont.textContent='No available slots';
+    });
+
+    document.addEventListener('DOMContentLoaded', ()=>{ loadWindows(); loadBlockouts(); });
+  </script>
+</MainLayout>
+
+
+

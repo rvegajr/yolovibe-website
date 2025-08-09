@@ -1,0 +1,29 @@
+name: Preview Validate Integrations
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --legacy-peer-deps
+        working-directory: YOLOVibeWebsite
+      - name: Prepare env (preview)
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" >> .env
+          echo "TURSO_AUTH_TOKEN=$TURSO_AUTH_TOKEN" >> .env
+        working-directory: YOLOVibeWebsite
+        env:
+          DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.PREVIEW_TURSO_AUTH_TOKEN }}
+      - name: Validate integrations
+        run: npx tsx cli/validate-integrations.ts --env dev --ci --verbose
+        working-directory: YOLOVibeWebsite
+
+

@@ -21,28 +21,24 @@ describe('HealthChecker', () => {
     vi.clearAllMocks();
 
     mockConfig = {
-        // Auth0 removed - using custom authentication
-        clientId: 'test_client_id',
-        clientSecret: 'test_client_secret',
-      },
       sendgrid: {
         apiKey: 'SG.test_key',
-        fromEmail: 'test@example.com',
+        fromEmail: 'test@example.com'
       },
       square: {
         accessToken: 'test_square_token',
         locationId: 'test_location_id',
-        environment: 'sandbox',
+        environment: 'sandbox'
       },
       google: {
         calendarId: 'test-calendar',
         serviceAccountKeyPath: './test-key.json',
-        useApplicationDefaultCredentials: false,
+        useApplicationDefaultCredentials: false
       },
       app: {
         nodeEnv: 'test',
-        port: 3000,
-      },
+        port: 3000
+      }
     };
 
     // Create mock SquareService

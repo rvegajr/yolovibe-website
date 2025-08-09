@@ -32,11 +32,8 @@ export interface PaginatedResult<T> {
 }
 
 export abstract class BaseRepository {
-  protected db: any;
-
-  constructor() {
-    this.db = getDatabaseConnection().getDatabase();
-  }
+  // Lazily access the DB via connection helper to avoid init timing issues
+  constructor() {}
 
   /**
    * Generate a unique ID for database records
@@ -48,10 +45,12 @@ export abstract class BaseRepository {
   /**
    * Execute a query and return a single result
    */
-  protected findOne<T>(sql: string, params: any[] = []): T | null {
+  protected async findOne<T>(sql: string, params: any[] = []): Promise<T | null> {
     try {
-      const stmt = this.db.prepare(sql);
-      const result = stmt.get(...params) as T | undefined;
+      // Route through connection helper to support LibSQL
+      const conn = getDatabaseConnection();
+      const rows = await conn.query(sql, params);
+      const result = (rows && rows.length > 0 ? rows[0] : undefined) as T | undefined;
       return result || null;
     } catch (error) {
       console.error('Database query error (findOne):', error);
@@ -62,10 +61,11 @@ export abstract class BaseRepository {
   /**
    * Execute a query and return multiple results
    */
-  protected findMany<T>(sql: string, params: any[] = []): T[] {
+  protected async findMany<T>(sql: string, params: any[] = []): Promise<T[]> {
     try {
-      const stmt = this.db.prepare(sql);
-      return stmt.all(...params) as T[];
+      const conn = getDatabaseConnection();
+      const rows = await conn.query(sql, params);
+      return rows as T[];
     } catch (error) {
       console.error('Database query error (findMany):', error);
       throw error;
@@ -75,10 +75,10 @@ export abstract class BaseRepository {
   /**
    * Execute an insert/update/delete query
    */
-  protected execute(sql: string, params: any[] = []): any {
+  protected async execute(sql: string, params: any[] = []): Promise<any> {
     try {
-      const stmt = this.db.prepare(sql);
-      return stmt.run(...params);
+      const conn = getDatabaseConnection();
+      return await conn.execute(sql, params);
     } catch (error) {
       console.error('Database execution error:', error);
       throw error;
@@ -90,7 +90,12 @@ export abstract class BaseRepository {
    */
   protected transaction<T>(fn: () => T): T {
     try {
-      const transaction = this.db.transaction(fn);
+      const conn = getDatabaseConnection();
+      if (conn.isTursoDatabase()) {
+        throw new Error('Transactions not supported on Turso in this helper. Use individual queries.');
+      }
+      const db = conn.getDatabase();
+      const transaction = db.transaction(fn);
       return transaction();
     } catch (error) {
       console.error('Transaction error:', error);
@@ -129,25 +134,25 @@ export abstract class BaseRepository {
   /**
    * Execute a paginated query
    */
-  protected findPaginated<T>(
+  protected async findPaginated<T>(
     baseQuery: string,
     params: any[] = [],
     options: PaginationOptions = {}
-  ): PaginatedResult<T> {
+  ): Promise<PaginatedResult<T>> {
     const page = Math.max(1, options.page || 1);
     const limit = Math.min(100, Math.max(1, options.limit || 20));
 
     const { sql, countSql } = this.buildPaginatedQuery(baseQuery, options);
 
     // Get total count
-    const countResult = this.findOne<{ count: number }>(countSql, params);
-    const total = countResult?.count || 0;
+    const countResult = await this.findOne<{ count: number }>(countSql, params);
+    const total = (countResult as any)?.count || 0;
 
     // Get paginated data
-    const data = this.findMany<T>(sql, params);
+    const data = await this.findMany<T>(sql, params);
 
     return {
-      data,
+      data: data as T[],
       total,
       page,
       limit,
@@ -158,9 +163,9 @@ export abstract class BaseRepository {
   /**
    * Check if a record exists
    */
-  protected exists(table: string, field: string, value: any): boolean {
+  protected async exists(table: string, field: string, value: any): Promise<boolean> {
     const sql = `SELECT 1 FROM ${table} WHERE ${field} = ? LIMIT 1`;
-    const result = this.findOne(sql, [value]);
+    const result = await this.findOne(sql, [value]);
     return result !== null;
   }
 

@@ -7,6 +7,7 @@ import { loadConfig } from '../infrastructure/config.js';
 import { HealthChecker } from '../infrastructure/health/HealthChecker.js';
 import { HealthDashboard } from '../infrastructure/health/HealthDashboard.js';
 import { SquareService } from '../infrastructure/payment/SquareService.js';
+import { initializeDatabase } from '../registration/database/connection.js';
 
 export class ApplicationStartup {
   private config!: ReturnType<typeof loadConfig>;
@@ -35,6 +36,11 @@ export class ApplicationStartup {
       console.log(' Loading configuration...');
       this.config = loadConfig();
       console.log(' Configuration loaded successfully\n');
+
+      // Step 1a: Ensure database is initialized and schema applied
+      console.log(' Initializing database and applying migrations (if needed)...');
+      await initializeDatabase();
+      console.log(' Database initialized successfully\n');
 
       // Step 2: Initialize Square service
       this.squareService = new SquareService(this.config);

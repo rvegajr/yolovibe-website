@@ -174,8 +174,7 @@ export class UserAuthenticatorDB implements IUserAuthenticator {
     // We need to modify UserRepository to expose password hash for verification
     // For now, let's create a method to get it
     const sql = 'SELECT password_hash FROM users WHERE email = ?';
-    const result = this.userRepository['findOne']<{ password_hash: string }>(sql, [email.toLowerCase()]);
-    
+    const result = await (this.userRepository as any).findOne<{ password_hash: string }>(sql, [email.toLowerCase()]);
     if (!result) {
       return false;
     }

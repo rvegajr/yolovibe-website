@@ -18,14 +18,15 @@ The following environment variables have been configured in Vercel production:
 - `SENDGRID_FROM_NAME`: YOLOVibeCode
 
 #### Square (Payment Processing)
-**Production Credentials:**
+Do not store live credentials in the repository. Configure these in your secret store or environment provider.
+**Production Credentials (example placeholders):**
 - `SQUARE_ENVIRONMENT`: production
-- `SQUARE_ACCESS_TOKEN`: EAAAlxVDkvHejNK4r_6fc6bDKsIJVmaVq4yc7kn0jQA3nzHHqTfi-LqMt2sIOGmH
-- App ID: sq0idp-3U0vTj6m-_HunufYIh6KHQ
+- `SQUARE_ACCESS_TOKEN`: <redacted>
+- App ID: <redacted>
 
-**Sandbox Credentials (for development/testing):**
-- App ID: sandbox-sq0idb-5rAQVYbZ3OFwpOOHfQ4K7A
-- Access Token: EAAAl0nbPFFE7MyGeWGhcIh49DrsY0wVgPaR1LfXF-JCVN3LvKJWUm5Ez3UwZmND
+**Sandbox Credentials (example placeholders):**
+- App ID: <redacted>
+- Access Token: <redacted>
 
 ## Authentication Status
 - **Auth0**: ❌ Removed completely

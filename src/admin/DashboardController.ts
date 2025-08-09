@@ -236,16 +236,18 @@ export class AdminDashboard {
 
   updateActivity(activity: DashboardMetrics['activity']): void {
     if (!activity) return;
-    
     const container = document.getElementById('activity-feed');
     if (!container) return;
 
-    const priorityColors = {
-      urgent: 'text-red-600',
-      high: 'text-orange-600',
-      medium: 'text-blue-600',
-      low: 'text-gray-600'
-    };
+    // Handle non-array payloads gracefully (API may return summary object)
+    if (!Array.isArray(activity)) {
+      container.innerHTML = `
+        <div class="text-sm text-slate-400">
+          <span>Activity summary available.</span>
+        </div>
+      `;
+      return;
+    }
 
     container.innerHTML = activity.map(item => `
       <div class="flex items-start space-x-3 py-3 border-b border-slate-600/30 last:border-b-0">

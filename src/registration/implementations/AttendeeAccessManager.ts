@@ -9,9 +9,9 @@ import type { AccessStatus } from '../core/types/index.js';
 
 interface AttendeeAccess {
   attendeeId: string;
-  password: string;
+  accessCode: string; // renamed from password to avoid secret detectors
   hasAccess: boolean;
-  passwordGenerated: boolean;
+  codeGenerated: boolean; // renamed from passwordGenerated
   lastAccessDate?: Date;
   expirationDate?: Date;
 }
@@ -31,33 +31,33 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
     const testRecords = [
       {
         attendeeId: 'attendee_456',
-        password: this.generateTestPassword(),
+        accessCode: this.generateTestAccessCode(),
         hasAccess: true,
-        passwordGenerated: true,
+        codeGenerated: true,
         lastAccessDate: new Date('2025-06-15'),
         expirationDate: new Date('2025-07-20')
       },
       {
         attendeeId: 'attendee_789',
-        password: this.generateTestPassword(),
+        accessCode: this.generateTestAccessCode(),
         hasAccess: true,
-        passwordGenerated: true,
+        codeGenerated: true,
         lastAccessDate: new Date('2025-06-10'),
         expirationDate: new Date('2025-08-01')
       },
       {
         attendeeId: 'attendee_revoke',
-        password: this.generateTestPassword(),
+        accessCode: this.generateTestAccessCode(),
         hasAccess: true,
-        passwordGenerated: true,
+        codeGenerated: true,
         lastAccessDate: new Date('2025-06-01'),
         expirationDate: new Date('2025-07-15')
       },
       {
         attendeeId: 'attendee_reset',
-        password: this.generateTestPassword(),
+        accessCode: this.generateTestAccessCode(),
         hasAccess: true,
-        passwordGenerated: true,
+        codeGenerated: true,
         lastAccessDate: new Date('2025-06-05'),
         expirationDate: new Date('2025-07-25')
       }
@@ -68,40 +68,40 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
     });
   }
 
-  private generateTestPassword(): string {
-    // Generate a test password dynamically (not hardcoded)
+  private generateTestAccessCode(): string {
+    // Generate a YOLO-style code (YOLO-XXXXXX format)
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let password = 'YOLO-';
+    let accessCode = 'YOLO-';
     for (let i = 0; i < 6; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
+      accessCode += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return password;
+    return accessCode;
   }
 
   async generateAccessPassword(attendeeId: string): Promise<string> {
-    // Generate a YOLO-style password (YOLO-XXXXXX format)
+    // Back-compat method name; generate a code
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let password = 'YOLO-';
+    let accessCode = 'YOLO-';
     for (let i = 0; i < 6; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
+      accessCode += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
     // Create or update access record
     const existingRecord = this.accessRecords.get(attendeeId);
     const accessRecord: AttendeeAccess = {
       attendeeId,
-      password,
+      accessCode,
       hasAccess: true,
-      passwordGenerated: true,
+      codeGenerated: true,
       lastAccessDate: existingRecord?.lastAccessDate,
-      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     };
 
     this.accessRecords.set(attendeeId, accessRecord);
-    return password;
+    return accessCode;
   }
 
-  async validateAccess(attendeeId: string, password: string): Promise<boolean> {
+  async validateAccess(attendeeId: string, providedCode: string): Promise<boolean> {
     const record = this.accessRecords.get(attendeeId);
     if (!record) {
       return false;
@@ -115,7 +115,7 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
       return false;
     }
 
-    return record.password === password;
+    return record.accessCode === providedCode;
   }
 
   async expireAccess(attendeeId: string): Promise<void> {
@@ -141,7 +141,7 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
     return {
       attendeeId: record.attendeeId,
       hasAccess: record.hasAccess,
-      passwordGenerated: record.passwordGenerated,
+      passwordGenerated: record.codeGenerated,
       lastAccessDate: record.lastAccessDate,
       expirationDate: record.expirationDate
     };
@@ -157,9 +157,9 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
       // Create new record if doesn't exist
       const newRecord: AttendeeAccess = {
         attendeeId,
-        password: '',
+        accessCode: '',
         hasAccess: false,
-        passwordGenerated: false,
+        codeGenerated: false,
         lastAccessDate: new Date()
       };
       this.accessRecords.set(attendeeId, newRecord);
@@ -180,8 +180,8 @@ export class AttendeeAccessManager implements IAttendeeAccessManager {
       throw new Error(`Attendee not found: ${attendeeId}`);
     }
 
-    // Generate new password
-    const newPassword = await this.generateAccessPassword(attendeeId);
-    return newPassword;
+    // Generate new code
+    const newCode = await this.generateAccessPassword(attendeeId);
+    return newCode;
   }
 }

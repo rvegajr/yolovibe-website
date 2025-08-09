@@ -82,7 +82,7 @@ export class UserRepository extends BaseRepository {
       userData.emailVerified ? 1 : 0, // Convert boolean to integer
     ];
 
-    this.execute(query, params);
+    await this.execute(query, params);
 
     this.logOperation('CREATE', 'users', { email: userData.email });
 
@@ -100,7 +100,7 @@ export class UserRepository extends BaseRepository {
    */
   async findByEmail(email: string): Promise<User | null> {
     const sql = 'SELECT * FROM users WHERE email = ?';
-    const row = this.findOne<UserRow>(sql, [email.toLowerCase()]);
+    const row = await this.findOne<UserRow>(sql, [email.toLowerCase()]);
     
     return row ? this.mapRowToUser(row) : null;
   }
@@ -110,7 +110,7 @@ export class UserRepository extends BaseRepository {
    */
   async findById(id: string): Promise<User | null> {
     const sql = 'SELECT * FROM users WHERE id = ?';
-    const row = this.findOne<UserRow>(sql, [id]);
+    const row = await this.findOne<UserRow>(sql, [id]);
     
     return row ? this.mapRowToUser(row) : null;
   }
@@ -124,7 +124,7 @@ export class UserRepository extends BaseRepository {
       WHERE session_token = ? 
       AND session_expires > datetime('now')
     `;
-    const row = this.findOne<UserRow>(sql, [token]);
+    const row = await this.findOne<UserRow>(sql, [token]);
     
     return row ? this.mapRowToUser(row) : null;
   }
@@ -143,7 +143,7 @@ export class UserRepository extends BaseRepository {
     const { set, params } = this.buildUpdateClause(this.toSnakeCase(dataToUpdate));
     const sql = `UPDATE users SET ${set} WHERE id = ?`;
     
-    const result = this.execute(sql, [...params, id]);
+    const result = await this.execute(sql, [...params, id]);
     
     if (result.changes === 0) {
       return null;
@@ -162,7 +162,7 @@ export class UserRepository extends BaseRepository {
       WHERE id = ?
     `;
     
-    const result = this.execute(sql, [passwordHash, this.getCurrentTimestamp(), id]);
+    const result = await this.execute(sql, [passwordHash, this.getCurrentTimestamp(), id]);
     return result.changes > 0;
   }
 
@@ -177,7 +177,7 @@ export class UserRepository extends BaseRepository {
     `;
     
     const now = this.getCurrentTimestamp();
-    const result = this.execute(sql, [
+    const result = await this.execute(sql, [
       sessionToken,
       expiresAt.toISOString(),
       now,
@@ -210,7 +210,7 @@ export class UserRepository extends BaseRepository {
       WHERE id = ?
     `;
     
-    const result = this.execute(sql, [this.getCurrentTimestamp(), userId]);
+    const result = await this.execute(sql, [this.getCurrentTimestamp(), userId]);
     
     this.logOperation('INVALIDATE_SESSION', 'users', { userId });
     
@@ -228,7 +228,7 @@ export class UserRepository extends BaseRepository {
     `;
     
     const now = this.getCurrentTimestamp();
-    const result = this.execute(sql, [
+    const result = await this.execute(sql, [
       resetToken,
       expiresAt.toISOString(),
       now,
@@ -273,7 +273,7 @@ export class UserRepository extends BaseRepository {
       WHERE id = ?
     `;
     
-    const result = this.execute(sql, [this.getCurrentTimestamp(), userId]);
+    const result = await this.execute(sql, [this.getCurrentTimestamp(), userId]);
     return result.changes > 0;
   }
 
@@ -295,7 +295,21 @@ export class UserRepository extends BaseRepository {
    * Check if email exists
    */
   async emailExists(email: string): Promise<boolean> {
-    return this.exists('users', 'email', email.toLowerCase());
+    return await this.exists('users', 'email', email.toLowerCase());
+  }
+
+  /**
+   * Seed an admin user if it does not exist (idempotent)
+   */
+  async seedAdmin(email: string, passwordHash: string): Promise<void> {
+    const exists = await this.emailExists(email);
+    if (exists) return;
+    const id = this.generateId();
+    const sql = `
+      INSERT INTO users (id, email, password_hash, first_name, last_name, is_admin, email_verified, created_at, updated_at)
+      VALUES (?, ?, ?, 'Admin', 'User', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `;
+    await this.execute(sql, [id, email.toLowerCase(), passwordHash]);
   }
 
   /**
@@ -303,7 +317,7 @@ export class UserRepository extends BaseRepository {
    */
   async findAdminUsers(): Promise<User[]> {
     const sql = 'SELECT * FROM users WHERE is_admin = 1 ORDER BY created_at DESC';
-    const rows = this.findMany<UserRow>(sql);
+    const rows = await this.findMany<UserRow>(sql);
     
     return rows.map(row => this.mapRowToUser(row));
   }
@@ -317,25 +331,12 @@ export class UserRepository extends BaseRepository {
     adminUsers: number;
     recentUsers: number;
   }> {
-    const stats = this.transaction(() => {
-      const totalUsers = this.findOne<{ count: number }>('SELECT COUNT(*) as count FROM users')?.count || 0;
-      
-      const verifiedUsers = this.findOne<{ count: number }>(
-        'SELECT COUNT(*) as count FROM users WHERE email_verified = 1'
-      )?.count || 0;
-      
-      const adminUsers = this.findOne<{ count: number }>(
-        'SELECT COUNT(*) as count FROM users WHERE is_admin = 1'
-      )?.count || 0;
-      
-      const recentUsers = this.findOne<{ count: number }>(
-        "SELECT COUNT(*) as count FROM users WHERE created_at > datetime('now', '-30 days')"
-      )?.count || 0;
+    const totalUsers = (await this.findOne<{ count: number }>('SELECT COUNT(*) as count FROM users'))?.count || 0;
+    const verifiedUsers = (await this.findOne<{ count: number }>('SELECT COUNT(*) as count FROM users WHERE email_verified = 1'))?.count || 0;
+    const adminUsers = (await this.findOne<{ count: number }>('SELECT COUNT(*) as count FROM users WHERE is_admin = 1'))?.count || 0;
+    const recentUsers = (await this.findOne<{ count: number }>("SELECT COUNT(*) as count FROM users WHERE created_at > datetime('now', '-30 days')"))?.count || 0;
 
-      return { totalUsers, verifiedUsers, adminUsers, recentUsers };
-    });
-
-    return stats;
+    return { totalUsers, verifiedUsers, adminUsers, recentUsers };
   }
 
   /**
@@ -345,7 +346,7 @@ export class UserRepository extends BaseRepository {
     // For now, we'll actually delete the user
     // In production, you might want to implement soft delete
     const sql = 'DELETE FROM users WHERE id = ?';
-    const result = this.execute(sql, [id]);
+    const result = await this.execute(sql, [id]);
     
     this.logOperation('DELETE', 'users', { id });
     

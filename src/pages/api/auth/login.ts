@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
-import { UserAuthenticator } from '../../../registration/implementations/UserAuthenticator.js';
+import { UserAuthenticatorDB } from '../../../registration/implementations/database/UserAuthenticatorDB.js';
 import type { Credentials } from '../../../registration/core/types/index.js';
+import { initializeDatabase } from '../../../registration/database/connection.js';
 
 export const prerender = false;
 
@@ -11,6 +12,8 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('🔐 API: User login attempt');
+    // Ensure DB is initialized for LibSQL client
+    await initializeDatabase();
     
     const body = await request.json();
     const { email, password } = body;
@@ -29,7 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.log(`🔍 API: Authenticating user: ${email}`);
     
     const credentials: Credentials = { email, password };
-    const userAuth = new UserAuthenticator();
+    const userAuth = new UserAuthenticatorDB();
     const authResult = await userAuth.authenticate(credentials);
     
     if (!authResult.success) {
@@ -49,6 +52,17 @@ export const POST: APIRoute = async ({ request }) => {
     const expiresAt = new Date();
     expiresAt.setSeconds(expiresAt.getSeconds() + (authResult.expiresIn || 86400));
     
+    // Build session cookie with dev-friendly attributes (no Secure on http)
+    const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+    const cookieParts = [
+      `sessionToken=${authResult.token}`,
+      'HttpOnly',
+      'SameSite=Strict',
+      'Path=/',
+      `Max-Age=${authResult.expiresIn || 86400}`
+    ];
+    if (isProd) cookieParts.push('Secure');
+
     return new Response(JSON.stringify({
       success: true,
       data: {
@@ -61,7 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Set-Cookie': `sessionToken=${authResult.token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400` // 24 hours
+        'Set-Cookie': cookieParts.join('; ')
       }
     });
     

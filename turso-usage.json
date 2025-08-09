@@ -10,14 +10,14 @@
       "averageQueryTime": 0
     },
     "2025-08": {
-      "timestamp": "2025-08-07T08:07:19.794Z",
-      "rowsRead": 2,
-      "rowsWritten": 0,
-      "storageUsedMB": 0.01171875,
-      "queryCount": 2,
+      "timestamp": "2025-08-08T23:53:48.087Z",
+      "rowsRead": 684,
+      "rowsWritten": 6,
+      "storageUsedMB": 0.021484375,
+      "queryCount": 462,
       "connectionCount": 0,
-      "averageQueryTime": 2
+      "averageQueryTime": 0.1193058568329718
     }
   },
-  "lastUpdated": "2025-08-07T08:07:19.794Z"
+  "lastUpdated": "2025-08-08T23:53:48.087Z"
 }
