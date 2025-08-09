@@ -41,7 +41,7 @@ These variables will be used when the `main` branch is deployed:
 
 1. Click "Add New"
 2. For each variable:
-   - Enter the variable name (e.g., `AUTH0_DOMAIN`)
+   - Enter the variable name (e.g., `SQUARE_ACCESS_TOKEN`)
    - Enter the production value
    - Under "Environment", select only "Production"
    - Click "Save"
@@ -78,9 +78,7 @@ SQUARE_ACCESS_TOKEN=[sandbox token]
 SQUARE_LOCATION_ID=[sandbox location ID]
 SENDGRID_API_KEY=[test key]
 SENDGRID_FROM_EMAIL=test@yolovibe.com
-AUTH0_DOMAIN=yolovibe-dev.auth0.com
-AUTH0_CLIENT_ID=[staging client ID]
-AUTH0_CLIENT_SECRET=[staging client secret]
+# Auth0 removed - using custom authentication
 GOOGLE_CALENDAR_ID=[test calendar ID]
 GOOGLE_SERVICE_ACCOUNT_KEY_PATH=[path to test service account key]
 ```

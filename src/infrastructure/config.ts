@@ -288,7 +288,6 @@ class ConfigLoader {
     console.log('========================');
     console.log(`Environment: ${config.nodeEnv}`);
     console.log(`Port: ${config.port}`);
-    console.log(`Auth0 Domain: ${config.auth0.domain}`);
     console.log(`SendGrid From: ${config.sendgrid.fromEmail}`);
     console.log(`Square Environment: ${config.square.environment}`);
     console.log(`Google Calendar: ${config.google.calendarId}`);

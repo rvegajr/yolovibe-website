@@ -138,7 +138,7 @@ program
   .option('-t, --timeout <seconds>', 'Connection timeout in seconds', '10')
   .option(
     '-s, --services <services>',
-    'Comma-separated list of services to test (auth0,sendgrid,square,google)'
+    'Comma-separated list of services to test (sendgrid,square,google)'
   )
   .action(async (options: CliOptions) => {
     const cli = new HealthCheckCli();

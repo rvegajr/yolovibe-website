@@ -34,7 +34,7 @@ describe('Configuration Module', () => {
     const config = loadConfig();
     expect(config.nodeEnv).toBe('test');
     expect(config.port).toBe(3000);
-    expect(config.auth0.domain).toBe('test.auth0.com');
+    // Auth0 removed - using custom authentication
     expect(config.sendgrid.fromEmail).toBe('test@example.com');
   });
 

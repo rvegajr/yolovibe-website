@@ -43,3 +43,4 @@ Do not store live credentials in the repository. Configure these in your secret 
 - All Auth0 environment variables have been removed
 - The health checker no longer checks Auth0 status
 - Make sure to keep the Square production credentials secure
+- Make sure to keep the Square production credentials secure
