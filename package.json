@@ -17,7 +17,7 @@
     "dev": "astro dev --port 6688 --config astro.config.dev.mjs --skip-ts-check",
     "start": "astro dev --port 6688 --config astro.config.dev.mjs --skip-ts-check",
     "dev:debug": "astro dev --port 6688 --config astro.config.dev.mjs --skip-ts-check --verbose",
-    "build": "astro build",
+    "build": "astro build && node scripts/set-vercel-runtime.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "env:prepare": "tsx cli/prepare-env.ts",
